@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { LearningPath } from "@pathway/api";
 import { resolveStrapiMediaUrl } from "@pathway/api";
 import { getPathwayApiClient } from "@/lib/pathway-api";
@@ -92,7 +93,13 @@ export default async function Home() {
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {paths.map((path) => (
-              <LearningPathCard key={path.id} path={path} strapiUrl={strapiUrl} />
+              <Link
+                key={path.id}
+                href={`/paths/${path.slug}`}
+                className="focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 rounded-2xl"
+              >
+                <LearningPathCard path={path} strapiUrl={strapiUrl} />
+              </Link>
             ))}
           </div>
         )}
