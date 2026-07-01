@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "1.0",
+  "project": {
+    "id": "pathway",
+    "name": "Pathway",
+    "status": "active",
+    "goal": "Portfolio proof project for a Senior React Native, Expo, React and Next.js engineer."
+  },
+  "activeMilestone": "M1",
+  "milestones": [
+    {
+      "id": "M0",
+      "title": "Foundation and Seeded Content",
+      "status": "done",
+      "evidence": [
+        "pnpm workspace with apps/mobile, apps/web, apps/cms, packages/api, packages/ui-tokens",
+        "Workspace package names: @pathway/mobile, @pathway/web, @pathway/cms, @pathway/api, @pathway/ui-tokens",
+        "Expo, Next.js, and Strapi scaffolds present and runnable",
+        "Strapi content types defined: Learning Path, Module, Lesson, Category, Author",
+        "Seed script apps/cms/scripts/seed-pathway.js creates 4 categories, 1 author, 4 learning paths, 12 modules, 36 lessons",
+        "SQLite database apps/cms/.tmp/data.db contains 5 learning_paths (1 published: React Native Performance), 12 modules, 45 lessons (9 published), 4 categories, 1 author",
+        "1 admin user exists in the database",
+        "Public read permissions configured for learning-path, module, lesson, category, author",
+        "docs/architecture.md documents the three-surface split",
+        "docs/cms-seeding.md documents the reset-and-seed workflow"
+      ]
+    },
+    {
+      "id": "M1",
+      "title": "Shared CMS-to-Client Vertical Slice",
+      "status": "ready",
+      "goal": "Prove that Strapi is the single published content source used by both Expo and Next.js.",
+      "acceptanceCriteria": [
+        "A published title changed in Strapi appears in Expo after refresh.",
+        "A published title changed in Strapi appears in Next.js after refresh.",
+        "Both clients consume the shared API package.",
+        "External CMS data is validated at the API boundary.",
+        "No production content is hardcoded independently in mobile or web."
+      ]
+    },
+    {
+      "id": "M2",
+      "title": "Expo Mobile Core Journey",
+      "status": "planned"
+    },
+    {
+      "id": "M3",
+      "title": "Next.js Public Web Experience",
+      "status": "planned"
+    },
+    {
+      "id": "M4",
+      "title": "Product Polish and Engineering Signals",
+      "status": "planned"
+    },
+    {
+      "id": "M5",
+      "title": "Deployment and Portfolio Packaging",
+      "status": "planned"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "surface.cms",
+      "type": "application",
+      "name": "Strapi CMS",
+      "source": "apps/cms",
+      "owns": [
+        "structured-content",
+        "media",
+        "publishing-state",
+        "cms-admin"
+      ],
+      "status": "ready"
+    },
+    {
+      "id": "surface.mobile",
+      "type": "application",
+      "name": "Expo Mobile",
+      "source": "apps/mobile",
+      "owns": [
+        "ios-learning-experience",
+        "android-learning-experience",
+        "local-saved-items",
+        "local-progress"
+      ],
+      "status": "foundation-ready"
+    },
+    {
+      "id": "surface.web",
+      "type": "application",
+      "name": "Next.js Web",
+      "source": "apps/web",
+      "owns": [
+        "public-discovery",
+        "seo",
+        "shareable-routes",
+        "long-form-reading"
+      ],
+      "status": "foundation-ready"
+    },
+    {
+      "id": "package.api",
+      "type": "shared-package",
+      "name": "Typed CMS API Contract",
+      "source": "packages/api",
+      "owns": [
+        "fetch-client",
+        "zod-schemas",
+        "strapi-response-mappers",
+        "parsed-domain-models"
+      ],
+      "status": "planned"
+    }
+  ],
+  "edges": [
+    {
+      "from": "surface.mobile",
+      "relation": "consumes",
+      "to": "package.api"
+    },
+    {
+      "from": "surface.web",
+      "relation": "consumes",
+      "to": "package.api"
+    },
+    {
+      "from": "package.api",
+      "relation": "fetches-from",
+      "to": "surface.cms"
+    }
+  ],
+  "invariants": [
+    {
+      "id": "architecture.content-source",
+      "rule": "Strapi is the source of truth for structured content, media and publishing."
+    },
+    {
+      "id": "architecture.surface-ownership",
+      "rule": "Expo owns the mobile learning product and Next.js owns public web discovery, SEO and shareable reading pages."
+    },
+    {
+      "id": "architecture.no-custom-cms",
+      "rule": "Next.js must not recreate Strapi admin or general content CRUD."
+    },
+    {
+      "id": "scope.v1",
+      "rule": "Do not introduce V2 features before the active milestone is demonstrably complete."
+    },
+    {
+      "id": "quality.external-data",
+      "rule": "External CMS data must be runtime-validated at the API boundary."
+    }
+  ],
+  "nextTask": {
+    "id": "M1-api-contract",
+    "summary": "Create the shared typed API boundary for published learning paths and lessons.",
+    "dependsOn": [
+      "M0"
+    ],
+    "blocks": [
+      "M1-mobile-featured-path",
+      "M1-web-content-route"
+    ]
+  }
+}
