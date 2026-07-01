@@ -1,0 +1,13 @@
+{
+  "name": "pathway",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.8.0",
+  "scripts": {
+    "dev:mobile": "pnpm --filter @pathway/mobile start",
+    "dev:web": "pnpm --filter @pathway/web dev",
+    "dev:cms": "pnpm --filter @pathway/cms develop",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  }
+}

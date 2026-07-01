@@ -1,0 +1,84 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Package manager / logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# TypeScript
+*.tsbuildinfo
+
+# Coverage and test output
+coverage/
+.nyc_output/
+
+# Build output
+dist/
+build/
+out/
+
+# Next.js
+apps/web/.next/
+apps/web/out/
+
+# Expo / React Native
+apps/mobile/.expo/
+apps/mobile/.expo-shared/
+apps/mobile/web-build/
+apps/mobile/dist/
+apps/mobile/android/
+apps/mobile/ios/
+apps/mobile/*.jks
+apps/mobile/*.keystore
+apps/mobile/*.p8
+apps/mobile/*.mobileprovision
+
+# Keep native folders only if intentionally generated and maintained
+# Remove the two lines below if you decide to commit prebuild/native projects.
+# apps/mobile/android/
+# apps/mobile/ios/
+
+# Strapi
+apps/cms/.cache/
+apps/cms/build/
+apps/cms/dist/
+apps/cms/.tmp/
+apps/cms/public/uploads/
+apps/cms/.strapi/
+apps/cms/data/
+apps/cms/*.db
+apps/cms/*.db-journal
+apps/cms/*.sqlite
+apps/cms/*.sqlite-journal
+
+# Local databases
+*.db
+*.db-journal
+*.sqlite
+*.sqlite-journal
+
+# EAS / Expo credentials
+credentials.json
+apps/mobile/credentials.json
+
+# Temporary files
+tmp/
+temp/
+.cache/
