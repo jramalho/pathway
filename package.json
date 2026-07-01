@@ -5,6 +5,8 @@
   "packageManager": "pnpm@11.8.0",
   "scripts": {
     "dev:mobile": "pnpm --filter @pathway/mobile start",
+    "dev:mobile:android": "pnpm --filter @pathway/mobile android",
+    "dev:mobile:ios": "pnpm --filter @pathway/mobile ios",
     "dev:web": "pnpm --filter @pathway/web dev",
     "dev:cms": "pnpm --filter @pathway/cms develop",
     "lint": "pnpm -r lint",

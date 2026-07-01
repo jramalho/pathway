@@ -5,7 +5,7 @@
     "singularName": "category",
     "pluralName": "categories",
     "displayName": "Category",
-    "description": "Organize your content into categories"
+    "description": "Organize learning content into categories"
   },
   "options": {
     "draftAndPublish": false
@@ -13,10 +13,18 @@
   "pluginOptions": {},
   "attributes": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "required": true,
+      "unique": true
     },
     "slug": {
-      "type": "uid"
+      "type": "uid",
+      "targetField": "name",
+      "required": true,
+      "unique": true
+    },
+    "description": {
+      "type": "text"
     },
     "articles": {
       "type": "relation",
@@ -24,8 +32,17 @@
       "target": "api::article.article",
       "mappedBy": "category"
     },
-    "description": {
-      "type": "text"
+    "learningPaths": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::learning-path.learning-path",
+      "mappedBy": "category"
+    },
+    "lessons": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::lesson.lesson",
+      "mappedBy": "category"
     }
   }
 }

@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "modules",
+  "info": {
+    "singularName": "module",
+    "pluralName": "modules",
+    "displayName": "Module",
+    "description": "A module grouping lessons within a learning path"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "order": {
+      "type": "integer",
+      "required": true
+    },
+    "learningPath": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::learning-path.learning-path",
+      "inversedBy": "modules"
+    },
+    "lessons": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::lesson.lesson",
+      "mappedBy": "module"
+    }
+  }
+}
