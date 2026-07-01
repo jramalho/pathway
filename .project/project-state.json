@@ -6,7 +6,7 @@
     "status": "active",
     "goal": "Portfolio proof project for a Senior React Native, Expo, React and Next.js engineer."
   },
-  "activeMilestone": "M1",
+  "activeMilestone": "M2",
   "milestones": [
     {
       "id": "M0",
@@ -28,7 +28,7 @@
     {
       "id": "M1",
       "title": "Shared CMS-to-Client Vertical Slice",
-      "status": "ready",
+      "status": "done",
       "goal": "Prove that Strapi is the single published content source used by both Expo and Next.js.",
       "acceptanceCriteria": [
         "A published title changed in Strapi appears in Expo after refresh.",
@@ -36,6 +36,29 @@
         "Both clients consume the shared API package.",
         "External CMS data is validated at the API boundary.",
         "No production content is hardcoded independently in mobile or web."
+      ],
+      "evidence": [
+        "packages/api exports createPathwayApiClient, LearningPath, LearningPathModule, LessonPreview, ContentImage, Difficulty, resolveStrapiMediaUrl, PathwayApiValidationError, PathwayApiHttpError, PathwayApiNetworkError",
+        "packages/api/src/strapi/learning-path.schema.ts contains Zod schemas validating Strapi responses at runtime",
+        "packages/api/src/strapi/learning-path.mapper.ts maps Strapi payloads to camelCase domain models",
+        "packages/api/src/domain/learning-path.ts defines typed domain models: LearningPath, LearningPathModule, LessonPreview, ContentImage, Difficulty",
+        "pnpm --filter @pathway/api test passes 23 tests (parser, mapper, media URL resolver)",
+        "pnpm --filter @pathway/api exec tsc --noEmit passes",
+        "apps/mobile/src/lib/pathway-api.ts creates singleton PathwayApiClient via createPathwayApiClient",
+        "apps/mobile/src/app/index.tsx fetches featured learning paths via api.getFeaturedLearningPaths with fallback to getPublishedLearningPaths",
+        "apps/mobile/src/components/learning-path-card.tsx renders LearningPath domain model fields only",
+        "apps/web/src/lib/pathway-api.ts creates server-only singleton PathwayApiClient",
+        "apps/web/src/app/(home)/page.tsx fetches featured learning paths and links cards to /paths/[slug]",
+        "apps/web/src/app/paths/[slug]/page.tsx fetches by slug via api.getLearningPathBySlug, calls notFound() for missing slug, generateMetadata derives title from real content",
+        "No /api/learning-paths, documentId, data.attributes, or attributes. references found in apps/web/src or apps/mobile/src",
+        "No production content titles hardcoded in apps/web/src or apps/mobile/src",
+        "No `any` types in packages/api/src, apps/web/src, or apps/mobile/src",
+        "Manual proof: changed Strapi title to 'React Native Performance — M1 Audit Sync Test', confirmed updated title in Next.js path page h1 and title tag, confirmed API returns updated title to both clients, restored original title",
+        "Strapi logs confirm both Next.js (slug filter) and Expo (featured filter) requests go through @pathway/api",
+        "Web 404: /paths/slug-que-nao-existe returns HTTP 404 with noindex meta tag",
+        "Web empty state: 'No learning paths have been published yet.' in apps/web/src/app/(home)/page.tsx",
+        "Mobile error/retry: 'Couldn\u2019t load learning paths.' + 'Try again' button in apps/mobile/src/app/index.tsx",
+        "Commit 94243fa: feat(pathway): complete shared CMS vertical slice"
       ]
     },
     {
@@ -84,7 +107,7 @@
         "local-saved-items",
         "local-progress"
       ],
-      "status": "foundation-ready"
+      "status": "m1-home-ready"
     },
     {
       "id": "surface.web",
@@ -97,7 +120,7 @@
         "shareable-routes",
         "long-form-reading"
       ],
-      "status": "foundation-ready"
+      "status": "m1-home-and-path-ready"
     },
     {
       "id": "package.api",
@@ -110,7 +133,7 @@
         "strapi-response-mappers",
         "parsed-domain-models"
       ],
-      "status": "planned"
+      "status": "ready"
     }
   ],
   "edges": [
@@ -153,14 +176,17 @@
     }
   ],
   "nextTask": {
-    "id": "M1-api-contract",
-    "summary": "Create the shared typed API boundary for published learning paths and lessons.",
+    "id": "M2-mobile-foundation",
+    "summary": "Establish the Expo mobile app shell, navigation structure and the smallest complete discovery-to-lesson flow using the shared API contract.",
     "dependsOn": [
-      "M0"
+      "M1"
     ],
     "blocks": [
-      "M1-mobile-featured-path",
-      "M1-web-content-route"
+      "M2-home",
+      "M2-explore",
+      "M2-learning-path-detail",
+      "M2-lesson-detail",
+      "M2-local-persistence"
     ]
   }
 }
