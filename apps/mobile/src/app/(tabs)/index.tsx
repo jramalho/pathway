@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import type { LearningPath } from "@pathway/api";
 
@@ -9,64 +8,15 @@ import { LearningPathCard } from "@/components/learning-path-card";
 import { Screen } from "@/components/ui/screen";
 import { ThemedText } from "@/components/themed-text";
 import { Spacing } from "@/constants/theme";
-import { getPathwayApiClient } from "@/lib/pathway-api";
-
-type LoadState =
-  | { status: "loading" }
-  | { status: "success"; paths: LearningPath[] }
-  | { status: "error" };
-
-async function loadLearningPaths(signal: AbortSignal): Promise<LearningPath[]> {
-  const api = getPathwayApiClient();
-
-  // Try featured first; fall back to all published if none are featured.
-  const featured = await api.getFeaturedLearningPaths({ signal });
-  if (featured.length > 0) return featured;
-
-  return api.getPublishedLearningPaths({ signal });
-}
+import { useFeaturedLearningPathsQuery } from "@/hooks/use-learning-paths";
 
 /**
- * Home screen — preserves the M1 vertical slice: fetches featured learning
- * paths from Strapi via @pathway/api, with fallback to all published.
- * Layout will be refined in Part 2.2.
+ * Home screen — fetches featured learning paths from Strapi via
+ * @pathway/api using the useFeaturedLearningPathsQuery hook.
+ * No useEffect + fetch + useState — the hook handles lifecycle.
  */
 export default function HomeScreen() {
-  const [state, setState] = useState<LoadState>({ status: "loading" });
-
-  const fetchPaths = useCallback(async (signal: AbortSignal) => {
-    try {
-      const paths = await loadLearningPaths(signal);
-      if (!signal.aborted) {
-        setState({ status: "success", paths });
-      }
-    } catch (err) {
-      // AbortError = request was cancelled (e.g. unmount or refresh).
-      if (err instanceof Error && err.name === "AbortError") return;
-      if (!signal.aborted) {
-        setState({ status: "error" });
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const { signal } = controller;
-    (async () => {
-      await fetchPaths(signal);
-    })();
-    return () => controller.abort();
-  }, [fetchPaths]);
-
-  const handleRetry = useCallback(() => {
-    setState({ status: "loading" });
-    const controller = new AbortController();
-    const { signal } = controller;
-    (async () => {
-      await fetchPaths(signal);
-    })();
-    return () => controller.abort();
-  }, [fetchPaths]);
+  const { data: paths, isLoading, isError, errorMessage, refetch } = useFeaturedLearningPathsQuery();
 
   return (
     <Screen>
@@ -81,35 +31,27 @@ export default function HomeScreen() {
         Featured learning paths
       </ThemedText>
 
-      {state.status === "loading" && <LoadingState count={3} />}
+      {isLoading && <LoadingState count={3} />}
 
-      {state.status === "error" && (
+      {isError && (
         <ErrorState
-          message="Couldn't load learning paths."
+          message={errorMessage ?? "Couldn't load learning paths."}
           retryLabel="Try again"
-          onRetry={handleRetry}
+          onRetry={refetch}
         />
       )}
 
-      {state.status === "success" && state.paths.length === 0 && (
+      {!isLoading && !isError && paths && paths.length === 0 && (
         <ThemedText themeColor="textSecondary" style={styles.emptyText}>
           No learning paths have been published yet.
         </ThemedText>
       )}
 
-      {state.status === "success" && state.paths.length > 0 && (
+      {!isLoading && !isError && paths && paths.length > 0 && (
         <View style={styles.list}>
-          {state.paths.map((path) => (
+          {paths.map((path: LearningPath) => (
             <LearningPathCard key={path.id} path={path} />
           ))}
-          <Pressable
-            onPress={handleRetry}
-            accessibilityRole="button"
-            accessibilityLabel="Refresh learning paths"
-            style={styles.refreshButton}
-          >
-            <ThemedText type="smallBold">Refresh</ThemedText>
-          </Pressable>
         </View>
       )}
     </Screen>
@@ -139,13 +81,5 @@ const styles = StyleSheet.create({
   },
   list: {
     gap: Spacing.three,
-  },
-  refreshButton: {
-    alignSelf: "center",
-    marginTop: Spacing.two,
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.two,
-    borderWidth: 2,
-    borderColor: "#000000",
   },
 });

@@ -1,52 +1,52 @@
 /**
  * Factory for the Pathway API client.
  *
+ * Creates an ApiClient configured with the Strapi base URL and
+ * exposes typed resource functions (learning paths, etc.).
+ *
  * The package never reads process.env or platform-specific env vars.
  * Callers (Next.js, Expo) provide the Strapi base URL explicitly.
- *
- * Usage:
- *   const pathwayApi = createPathwayApiClient({ baseUrl: "http://localhost:1337" });
- *   const paths = await pathwayApi.getPublishedLearningPaths();
  */
 
-import { createGetPublishedLearningPaths } from "../learning-paths/get-published-learning-paths.ts";
-import { createGetFeaturedLearningPaths } from "../learning-paths/get-featured-learning-paths.ts";
-import { createGetLearningPathBySlug } from "../learning-paths/get-learning-path-by-slug.ts";
+import { ApiClient } from "./api-client.ts";
+import { createLearningPathsResource, type LearningPathsResource } from "../resources/learning-paths.resource.ts";
 
 export interface PathwayApiClient {
-  getPublishedLearningPaths(options?: {
-    signal?: AbortSignal;
-    fetch?: typeof fetch;
-  }): Promise<import("../domain/learning-path.ts").LearningPath[]>;
-  getFeaturedLearningPaths(options?: {
-    signal?: AbortSignal;
-    fetch?: typeof fetch;
-    limit?: number;
-  }): Promise<import("../domain/learning-path.ts").LearningPath[]>;
-  getLearningPathBySlug(
-    slug: string,
-    options?: { signal?: AbortSignal; fetch?: typeof fetch },
-  ): Promise<import("../domain/learning-path.ts").LearningPath | null>;
+  /** Low-level HTTP client (for advanced use / testing). */
+  readonly http: ApiClient;
+  /** Learning paths resource. */
+  readonly learningPaths: LearningPathsResource;
+  /** Backward-compatible methods (delegate to learningPaths resource). */
+  getPublishedLearningPaths(options?: { signal?: AbortSignal; fetch?: typeof fetch }): Promise<import("../domain/learning-path.ts").LearningPath[]>;
+  getFeaturedLearningPaths(options?: { signal?: AbortSignal; fetch?: typeof fetch; limit?: number }): Promise<import("../domain/learning-path.ts").LearningPath[]>;
+  getLearningPathBySlug(slug: string, options?: { signal?: AbortSignal; fetch?: typeof fetch }): Promise<import("../domain/learning-path.ts").LearningPath | null>;
 }
 
 export interface CreatePathwayApiClientOptions {
   /** Strapi base URL, e.g. "http://localhost:1337". Trailing slash is normalized. */
   baseUrl: string;
-}
-
-/** Normalize base URL: ensure no trailing slash. */
-function normalizeBaseUrl(baseUrl: string): string {
-  return baseUrl.replace(/\/+$/, "");
+  /** Override fetch for testing. */
+  fetch?: typeof fetch;
+  /** Default timeout in ms. */
+  defaultTimeoutMs?: number;
 }
 
 export function createPathwayApiClient(
   options: CreatePathwayApiClientOptions,
 ): PathwayApiClient {
-  const baseUrl = normalizeBaseUrl(options.baseUrl);
+  const http = new ApiClient({
+    baseUrl: options.baseUrl,
+    fetch: options.fetch,
+    defaultTimeoutMs: options.defaultTimeoutMs,
+  });
+
+  const learningPaths = createLearningPathsResource(http);
 
   return {
-    getPublishedLearningPaths: createGetPublishedLearningPaths(baseUrl),
-    getFeaturedLearningPaths: createGetFeaturedLearningPaths(baseUrl),
-    getLearningPathBySlug: createGetLearningPathBySlug(baseUrl),
+    http,
+    learningPaths,
+    getPublishedLearningPaths: (opts) => learningPaths.getPublished({ signal: opts?.signal }),
+    getFeaturedLearningPaths: (opts) => learningPaths.getFeatured({ signal: opts?.signal, limit: opts?.limit }),
+    getLearningPathBySlug: (slug, opts) => learningPaths.getBySlug(slug, { signal: opts?.signal }),
   };
 }

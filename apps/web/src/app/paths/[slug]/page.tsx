@@ -16,10 +16,6 @@ const difficultyLabels: Record<string, string> = {
   advanced: "Advanced",
 };
 
-/**
- * Deduplicate the fetch between `generateMetadata` and the page render.
- * React `cache` memoizes per-request so the CMS is hit once.
- */
 const fetchLearningPath = cache(
   async (slug: string): Promise<LearningPath | null> => {
     const api = getPathwayApiClient();
@@ -34,9 +30,6 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
 
-  // Catch API errors here so a network/HTTP failure doesn't prevent the
-  // page component from rendering its own error boundary. Returning a
-  // fallback title lets the page's error boundary handle the real error.
   let path: LearningPath | null;
   try {
     path = await fetchLearningPath(slug);
@@ -72,23 +65,17 @@ export default async function LearningPathPage({
 
   return (
     <main className="flex flex-1 flex-col gap-10 px-6 py-12">
-      <nav aria-label="Breadcrumb" className="text-sm text-zinc-500 dark:text-zinc-400">
+      <nav aria-label="Breadcrumb" className="text-sm text-zinc-500">
         <ol className="flex items-center gap-2">
           <li>
-            <Link href="/" className="hover:underline">
-              Home
-            </Link>
+            <Link href="/" className="hover:underline">Home</Link>
           </li>
           <li aria-hidden="true">/</li>
           <li>
-            <Link href="/" className="hover:underline">
-              Learning Paths
-            </Link>
+            <Link href="/" className="hover:underline">Learning Paths</Link>
           </li>
           <li aria-hidden="true">/</li>
-          <li aria-current="page" className="text-zinc-900 dark:text-zinc-50">
-            {path.title}
-          </li>
+          <li aria-current="page" className="text-zinc-900">{path.title}</li>
         </ol>
       </nav>
 
@@ -99,29 +86,27 @@ export default async function LearningPathPage({
             alt={coverAlt}
             width={1200}
             height={400}
-            className="h-64 w-full rounded-2xl object-cover"
+            className="h-64 w-full object-cover border-2 border-black"
             unoptimized
             priority
           />
         )}
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="border-2 border-black bg-[#D4E7DD] px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-black">
               {difficultyLabels[path.difficulty] ?? path.difficulty}
             </span>
             {path.featured && (
-              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900 dark:text-amber-200">
-                Featured
+              <span className="border-2 border-black bg-[#FAF9F5] px-2 py-0.5 text-xs font-bold uppercase text-black">
+                ★ Featured
               </span>
             )}
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="text-3xl font-extrabold text-zinc-900" style={{ fontFamily: 'var(--font-heading)' }}>
             {path.title}
           </h1>
-          <p className="max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
-            {path.description}
-          </p>
-          <div className="flex gap-4 text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="max-w-2xl text-lg text-zinc-600">{path.description}</p>
+          <div className="flex gap-4 text-sm text-zinc-500">
             <span>{path.lessonCount} lessons</span>
             <span>·</span>
             <span>{path.estimatedDuration} min</span>
@@ -130,58 +115,38 @@ export default async function LearningPathPage({
       </header>
 
       <section className="flex flex-col gap-6">
-        <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
+        <h2 className="text-2xl font-bold text-zinc-900" style={{ fontFamily: 'var(--font-heading)' }}>
           Modules
         </h2>
         {path.modules.length === 0 ? (
-          <p className="text-zinc-500 dark:text-zinc-400">
-            No modules have been added to this learning path yet.
-          </p>
+          <p className="text-zinc-500">No modules have been added to this learning path yet.</p>
         ) : (
           <ol className="flex flex-col gap-6">
             {path.modules.map((module) => (
-              <li
-                key={module.id}
-                className="flex flex-col gap-3 rounded-2xl border border-zinc-200 p-5 dark:border-zinc-800"
-              >
+              <li key={module.id} className="flex flex-col gap-3 border-2 border-black bg-[#EFEEEA] p-5">
                 <div className="flex flex-col gap-1">
-                  <span className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+                  <span className="text-xs font-bold uppercase tracking-wide text-zinc-500">
                     Module {module.order}
                   </span>
-                  <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
+                  <h3 className="text-xl font-bold text-zinc-900" style={{ fontFamily: 'var(--font-heading)' }}>
                     {module.title}
                   </h3>
                   {module.description && (
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                      {module.description}
-                    </p>
+                    <p className="text-sm text-zinc-600">{module.description}</p>
                   )}
                 </div>
                 {module.lessons.length === 0 ? (
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    No lessons in this module yet.
-                  </p>
+                  <p className="text-sm text-zinc-500">No lessons in this module yet.</p>
                 ) : (
                   <ul className="flex flex-col gap-2">
                     {module.lessons.map((lesson) => (
-                      <li
-                        key={lesson.id}
-                        className="flex flex-col gap-1 rounded-xl bg-zinc-50 p-4 dark:bg-zinc-900"
-                      >
+                      <li key={lesson.id} className="flex flex-col gap-1 bg-[#E9E8E4] p-4">
                         <div className="flex items-center justify-between gap-2">
-                          <h4 className="text-base font-medium text-zinc-900 dark:text-zinc-50">
-                            {lesson.title}
-                          </h4>
-                          <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                            {lesson.estimatedDuration} min
-                          </span>
+                          <h4 className="text-base font-medium text-zinc-900">{lesson.title}</h4>
+                          <span className="text-xs text-zinc-500">{lesson.estimatedDuration} min</span>
                         </div>
-                        {lesson.summary && (
-                          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                            {lesson.summary}
-                          </p>
-                        )}
-                        <span className="text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+                        {lesson.summary && <p className="text-sm text-zinc-600">{lesson.summary}</p>}
+                        <span className="text-xs uppercase tracking-wide text-zinc-500">
                           {difficultyLabels[lesson.difficulty] ?? lesson.difficulty}
                         </span>
                       </li>

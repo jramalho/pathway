@@ -1,7 +1,13 @@
 export default function Loading() {
   return (
-    <main className="flex flex-1 flex-col items-center justify-center px-6 py-24">
-      <p className="text-lg text-zinc-500 dark:text-zinc-400">Loading learning paths…</p>
+    <main className="flex flex-1 flex-col gap-6 px-6 py-16">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div
+          key={i}
+          className="h-32 border-2 border-black bg-[#EFEEEA]"
+          aria-hidden="true"
+        />
+      ))}
     </main>
   );
 }

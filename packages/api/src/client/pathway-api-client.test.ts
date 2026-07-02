@@ -1,5 +1,5 @@
 /**
- * Tests for the Pathway API client (Parte 4).
+ * Tests for the Pathway API client factory (backward-compatible interface).
  *
  * Uses node:test with an injectable mock fetch — no real Strapi calls.
  */
@@ -9,9 +9,7 @@ import assert from "node:assert/strict";
 
 import { createPathwayApiClient } from "./create-pathway-api-client.ts";
 import { resolveStrapiMediaUrl } from "./resolve-strapi-media-url.ts";
-import { PathwayApiHttpError } from "../errors/pathway-api-http-error.ts";
-import { PathwayApiNetworkError } from "../errors/pathway-api-network-error.ts";
-import { PathwayApiValidationError } from "../errors/pathway-api-validation-error.ts";
+import { ApiError, isApiError } from "./api-error.ts";
 import {
   publishedLearningPathListFixture,
   publishedLearningPathFixture,
@@ -27,6 +25,8 @@ function mockFetchOk(body: unknown): typeof fetch {
       ok: true,
       status: 200,
       statusText: "OK",
+      headers: new Headers(),
+      text: () => Promise.resolve(JSON.stringify(body)),
       json: () => Promise.resolve(body),
     }) as Promise<Response>) as typeof fetch;
 }
@@ -37,6 +37,8 @@ function mockFetchStatus(status: number, statusText: string): typeof fetch {
       ok: false,
       status,
       statusText,
+      headers: new Headers(),
+      text: () => Promise.resolve(""),
       json: () => Promise.resolve({}),
     }) as Promise<Response>) as typeof fetch;
 }
@@ -60,95 +62,70 @@ function mockFetchAbort(): typeof fetch {
 const BASE_URL = "http://localhost:1337";
 
 test("getPublishedLearningPaths: 200 valid response → LearningPath[]", async () => {
-  const client = createPathwayApiClient({ baseUrl: BASE_URL });
-  const paths = await client.getPublishedLearningPaths({
-    fetch: mockFetchOk(publishedLearningPathListFixture),
-  });
+  const client = createPathwayApiClient({ baseUrl: BASE_URL, fetch: mockFetchOk(publishedLearningPathListFixture) });
+  const paths = await client.getPublishedLearningPaths();
   assert.equal(paths.length, 1);
   assert.equal(paths[0].slug, "react-native-performance");
   assert.equal(paths[0].lessonCount, 3);
 });
 
-test("getPublishedLearningPaths: non-2xx → PathwayApiHttpError", async () => {
-  const client = createPathwayApiClient({ baseUrl: BASE_URL });
+test("getPublishedLearningPaths: non-2xx → ApiError kind=http", async () => {
+  const client = createPathwayApiClient({ baseUrl: BASE_URL, fetch: mockFetchStatus(500, "Internal Server Error") });
   await assert.rejects(
-    () => client.getPublishedLearningPaths({ fetch: mockFetchStatus(500, "Internal Server Error") }),
-    (err: unknown) => err instanceof PathwayApiHttpError && err.status === 500,
+    () => client.getPublishedLearningPaths(),
+    (err: unknown) => isApiError(err) && err.kind === "http" && err.status === 500,
   );
 });
 
-test("getPublishedLearningPaths: fetch failure → PathwayApiNetworkError", async () => {
-  const client = createPathwayApiClient({ baseUrl: BASE_URL });
+test("getPublishedLearningPaths: fetch failure → ApiError kind=network", async () => {
+  const client = createPathwayApiClient({ baseUrl: BASE_URL, fetch: mockFetchNetworkError("ECONNREFUSED"), defaultTimeoutMs: 100 });
   await assert.rejects(
-    () => client.getPublishedLearningPaths({ fetch: mockFetchNetworkError("ECONNREFUSED") }),
-    (err: unknown) => err instanceof PathwayApiNetworkError,
+    () => client.getPublishedLearningPaths(),
+    (err: unknown) => isApiError(err) && err.kind === "network",
   );
 });
 
-test("getPublishedLearningPaths: AbortError propagates as-is (not wrapped)", async () => {
-  const client = createPathwayApiClient({ baseUrl: BASE_URL });
+test("getPublishedLearningPaths: AbortError → ApiError kind=aborted", async () => {
+  const client = createPathwayApiClient({ baseUrl: BASE_URL, fetch: mockFetchAbort() });
   await assert.rejects(
-    () => client.getPublishedLearningPaths({ fetch: mockFetchAbort() }),
-    (err: unknown) => err instanceof Error && err.name === "AbortError",
+    () => client.getPublishedLearningPaths(),
+    (err: unknown) => isApiError(err) && err.kind === "aborted",
   );
 });
 
-test("getPublishedLearningPaths: 200 but invalid payload → PathwayApiValidationError", async () => {
-  const client = createPathwayApiClient({ baseUrl: BASE_URL });
+test("getPublishedLearningPaths: 200 but invalid payload → ApiError kind=validation", async () => {
+  const client = createPathwayApiClient({ baseUrl: BASE_URL, fetch: mockFetchOk({ wrong: true }) });
   await assert.rejects(
-    () => client.getPublishedLearningPaths({ fetch: mockFetchOk({ wrong: true }) }),
-    (err: unknown) => err instanceof PathwayApiValidationError,
+    () => client.getPublishedLearningPaths(),
+    (err: unknown) => isApiError(err) && err.kind === "validation",
   );
 });
 
 test("getFeaturedLearningPaths: 200 valid response → LearningPath[]", async () => {
-  const client = createPathwayApiClient({ baseUrl: BASE_URL });
-  const paths = await client.getFeaturedLearningPaths({
-    fetch: mockFetchOk(publishedLearningPathListFixture),
-  });
+  const client = createPathwayApiClient({ baseUrl: BASE_URL, fetch: mockFetchOk(publishedLearningPathListFixture) });
+  const paths = await client.getFeaturedLearningPaths();
   assert.equal(paths.length, 1);
   assert.equal(paths[0].featured, true);
 });
 
 test("getLearningPathBySlug: 200 with one match → LearningPath", async () => {
-  const client = createPathwayApiClient({ baseUrl: BASE_URL });
-  const lp = await client.getLearningPathBySlug("react-native-performance", {
-    fetch: mockFetchOk(publishedLearningPathListFixture),
-  });
+  const client = createPathwayApiClient({ baseUrl: BASE_URL, fetch: mockFetchOk(publishedLearningPathListFixture) });
+  const lp = await client.getLearningPathBySlug("react-native-performance");
   assert.notEqual(lp, null);
   assert.equal(lp!.slug, "react-native-performance");
 });
 
 test("getLearningPathBySlug: 200 with empty list → null", async () => {
-  const client = createPathwayApiClient({ baseUrl: BASE_URL });
-  const lp = await client.getLearningPathBySlug("nonexistent-slug", {
-    fetch: mockFetchOk({ data: [], meta: {} }),
-  });
+  const client = createPathwayApiClient({ baseUrl: BASE_URL, fetch: mockFetchOk({ data: [], meta: {} }) });
+  const lp = await client.getLearningPathBySlug("nonexistent-slug");
   assert.equal(lp, null);
 });
 
-test("getLearningPathBySlug: 200 with multiple matches → PathwayApiValidationError", async () => {
-  const client = createPathwayApiClient({ baseUrl: BASE_URL });
-  const duplicateFixture = {
-    data: [
-      publishedLearningPathFixture.data,
-      publishedLearningPathFixture.data,
-    ],
-    meta: {},
-  };
+test("getLearningPathBySlug: empty slug → throws Error", async () => {
+  const client = createPathwayApiClient({ baseUrl: BASE_URL, fetch: mockFetchOk({ data: [], meta: {} }) });
   await assert.rejects(
-    () => client.getLearningPathBySlug("react-native-performance", {
-      fetch: mockFetchOk(duplicateFixture),
-    }),
-    (err: unknown) => err instanceof PathwayApiValidationError,
-  );
-});
-
-test("getLearningPathBySlug: empty slug → PathwayApiValidationError", async () => {
-  const client = createPathwayApiClient({ baseUrl: BASE_URL });
-  await assert.rejects(
-    () => client.getLearningPathBySlug("   ", { fetch: mockFetchOk({ data: [], meta: {} }) }),
-    (err: unknown) => err instanceof PathwayApiValidationError,
+    () => client.getLearningPathBySlug("   "),
+    (err: unknown) => err instanceof Error && err.message === "slug must not be empty",
   );
 });
 
@@ -160,12 +137,14 @@ test("baseUrl trailing slash is normalized", async () => {
       ok: true,
       status: 200,
       statusText: "OK",
+      headers: new Headers(),
+      text: () => Promise.resolve(JSON.stringify(publishedLearningPathListFixture)),
       json: () => Promise.resolve(publishedLearningPathListFixture),
     }) as Promise<Response>;
   }) as typeof fetch;
 
-  const client = createPathwayApiClient({ baseUrl: "http://localhost:1337/" });
-  await client.getPublishedLearningPaths({ fetch: fetchMock });
+  const client = createPathwayApiClient({ baseUrl: "http://localhost:1337/", fetch: fetchMock });
+  await client.getPublishedLearningPaths();
   assert.ok(capturedUrl.startsWith("http://localhost:1337/api/"), `URL was: ${capturedUrl}`);
   assert.ok(!capturedUrl.includes("//api/"), `double slash in: ${capturedUrl}`);
 });

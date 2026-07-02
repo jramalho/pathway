@@ -1,67 +1,59 @@
 /**
- * Shared visual tokens for Pathway — Neo-Academic Brutalist.
+ * Shared visual tokens for Pathway.
  *
  * Platform-agnostic values only (colors, spacing, typography, borders,
- * shadows, layout). React Native and web components consume these but do
- * not share component implementations.
+ * shadows, layout). React Native and web components consume these but
+ * do not share component implementations.
+ *
+ * Structure:
+ *   foundation.ts — raw values, never referenced directly by components
+ *   semantic.ts   — purpose-named tokens, the API components use
+ *   index.ts      — public entrypoint
  */
+import { foundation } from "./foundation.ts";
+import { semantic } from "./semantic.ts";
+
+export { foundation } from "./foundation.ts";
+export { semantic } from "./semantic.ts";
+
+// Backward-compatible flat export for existing consumers.
 export const tokens = {
   color: {
-    /** App background / surface. */
-    surface: "#FAF9F5",
-    /** Container surface (cards, lists). */
-    surfaceContainer: "#EFEEEA",
-    /** Higher-contrast container surface. */
-    surfaceContainerHigh: "#E9E8E4",
-    /** Primary black. */
-    black: "#000000",
-    /** Primary text. */
-    text: "#1B1C1A",
-    /** Secondary text. */
-    textSecondary: "#424845",
-    /** Mint surface (secondary buttons, tags). */
-    mint: "#D4E7DD",
-    /** Accent green (primary buttons). */
-    accentGreen: "#79FF5B",
-    /** Active green (active tab block). */
-    activeGreen: "#38FE13",
-    /** Error / danger. */
-    error: "#BA1A1A",
+    surface: semantic.color.surfaceCanvas,
+    surfaceContainer: semantic.color.surfaceRaised,
+    surfaceContainerHigh: semantic.color.surfaceMuted,
+    black: semantic.color.borderStrong,
+    text: semantic.color.textPrimary,
+    textSecondary: semantic.color.textSecondary,
+    mint: semantic.color.accentSecondary,
+    accentGreen: semantic.color.accentPrimary,
+    activeGreen: semantic.color.accentActive,
+    error: semantic.color.feedbackDanger,
   },
   spacing: {
-    xs: 4,
-    sm: 8,
-    md: 12,
-    lg: 24,
-    xl: 48,
-    xxl: 80,
+    xs: semantic.spacing.xs,
+    sm: semantic.spacing.sm,
+    md: semantic.spacing.md,
+    lg: semantic.spacing.lg,
+    xl: semantic.spacing.xl,
+    xxl: semantic.spacing.xxl,
   },
   typography: {
-    /** Headings and brand. */
-    heading: "Epilogue",
-    /** Body, labels, tabs, buttons. */
-    body: "Inter",
+    heading: semantic.typography.headingFamily,
+    body: semantic.typography.bodyFamily,
   },
   border: {
-    /** Primary border — containers, cards, buttons, header, bottom nav. */
-    primary: 3,
-    /** Thin border — tags and inputs. */
-    thin: 2,
+    primary: semantic.border.widthStrong,
+    thin: semantic.border.widthThin,
   },
   shadow: {
-    /** Hard shadow offset for prominent interactive elements. */
-    offset: 6,
-    /** Reduced shadow offset when pressed. */
-    offsetPressed: 3,
+    offset: semantic.shadow.offsetResting,
+    offsetPressed: semantic.shadow.offsetPressed,
   },
   layout: {
-    /** Minimum touch target. */
-    touchTarget: 44,
-    /** Header visual height (excludes safe area). */
-    headerHeight: 64,
-    /** Horizontal content padding. */
-    contentPadding: 24,
-    /** Max content width for large screens. */
-    maxContentWidth: 800,
+    touchTarget: semantic.touch.targetMin,
+    headerHeight: semantic.layout.headerHeight,
+    contentPadding: semantic.layout.contentPadding,
+    maxContentWidth: semantic.layout.maxContentWidth,
   },
 } as const;
