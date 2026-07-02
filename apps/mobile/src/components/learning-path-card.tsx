@@ -4,10 +4,10 @@ import { StyleSheet, View } from "react-native";
 import type { LearningPath } from "@pathway/api";
 import { resolveStrapiMediaUrl } from "@pathway/api";
 
+import { Tag } from "@/components/ui/tag";
 import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
 import { useTheme } from "@/hooks/use-theme";
-import { Spacing } from "@/constants/theme";
+import { Border, Spacing } from "@/constants/theme";
 import { getStrapiUrl } from "@/lib/env";
 
 const difficultyLabels: Record<string, string> = {
@@ -25,54 +25,72 @@ export function LearningPathCard({ path }: { path: LearningPath }) {
   const alt = path.coverImage?.alternativeText ?? path.title;
 
   return (
-    <ThemedView type="backgroundElement" style={styles.card}>
-      {coverUrl ? (
-        <Image
-          source={coverUrl}
-          style={styles.cover}
-          contentFit="cover"
-          accessibilityLabel={alt}
-          transition={200}
-        />
-      ) : (
-        <View
-          style={[styles.cover, styles.coverFallback, { backgroundColor: theme.backgroundSelected }]}
-          accessibilityLabel="No cover image"
-        />
-      )}
-      <View style={styles.content}>
-        <View style={styles.metaRow}>
-          <ThemedText type="small" themeColor="textSecondary">
-            {difficultyLabels[path.difficulty] ?? path.difficulty}
+    <View style={styles.wrapper}>
+      {/* Hard shadow layer */}
+      <View style={styles.shadow} />
+      <View style={styles.card}>
+        {coverUrl ? (
+          <Image
+            source={coverUrl}
+            style={styles.cover}
+            contentFit="cover"
+            accessibilityLabel={alt}
+            transition={200}
+          />
+        ) : (
+          <View
+            style={[styles.cover, styles.coverFallback, { backgroundColor: theme.backgroundSelected }]}
+            accessibilityLabel="No cover image"
+          />
+        )}
+        <View style={styles.content}>
+          <View style={styles.metaRow}>
+            <Tag backgroundColor="#D4E7DD">
+              {difficultyLabels[path.difficulty] ?? path.difficulty}
+            </Tag>
+            {path.featured && (
+              <Tag backgroundColor="#FAF9F5">★ Featured</Tag>
+            )}
+          </View>
+          <ThemedText type="subtitle" style={styles.title}>
+            {path.title}
           </ThemedText>
-          {path.featured && (
-            <ThemedText type="smallBold" style={styles.featuredBadge}>
-              ★ Featured
+          <ThemedText themeColor="textSecondary" style={styles.description}>
+            {path.description}
+          </ThemedText>
+          <View style={styles.statsRow}>
+            <ThemedText type="small" themeColor="textSecondary">
+              {path.lessonCount} lessons
             </ThemedText>
-          )}
-        </View>
-        <ThemedText type="subtitle" style={styles.title}>
-          {path.title}
-        </ThemedText>
-        <ThemedText themeColor="textSecondary" style={styles.description}>
-          {path.description}
-        </ThemedText>
-        <View style={styles.statsRow}>
-          <ThemedText type="small" themeColor="textSecondary">
-            {path.lessonCount} lessons
-          </ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            · {path.estimatedDuration} min
-          </ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              · {path.estimatedDuration} min
+            </ThemedText>
+          </View>
         </View>
       </View>
-    </ThemedView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    position: "relative",
+  },
+  shadow: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "#000000",
+    transform: [{ translateX: 6 }, { translateY: 6 }],
+  },
   card: {
-    borderRadius: Spacing.three,
+    position: "relative",
+    zIndex: 1,
+    backgroundColor: "#EFEEEA",
+    borderWidth: Border.primary,
+    borderColor: "#000000",
     overflow: "hidden",
   },
   cover: {
@@ -91,21 +109,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.two,
-  },
-  featuredBadge: {
-    color: "#b45309",
+    flexWrap: "wrap",
   },
   title: {
     fontSize: 20,
     lineHeight: 28,
-    fontWeight: "600",
+    fontWeight: "700",
+  fontFamily: "Epilogue",
+  color: "#1B1C1A",
   },
   description: {
     fontSize: 14,
     lineHeight: 20,
+    color: "#424845",
   },
   statsRow: {
     flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.one,
   },
 });

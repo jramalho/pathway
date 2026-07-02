@@ -64,7 +64,18 @@
     {
       "id": "M2",
       "title": "Expo Mobile Core Journey",
-      "status": "planned"
+      "status": "in-progress",
+      "currentPart": "2.1",
+      "parts": [
+        { "id": "2.1", "title": "Mobile foundation — design system, app shell, tabs e rotas", "status": "done" },
+        { "id": "2.2", "title": "Home completa", "status": "pending" },
+        { "id": "2.3", "title": "Explore", "status": "pending" },
+        { "id": "2.4", "title": "Learning Path Detail", "status": "pending" },
+        { "id": "2.5", "title": "Lesson Detail", "status": "pending" },
+        { "id": "2.6", "title": "Saved", "status": "pending" },
+        { "id": "2.7", "title": "Profile", "status": "pending" },
+        { "id": "2.8", "title": "Estados e fechamento", "status": "pending" }
+      ]
     },
     {
       "id": "M3",

@@ -1,65 +1,107 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Mobile theme constants — Neo-Academic Brutalist.
+ *
+ * Colors, spacing, borders and layout values come from the shared
+ * `@pathway/ui-tokens` package so web and mobile stay in sync on the
+ * values that make sense to share. Font family names are resolved per
+ * platform here (the shared package only stores the logical name).
  */
 
-import '@/global.css';
+import { tokens } from "@pathway/ui-tokens";
 
-import { Platform } from 'react-native';
+import "@/global.css";
+
+import { Platform } from "react-native";
 
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+    background: tokens.color.surface,
+    backgroundElement: tokens.color.surfaceContainer,
+    backgroundSelected: tokens.color.surfaceContainerHigh,
+    text: tokens.color.text,
+    textSecondary: tokens.color.textSecondary,
+    black: tokens.color.black,
+    mint: tokens.color.mint,
+    accentGreen: tokens.color.accentGreen,
+    activeGreen: tokens.color.activeGreen,
+    error: tokens.color.error,
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+    // The Neo-Academic aesthetic is a light, editorial surface. Dark mode
+    // keeps the same palette — the design is intentionally single-mode.
+    background: tokens.color.surface,
+    backgroundElement: tokens.color.surfaceContainer,
+    backgroundSelected: tokens.color.surfaceContainerHigh,
+    text: tokens.color.text,
+    textSecondary: tokens.color.textSecondary,
+    black: tokens.color.black,
+    mint: tokens.color.mint,
+    accentGreen: tokens.color.accentGreen,
+    activeGreen: tokens.color.activeGreen,
+    error: tokens.color.error,
   },
 } as const;
 
-export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
+export type ThemeColor = keyof typeof Colors.light;
 
+/**
+ * Font family names. The shared tokens store the logical family name
+ * ("Epilogue", "Inter"); here we resolve the platform-specific PostScript
+ * name so React Native can find the loaded font.
+ */
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
+    heading: "Epilogue",
+    body: "Inter",
+    sans: "Inter",
+    serif: "ui-serif",
+    rounded: "ui-rounded",
+    mono: "ui-monospace",
   },
   default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
+    heading: "Epilogue",
+    body: "Inter",
+    sans: "Inter",
+    serif: "serif",
+    rounded: "normal",
+    mono: "monospace",
   },
   web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
+    heading: "var(--font-display)",
+    body: "var(--font-body)",
+    sans: "var(--font-body)",
+    serif: "var(--font-serif)",
+    rounded: "var(--font-rounded)",
+    mono: "var(--font-mono)",
   },
 });
 
 export const Spacing = {
   half: 2,
-  one: 4,
-  two: 8,
-  three: 16,
-  four: 24,
-  five: 32,
-  six: 64,
+  one: tokens.spacing.xs,
+  two: tokens.spacing.sm,
+  three: tokens.spacing.md,
+  four: tokens.spacing.lg,
+  five: tokens.spacing.xl,
+  six: tokens.spacing.xxl,
+} as const;
+
+export const Border = {
+  primary: tokens.border.primary,
+  thin: tokens.border.thin,
+} as const;
+
+export const Shadow = {
+  offset: tokens.shadow.offset,
+  offsetPressed: tokens.shadow.offsetPressed,
+} as const;
+
+export const Layout = {
+  touchTarget: tokens.layout.touchTarget,
+  headerHeight: tokens.layout.headerHeight,
+  contentPadding: tokens.layout.contentPadding,
+  maxContentWidth: tokens.layout.maxContentWidth,
 } as const;
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
-export const MaxContentWidth = 800;
+export const MaxContentWidth = Layout.maxContentWidth;

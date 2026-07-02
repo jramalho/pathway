@@ -3,8 +3,11 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
-    "@pathway/api": "workspace:*",
+    "@expo-google-fonts/epilogue": "^0.4.2",
+    "@expo-google-fonts/inter": "^0.4.2",
     "@expo/ui": "~57.0.1",
+    "@pathway/api": "workspace:*",
+    "@pathway/ui-tokens": "workspace:*",
     "expo": "~57.0.1",
     "expo-constants": "~57.0.2",
     "expo-device": "~57.0.0",
