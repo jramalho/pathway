@@ -1,0 +1,156 @@
+import { StyleSheet, View } from "react-native";
+import { SymbolView } from "expo-symbols";
+import { useRouter } from "expo-router";
+
+import type { LearningPath, LessonPreview } from "@pathway/api";
+
+import { NeoButton } from "@/components/ui/neo-button";
+import { ProgressBar } from "@/components/ui/progress-bar";
+import { Tag } from "@/components/ui/tag";
+import { ThemedText } from "@/components/themed-text";
+import { Border, Shadow, Spacing } from "@/constants/theme";
+
+export type ContinueLearningCardProps = {
+  path: LearningPath;
+  lesson: LessonPreview;
+};
+
+/**
+ * Continue Learning card — prominent card using a real LearningPath
+ * and its first navigable Lesson. Shows 0% progress (no persistence yet).
+ * CTA navigates to /lessons/[slug].
+ */
+export function ContinueLearningCard({ path, lesson }: ContinueLearningCardProps) {
+  const router = useRouter();
+
+  const ctaLabel = `Start learning — ${lesson.title}`;
+
+  return (
+    <View style={styles.wrapper}>
+      {/* Hard shadow */}
+      <View style={styles.shadow} />
+      <View style={styles.card}>
+        {/* Decorative mint block top-right */}
+        <View style={styles.decorBlock} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" />
+
+        <View style={styles.content}>
+          {/* Tag row */}
+          <View style={styles.tagRow}>
+            <View style={styles.tagWrapper}>
+              <SymbolView
+                name={{ ios: "bolt.fill", android: "bolt", web: "bolt" }}
+                size={12}
+                tintColor="#000000"
+              />
+              <Tag backgroundColor="#FAF9F5">START LEARNING</Tag>
+            </View>
+          </View>
+
+          {/* Path title */}
+          <ThemedText style={styles.pathTitle}>{path.title}</ThemedText>
+
+          {/* Lesson title */}
+          <ThemedText themeColor="textSecondary" style={styles.lessonTitle}>
+            {lesson.title}
+          </ThemedText>
+
+          {/* Progress */}
+          <View style={styles.progressSection}>
+            <View style={styles.progressLabelRow}>
+              <ThemedText type="smallBold" style={styles.progressLabel}>Progress</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary" style={styles.progressValue}>0%</ThemedText>
+            </View>
+            <ProgressBar value={0} />
+          </View>
+
+          {/* CTA */}
+          <NeoButton
+            label="Start learning"
+            variant="primary"
+            accessibilityLabel={ctaLabel}
+            onPress={() => router.navigate(`/lessons/${lesson.slug}`)}
+            style={styles.cta}
+          />
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  wrapper: {
+    position: "relative",
+  },
+  shadow: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "#000000",
+    transform: [{ translateX: Shadow.offset }, { translateY: Shadow.offset }],
+  },
+  card: {
+    position: "relative",
+    zIndex: 1,
+    backgroundColor: "#EFEEEA",
+    borderWidth: Border.primary,
+    borderColor: "#000000",
+    overflow: "hidden",
+  },
+  decorBlock: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    width: 64,
+    height: 64,
+    backgroundColor: "#D4E7DD",
+    borderLeftWidth: Border.primary,
+    borderLeftColor: "#000000",
+    borderBottomWidth: Border.primary,
+    borderBottomColor: "#000000",
+  },
+  content: {
+    padding: Spacing.four,
+    gap: Spacing.three,
+  },
+  tagRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  tagWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.one,
+  },
+  pathTitle: {
+    fontFamily: "Epilogue",
+    fontSize: 24,
+    fontWeight: "800",
+    lineHeight: 30,
+    color: "#000000",
+  },
+  lessonTitle: {
+    fontFamily: "Inter",
+    fontSize: 17,
+    lineHeight: 24,
+    fontWeight: "500",
+  },
+  progressSection: {
+    gap: Spacing.two,
+  },
+  progressLabelRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  progressLabel: {
+    color: "#000000",
+  },
+  progressValue: {
+    color: "#424845",
+  },
+  cta: {
+    marginTop: Spacing.one,
+  },
+});

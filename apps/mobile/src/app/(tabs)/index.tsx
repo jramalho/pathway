@@ -1,85 +1,204 @@
 import { StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
 
-import type { LearningPath } from "@pathway/api";
+import type { LearningPath, LessonPreview } from "@pathway/api";
 
+import { CompactLessonCard } from "@/components/home/compact-lesson-card";
+import { CompactPathCard } from "@/components/home/compact-path-card";
+import { ContinueLearningCard } from "@/components/home/continue-learning-card";
+import { FeaturedPathCard } from "@/components/home/featured-path-card";
+import { HomeSkeleton } from "@/components/home/home-skeleton";
+import { SectionHeader } from "@/components/home/section-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
-import { LoadingState } from "@/components/ui/loading-state";
-import { LearningPathCard } from "@/components/learning-path-card";
 import { Screen } from "@/components/ui/screen";
 import { ThemedText } from "@/components/themed-text";
 import { Spacing } from "@/constants/theme";
 import { useFeaturedLearningPathsQuery } from "@/hooks/use-learning-paths";
 
+// ponytail: display name until authentication exists (Part 2.7).
+const DISPLAY_NAME = "Jonathan";
+
+/** Maximum number of featured paths to show on Home. */
+const MAX_FEATURED_PATHS = 3;
+/** Maximum number of recommended lessons to show on Home. */
+const MAX_RECOMMENDED_LESSONS = 3;
+
+/** Time-based greeting based on local hour. */
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning,";
+  if (hour < 18) return "Good afternoon,";
+  return "Good evening,";
+}
+
+/** Extract the first navigable lesson from a learning path's module tree. */
+function getFirstLesson(path: LearningPath): LessonPreview | null {
+  for (const module of path.modules) {
+    if (module.lessons.length > 0) {
+      return module.lessons[0];
+    }
+  }
+  return null;
+}
+
+/** Flatten all lessons from all paths, limited to maxCount. */
+function flattenLessons(paths: LearningPath[], maxCount: number): { lesson: LessonPreview; pathTitle: string }[] {
+  const results: { lesson: LessonPreview; pathTitle: string }[] = [];
+  for (const path of paths) {
+    for (const module of path.modules) {
+      for (const lesson of module.lessons) {
+        results.push({ lesson, pathTitle: path.title });
+        if (results.length >= maxCount) return results;
+      }
+    }
+  }
+  return results;
+}
+
 /**
- * Home screen — fetches featured learning paths from Strapi via
- * @pathway/api using the useFeaturedLearningPathsQuery hook.
- * No useEffect + fetch + useState — the hook handles lifecycle.
+ * Home screen — loads real published content from Strapi via @pathway/api.
+ * Shows greeting, continue learning card, featured paths, recommended
+ * lessons, and recently saved (empty state). No hardcoded content.
  */
 export default function HomeScreen() {
+  const router = useRouter();
   const { data: paths, isLoading, isError, errorMessage, refetch } = useFeaturedLearningPathsQuery();
 
-  return (
-    <Screen>
-      <ThemedText type="title" style={styles.title}>
-        Pathway
-      </ThemedText>
-      <ThemedText themeColor="textSecondary" style={styles.subtitle}>
-        Short, structured learning for mobile engineers and product builders.
-      </ThemedText>
+  // Derive data for sections from the real API response
+  const allPaths = paths ?? [];
+  const continuePath = allPaths[0] ?? null;
+  const continueLesson = continuePath ? getFirstLesson(continuePath) : null;
+  const featuredPaths = allPaths.slice(0, MAX_FEATURED_PATHS);
+  const firstFeatured = featuredPaths[0] ?? null;
+  const remainingPaths = featuredPaths.slice(1);
+  const recommendedLessons = flattenLessons(allPaths, MAX_RECOMMENDED_LESSONS);
 
-      <ThemedText type="subtitle" style={styles.sectionTitle}>
-        Featured learning paths
-      </ThemedText>
+  // --- Loading ---
+  if (isLoading) {
+    return (
+      <Screen>
+        <HomeSkeleton />
+      </Screen>
+    );
+  }
 
-      {isLoading && <LoadingState count={3} />}
-
-      {isError && (
+  // --- Error ---
+  if (isError) {
+    return (
+      <Screen>
+        <View style={styles.greeting}>
+          <ThemedText style={styles.greetingLine}>{getGreeting()}</ThemedText>
+          <ThemedText style={styles.greetingName}>{DISPLAY_NAME}.</ThemedText>
+        </View>
         <ErrorState
-          message={errorMessage ?? "Couldn't load learning paths."}
+          message={errorMessage ?? "We couldn't load the learning paths right now."}
           retryLabel="Try again"
           onRetry={refetch}
         />
+      </Screen>
+    );
+  }
+
+  // --- Empty ---
+  if (allPaths.length === 0) {
+    return (
+      <Screen>
+        <View style={styles.greeting}>
+          <ThemedText style={styles.greetingLine}>{getGreeting()}</ThemedText>
+          <ThemedText style={styles.greetingName}>{DISPLAY_NAME}.</ThemedText>
+        </View>
+        <EmptyState
+          title="No learning content published yet"
+          description="The catalog will be available here when content is published."
+        />
+      </Screen>
+    );
+  }
+
+  // --- Content ---
+  return (
+    <Screen>
+      {/* 1. Greeting */}
+      <View style={styles.greeting}>
+        <ThemedText style={styles.greetingLine}>{getGreeting()}</ThemedText>
+        <ThemedText style={styles.greetingName}>{DISPLAY_NAME}.</ThemedText>
+      </View>
+
+      {/* 2. Continue Learning */}
+      {continuePath && continueLesson ? (
+        <ContinueLearningCard path={continuePath} lesson={continueLesson} />
+      ) : (
+        <EmptyState
+          title="No learning content published yet"
+          description="The catalog will be available here when content is published."
+          actionLabel="Explore content"
+          onAction={() => router.navigate("/explore")}
+        />
       )}
 
-      {!isLoading && !isError && paths && paths.length === 0 && (
-        <ThemedText themeColor="textSecondary" style={styles.emptyText}>
-          No learning paths have been published yet.
-        </ThemedText>
-      )}
-
-      {!isLoading && !isError && paths && paths.length > 0 && (
-        <View style={styles.list}>
-          {paths.map((path: LearningPath) => (
-            <LearningPathCard key={path.id} path={path} />
+      {/* 3. Featured Paths */}
+      <View style={styles.section}>
+        <SectionHeader title="Featured Paths" />
+        <View style={styles.pathList}>
+          {firstFeatured && <FeaturedPathCard path={firstFeatured} />}
+          {remainingPaths.map((path) => (
+            <CompactPathCard key={path.id} path={path} />
           ))}
         </View>
+      </View>
+
+      {/* 4. Recommended Lessons */}
+      {recommendedLessons.length > 0 && (
+        <View style={styles.section}>
+          <SectionHeader title="Recommended Lessons" />
+          <View style={styles.lessonList}>
+            {recommendedLessons.map(({ lesson, pathTitle }) => (
+              <CompactLessonCard key={lesson.id} lesson={lesson} pathTitle={pathTitle} />
+            ))}
+          </View>
+        </View>
       )}
+
+      {/* 5. Recently Saved — empty state (save/persistence arrives in Part 2.6) */}
+      <View style={styles.section}>
+        <SectionHeader title="Recently Saved" />
+        <EmptyState
+          title="Nothing saved yet"
+          description="Save a path or lesson to return to it later."
+          actionLabel="Explore content"
+          onAction={() => router.navigate("/explore")}
+        />
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 36,
-    lineHeight: 40,
+  greeting: {
+    gap: 0,
+  },
+  greetingLine: {
+    fontFamily: "Epilogue",
+    fontSize: 32,
     fontWeight: "800",
+    lineHeight: 38,
+    color: "#000000",
+  },
+  greetingName: {
     fontFamily: "Epilogue",
+    fontSize: 32,
+    fontWeight: "800",
+    lineHeight: 38,
+    color: "#000000",
   },
-  subtitle: {
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    lineHeight: 32,
-    fontWeight: "700",
-    fontFamily: "Epilogue",
-  },
-  emptyText: {
-    textAlign: "center",
-    paddingVertical: Spacing.five,
-  },
-  list: {
+  section: {
     gap: Spacing.three,
+  },
+  pathList: {
+    gap: Spacing.three,
+  },
+  lessonList: {
+    gap: Spacing.two,
   },
 });
