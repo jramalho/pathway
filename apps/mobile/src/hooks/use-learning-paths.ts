@@ -38,3 +38,18 @@ export function useLearningPathBySlugQuery(slug: string | undefined) {
     { enabled: !!slug },
   );
 }
+
+/**
+ * Fetch a single published lesson by slug with full body, author, category.
+ */
+export function useLessonBySlugQuery(slug: string | undefined) {
+  return useQuery(
+    async (signal) => {
+      if (!slug) return null;
+      const api = getPathwayApiClient();
+      return api.getLessonBySlug(slug, { signal });
+    },
+    [slug],
+    { enabled: !!slug },
+  );
+}

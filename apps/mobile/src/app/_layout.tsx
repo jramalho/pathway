@@ -7,6 +7,8 @@ import { Epilogue_700Bold, Epilogue_800ExtraBold } from "@expo-google-fonts/epil
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from "@expo-google-fonts/inter";
 import { useFonts } from "expo-font";
 
+import { LearningActivityProvider } from "@/features/learning-activity/learning-activity-provider";
+
 SplashScreen.preventAutoHideAsync();
 
 /**
@@ -35,13 +37,13 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <LearningActivityProvider>
       <StatusBar style="dark" />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="paths/[slug]" />
         <Stack.Screen name="lessons/[slug]" />
       </Stack>
-    </>
+    </LearningActivityProvider>
   );
 }

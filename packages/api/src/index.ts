@@ -59,6 +59,14 @@ export type {
   LessonPreview,
 } from "./domain/learning-path.ts";
 
+// Full lesson detail model (body, author, category, media).
+export type {
+  Author,
+  Category,
+  LessonBodyBlock,
+  LessonDetail,
+} from "./domain/lesson.ts";
+
 // Schemas (for testing / advanced use).
 export {
   learningPathResponseSchema,
