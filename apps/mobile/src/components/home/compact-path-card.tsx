@@ -25,7 +25,7 @@ export type CompactPathCardProps = {
  */
 export function CompactPathCard({ path }: CompactPathCardProps) {
   const router = useRouter();
-  const a11yLabel = `${path.title}. Opens learning path details.`;
+  const a11yLabel = `Open learning path ${path.title}`;
 
   return (
     <Pressable

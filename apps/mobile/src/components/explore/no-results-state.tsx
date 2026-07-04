@@ -35,7 +35,7 @@ export function NoResultsState({ onReset }: NoResultsStateProps) {
         {/* Reset button */}
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Reset parameters"
+          accessibilityLabel="Reset search and topic filters"
           onPress={onReset}
           style={({ pressed }) => [
             styles.button,

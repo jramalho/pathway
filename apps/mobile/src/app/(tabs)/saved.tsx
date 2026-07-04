@@ -75,6 +75,8 @@ export default function SavedScreen() {
           message={errorMessage ?? "We couldn't load your saved content right now."}
           retryLabel="TRY AGAIN"
           onRetry={refetch}
+          secondaryLabel="BACK TO EXPLORE"
+          onSecondary={() => router.navigate("/explore")}
         />
       </Screen>
     );

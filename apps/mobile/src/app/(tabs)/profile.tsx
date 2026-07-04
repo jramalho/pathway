@@ -180,8 +180,6 @@ export default function ProfileScreen() {
             <EmptyState
               title="NO COMPLETED PATHS YET"
               description="Finish every lesson in a path to see it here."
-              actionLabel={activePaths.length === 0 && completedLessons.available.length === 0 ? "EXPLORE CONTENT" : undefined}
-              onAction={activePaths.length === 0 && completedLessons.available.length === 0 ? () => router.navigate("/explore") : undefined}
             />
           )}
         </View>
@@ -206,8 +204,7 @@ export default function ProfileScreen() {
             <EmptyState
               title="NO COMPLETED LESSONS"
               description="Your completed lessons are not currently published or available."
-              actionLabel="EXPLORE CONTENT"
-              onAction={() => router.navigate("/explore")}
+              icon="warning"
             />
           ) : (
             <EmptyState

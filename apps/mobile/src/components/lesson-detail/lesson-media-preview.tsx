@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Image } from "expo-image";
+import { Image, type ImageSource } from "expo-image";
 import { SymbolView } from "expo-symbols";
 
 import type { ContentImage } from "@pathway/api";
@@ -16,8 +17,8 @@ export type LessonMediaPreviewProps = {
 
 /**
  * Media preview — shows video thumbnail or cover image when available,
- * or an abstract geometric fallback when no media exists.
- * No functional play button — the play icon is decorative.
+ * or an abstract geometric fallback when no media exists or the image
+ * fails to load. No functional play button — the play icon is decorative.
  */
 export function LessonMediaPreview({ videoThumbnail, videoUrl }: LessonMediaPreviewProps) {
   const baseUrl = getStrapiUrl();
@@ -25,7 +26,8 @@ export function LessonMediaPreview({ videoThumbnail, videoUrl }: LessonMediaPrev
     ? resolveStrapiMediaUrl(videoThumbnail.url, baseUrl)
     : null;
   const alt = videoThumbnail?.alternativeText ?? "Lesson preview";
-  const hasMedia = thumbUrl !== null;
+  const [failed, setFailed] = useState(false);
+  const hasMedia = thumbUrl !== null && !failed;
 
   return (
     <View style={styles.wrapper}>
@@ -35,11 +37,12 @@ export function LessonMediaPreview({ videoThumbnail, videoUrl }: LessonMediaPrev
         {hasMedia ? (
           <>
             <Image
-              source={thumbUrl}
+              source={thumbUrl as ImageSource}
               style={styles.image}
               contentFit="cover"
               accessibilityLabel={alt}
               transition={200}
+              onError={() => setFailed(true)}
             />
             {/* Tag overlay */}
             <View style={styles.tagOverlay}>

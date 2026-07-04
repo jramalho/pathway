@@ -142,7 +142,7 @@ export default function PathDetailScreen() {
       <BackLink />
 
       {/* Hero */}
-      <LearningPathHero path={path} firstLesson={firstLesson} restoringProgress={!isHydrated} />
+      <LearningPathHero path={path} firstLesson={firstLesson} progressPercentage={isHydrated ? (pathProgress?.percentage ?? 0) : 0} restoringProgress={!isHydrated} />
 
       {/* Curriculum */}
       <View style={styles.section}>

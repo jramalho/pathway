@@ -48,7 +48,7 @@ export function DetailHeader({
         {/* Left: back button */}
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Go back to learning paths"
+          accessibilityLabel="Go back"
           hitSlop={12}
           style={styles.iconSlot}
           onPress={handleBack}

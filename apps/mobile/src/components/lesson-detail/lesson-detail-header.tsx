@@ -44,7 +44,7 @@ export function LessonDetailHeader({ lessonTitle, isSaved, onToggleSave, pathSlu
         {/* Left: back */}
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Go back"
+          accessibilityLabel="Go back to previous screen"
           hitSlop={12}
           style={styles.iconSlot}
           onPress={handleBack}

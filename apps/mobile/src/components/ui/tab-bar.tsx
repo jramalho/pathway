@@ -33,6 +33,8 @@ export function TabBar({ children, style, ...rest }: TabBarProps) {
 
 export type TabButtonProps = TabTriggerSlotProps & {
   label: string;
+  /** Full accessibility label (defaults to label if not provided). */
+  accessibilityLabel?: string;
   icon: React.ComponentProps<typeof SymbolView>["name"];
 };
 
@@ -41,12 +43,12 @@ export type TabButtonProps = TabTriggerSlotProps & {
  * Active = green block, 3px border, hard shadow, lifted up, black icon
  * and bold label.
  */
-export function TabButton({ label, icon, isFocused, ...props }: TabButtonProps) {
+export function TabButton({ label, accessibilityLabel, icon, isFocused, ...props }: TabButtonProps) {
   return (
     <Pressable
       {...props}
       accessibilityRole="tab"
-      accessibilityLabel={label}
+      accessibilityLabel={accessibilityLabel ?? label}
       accessibilityState={{ selected: !!isFocused }}
       hitSlop={0}
       style={styles.tabPressable}

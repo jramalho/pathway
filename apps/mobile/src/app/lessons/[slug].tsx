@@ -30,7 +30,7 @@ import { useLessonBySlugQuery, usePublishedLearningPathsQuery } from "@/hooks/us
  *
  * Loads a real published lesson by slug via @pathway/api, shows
  * context, media, body, key takeaway, completion, and navigation.
- * Save and completion are in-memory only (no persistence yet).
+ * Save and completion persist locally via AsyncStorage (Part 2.6+).
  */
 export default function LessonDetailScreen() {
   const router = useRouter();

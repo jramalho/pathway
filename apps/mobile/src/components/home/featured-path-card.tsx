@@ -1,16 +1,13 @@
 import { Pressable, StyleSheet, View } from "react-native";
-import { Image } from "expo-image";
 import { SymbolView } from "expo-symbols";
 import { useRouter } from "expo-router";
 
 import type { LearningPath } from "@pathway/api";
-import { resolveStrapiMediaUrl } from "@pathway/api";
 
-import { CoverFallback } from "./cover-fallback";
+import { PathCover } from "@/components/ui/path-cover";
 import { Tag } from "@/components/ui/tag";
 import { ThemedText } from "@/components/themed-text";
 import { Border, Spacing } from "@/constants/theme";
-import { getStrapiUrl } from "@/lib/env";
 
 const difficultyLabels: Record<string, string> = {
   beginner: "Beginner",
@@ -29,12 +26,7 @@ export type FeaturedPathCardProps = {
  */
 export function FeaturedPathCard({ path }: FeaturedPathCardProps) {
   const router = useRouter();
-  const baseUrl = getStrapiUrl();
-  const coverUrl = path.coverImage
-    ? resolveStrapiMediaUrl(path.coverImage.url, baseUrl)
-    : null;
-  const alt = path.coverImage?.alternativeText ?? path.title;
-  const a11yLabel = `${path.title}. Opens learning path details.`;
+  const a11yLabel = `Open learning path ${path.title}`;
 
   return (
     <Pressable
@@ -45,17 +37,12 @@ export function FeaturedPathCard({ path }: FeaturedPathCardProps) {
     >
       <View style={styles.card}>
         {/* Cover image or fallback */}
-        {coverUrl ? (
-          <Image
-            source={coverUrl}
-            style={styles.cover}
-            contentFit="cover"
-            accessibilityLabel={alt}
-            transition={200}
-          />
-        ) : (
-          <CoverFallback />
-        )}
+        <PathCover
+          coverImage={path.coverImage}
+          fallbackTitle={path.title}
+          style={styles.cover}
+          decorative
+        />
         {/* Border between image and body */}
         <View style={styles.coverBorder} />
 

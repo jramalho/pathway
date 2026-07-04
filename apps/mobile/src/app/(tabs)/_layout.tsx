@@ -20,24 +20,28 @@ export default function TabsLayout() {
           <TabTrigger name="home" href="/" asChild>
             <TabButton
               label="Home"
+              accessibilityLabel="Home tab"
               icon={{ ios: "house", android: "home", web: "home" }}
             />
           </TabTrigger>
           <TabTrigger name="explore" href="/explore" asChild>
             <TabButton
               label="Explore"
+              accessibilityLabel="Explore tab"
               icon={{ ios: "safari", android: "explore", web: "explore" }}
             />
           </TabTrigger>
           <TabTrigger name="saved" href="/saved" asChild>
             <TabButton
               label="Saved"
+              accessibilityLabel="Saved tab"
               icon={{ ios: "bookmark", android: "bookmark", web: "bookmark" }}
             />
           </TabTrigger>
           <TabTrigger name="profile" href="/profile" asChild>
             <TabButton
               label="Profile"
+              accessibilityLabel="Profile tab"
               icon={{ ios: "person", android: "person", web: "person" }}
             />
           </TabTrigger>

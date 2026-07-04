@@ -21,6 +21,7 @@ import {
   type Topic,
 } from "@/components/explore/explore-filters";
 import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Screen } from "@/components/ui/screen";
 import { ThemedText } from "@/components/themed-text";
 import { Border, Spacing } from "@/constants/theme";
@@ -116,9 +117,11 @@ export default function ExploreScreen() {
           <ThemedText style={styles.title}>DISCOVERY</ThemedText>
           <View style={styles.titleDivider} />
         </View>
-        <ThemedText themeColor="textSecondary" style={styles.emptyText}>
-          No learning content published yet.
-        </ThemedText>
+        <EmptyState
+          title="NO CONTENT PUBLISHED YET"
+          description="The learning catalog will be available here when content is published."
+          icon="grid"
+        />
       </Screen>
     );
   }
@@ -262,11 +265,6 @@ const styles = StyleSheet.create({
     height: Border.primary,
     backgroundColor: "#000000",
     width: "100%",
-  },
-  emptyText: {
-    fontSize: 16,
-    lineHeight: 24,
-    paddingVertical: Spacing.five,
   },
   resultsHeader: {
     gap: Spacing.one,

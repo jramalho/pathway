@@ -20,6 +20,7 @@ import { Border, Spacing } from "@/constants/theme";
 import { useLearningActivity } from "@/features/learning-activity/use-learning-activity";
 import { useFeaturedLearningPathsQuery } from "@/hooks/use-learning-paths";
 import { getRecentlySaved } from "@/lib/saved-content";
+import { calculatePathProgress } from "@/components/lesson-detail/lesson-detail-utils";
 
 // ponytail: display name until authentication exists (Part 2.7).
 const DISPLAY_NAME = "Jonathan";
@@ -71,7 +72,7 @@ function flattenLessons(paths: LearningPath[], maxCount: number): { lesson: Less
 export default function HomeScreen() {
   const router = useRouter();
   const { data: paths, isLoading, isError, errorMessage, refetch } = useFeaturedLearningPathsQuery();
-  const { savedLessonOrder, savedPathOrder, isHydrated } = useLearningActivity();
+  const { savedLessonOrder, savedPathOrder, completedLessonSlugs, isHydrated } = useLearningActivity();
 
   // Derive data for sections from the real API response
   const allPaths = paths ?? [];
@@ -81,6 +82,12 @@ export default function HomeScreen() {
   const firstFeatured = featuredPaths[0] ?? null;
   const remainingPaths = featuredPaths.slice(1);
   const recommendedLessons = flattenLessons(allPaths, MAX_RECOMMENDED_LESSONS);
+
+  // Calculate real progress for the continue-learning path.
+  const continueProgress = useMemo(() => {
+    if (!continuePath) return null;
+    return calculatePathProgress(continuePath, completedLessonSlugs);
+  }, [continuePath, completedLessonSlugs]);
 
   // Resolve recently saved items from persisted slugs + real API data.
   const recentlySaved = useMemo(() => {
@@ -111,6 +118,8 @@ export default function HomeScreen() {
           message={errorMessage ?? "We couldn't load the learning paths right now."}
           retryLabel="Try again"
           onRetry={refetch}
+          secondaryLabel="Back to Explore"
+          onSecondary={() => router.navigate("/explore")}
         />
       </Screen>
     );
@@ -143,7 +152,12 @@ export default function HomeScreen() {
 
       {/* 2. Continue Learning */}
       {continuePath && continueLesson ? (
-        <ContinueLearningCard path={continuePath} lesson={continueLesson} />
+        <ContinueLearningCard
+          path={continuePath}
+          lesson={continueLesson}
+          progressPercentage={continueProgress?.percentage ?? 0}
+          restoringProgress={!isHydrated}
+        />
       ) : (
         <EmptyState
           title="No learning content published yet"
@@ -204,9 +218,13 @@ export default function HomeScreen() {
           </View>
         ) : hasSavedItems ? (
           // Saved slugs exist but none are currently available.
-          <ThemedText type="small" themeColor="textSecondary" style={styles.unavailableText}>
-            Saved content is currently unavailable.
-          </ThemedText>
+          <EmptyState
+            title="SAVED CONTENT UNAVAILABLE"
+            description="Your saved items are not currently published or available."
+            actionLabel="EXPLORE CONTENT"
+            onAction={() => router.navigate("/explore")}
+            icon="warning"
+          />
         ) : (
           <EmptyState
             title="NOTHING SAVED YET"
@@ -351,12 +369,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     fontWeight: "500",
-  },
-  unavailableText: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: "500",
-    paddingVertical: Spacing.three,
   },
 });

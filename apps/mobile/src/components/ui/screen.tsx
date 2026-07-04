@@ -8,13 +8,22 @@ export type ScreenProps = ViewProps & {
   scrollable?: boolean;
   /** Horizontal padding (default content padding 24). */
   paddingHorizontal?: number;
-  /** Extra bottom padding to clear the bottom tab bar. */
+  /**
+   * Extra bottom padding to clear the bottom tab bar.
+   * When omitted, defaults to BottomTabInset + Spacing.three for tab
+   * screens. Detail screens pass a smaller value — the Screen component
+   * adds the bottom safe area inset automatically so CTAs stay tappable
+   * above the home indicator.
+   */
   bottomInset?: number;
 };
 
 /**
  * Screen shell: safe-area aware, correct background, content padding,
  * and bottom-nav compensation. Supports ScrollView when needed.
+ *
+ * The bottom safe area inset is always added to `bottomInset` so content
+ * and CTAs are never covered by the home indicator on devices that have one.
  */
 export function Screen({
   scrollable = true,
@@ -25,6 +34,7 @@ export function Screen({
   ...rest
 }: ScreenProps) {
   const insets = useSafeAreaInsets();
+  const totalBottomPadding = bottomInset + insets.bottom;
 
   const containerStyle = [
     styles.container,
@@ -39,7 +49,7 @@ export function Screen({
           style={styles.scroll}
           contentContainerStyle={[
             styles.content,
-            { paddingHorizontal, paddingBottom: bottomInset },
+            { paddingHorizontal, paddingBottom: totalBottomPadding },
           ]}
           showsVerticalScrollIndicator={false}
           {...(rest as React.ComponentProps<typeof ScrollView>)}
@@ -52,7 +62,7 @@ export function Screen({
 
   return (
     <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
-      <View style={[containerStyle, { paddingHorizontal, paddingBottom: bottomInset }]} {...rest}>
+      <View style={[containerStyle, { paddingHorizontal, paddingBottom: totalBottomPadding }]} {...rest}>
         {children}
       </View>
     </SafeAreaView>

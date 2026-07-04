@@ -26,7 +26,7 @@ export type CompactLessonCardProps = {
  */
 export function CompactLessonCard({ lesson, pathTitle }: CompactLessonCardProps) {
   const router = useRouter();
-  const a11yLabel = `${lesson.title}${pathTitle ? ` from ${pathTitle}` : ""}. Opens lesson.`;
+  const a11yLabel = `Open lesson ${lesson.title}${pathTitle ? ` from ${pathTitle}` : ""}`;
 
   return (
     <Pressable

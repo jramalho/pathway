@@ -13,14 +13,19 @@ import { Border, Shadow, Spacing } from "@/constants/theme";
 export type ContinueLearningCardProps = {
   path: LearningPath;
   lesson: LessonPreview;
+  /** Progress percentage 0-100 from persisted completion state. */
+  progressPercentage?: number;
+  /** While local state is being restored from storage. */
+  restoringProgress?: boolean;
 };
 
 /**
  * Continue Learning card — prominent card using a real LearningPath
- * and its first navigable Lesson. Shows 0% progress (no persistence yet).
+ * and its first navigable Lesson. Shows real progress from persisted
+ * completion state, or "RESTORING PROGRESS" during hydration.
  * CTA navigates to /lessons/[slug].
  */
-export function ContinueLearningCard({ path, lesson }: ContinueLearningCardProps) {
+export function ContinueLearningCard({ path, lesson, progressPercentage = 0, restoringProgress }: ContinueLearningCardProps) {
   const router = useRouter();
 
   const ctaLabel = `Start learning — ${lesson.title}`;
@@ -57,10 +62,18 @@ export function ContinueLearningCard({ path, lesson }: ContinueLearningCardProps
           {/* Progress */}
           <View style={styles.progressSection}>
             <View style={styles.progressLabelRow}>
-              <ThemedText type="smallBold" style={styles.progressLabel}>Progress</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary" style={styles.progressValue}>0%</ThemedText>
+              <ThemedText type="smallBold" style={styles.progressLabel}>
+                {restoringProgress ? "RESTORING PROGRESS" : "PROGRESS"}
+              </ThemedText>
+              {!restoringProgress && (
+                <ThemedText type="small" themeColor="textSecondary" style={styles.progressValue}>{progressPercentage}%</ThemedText>
+              )}
             </View>
-            <ProgressBar value={0} />
+            {restoringProgress ? (
+              <View style={styles.progressSkeleton} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" />
+            ) : (
+              <ProgressBar value={progressPercentage} />
+            )}
           </View>
 
           {/* CTA */}
@@ -149,6 +162,12 @@ const styles = StyleSheet.create({
   },
   progressValue: {
     color: "#424845",
+  },
+  progressSkeleton: {
+    height: 16,
+    backgroundColor: "#D4E7DD",
+    borderWidth: Border.primary,
+    borderColor: "#000000",
   },
   cta: {
     marginTop: Spacing.one,

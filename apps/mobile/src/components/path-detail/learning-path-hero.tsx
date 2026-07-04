@@ -1,17 +1,14 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Image } from "expo-image";
 import { SymbolView } from "expo-symbols";
 import { useRouter } from "expo-router";
 
 import type { LearningPath, LessonPreview } from "@pathway/api";
-import { resolveStrapiMediaUrl } from "@pathway/api";
 
-import { CoverFallback } from "@/components/home/cover-fallback";
+import { PathCover } from "@/components/ui/path-cover";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Tag } from "@/components/ui/tag";
 import { ThemedText } from "@/components/themed-text";
 import { Border, Shadow, Spacing } from "@/constants/theme";
-import { getStrapiUrl } from "@/lib/env";
 import { getDifficultyLabel } from "./learning-path-detail-utils";
 
 export type LearningPathHeroProps = {
@@ -31,11 +28,6 @@ export type LearningPathHeroProps = {
  */
 export function LearningPathHero({ path, firstLesson, progressPercentage = 0, restoringProgress }: LearningPathHeroProps) {
   const router = useRouter();
-  const baseUrl = getStrapiUrl();
-  const coverUrl = path.coverImage
-    ? resolveStrapiMediaUrl(path.coverImage.url, baseUrl)
-    : null;
-  const alt = path.coverImage?.alternativeText ?? path.title;
   const difficultyLabel = getDifficultyLabel(path.difficulty);
 
   return (
@@ -44,19 +36,12 @@ export function LearningPathHero({ path, firstLesson, progressPercentage = 0, re
       <View style={styles.shadow} />
       <View style={styles.card}>
         {/* Cover image or fallback */}
-        {coverUrl ? (
-          <Image
-            source={coverUrl}
-            style={styles.cover}
-            contentFit="cover"
-            accessibilityLabel={alt}
-            transition={200}
-          />
-        ) : (
-          <View style={styles.cover}>
-            <CoverFallback />
-          </View>
-        )}
+        <PathCover
+          coverImage={path.coverImage}
+          fallbackTitle={path.title}
+          style={styles.cover}
+          decorative
+        />
         {/* Border between image and content */}
         <View style={styles.coverBorder} />
 

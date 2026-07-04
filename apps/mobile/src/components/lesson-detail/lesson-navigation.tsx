@@ -28,7 +28,7 @@ export function LessonNavigation({ previousLesson, nextLesson, pathSlug, isPathC
       {previousLesson && (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Previous lesson: ${previousLesson.title}`}
+          accessibilityLabel={`Go to previous lesson ${previousLesson.title}`}
           onPress={() => router.navigate(`/lessons/${previousLesson.slug}`)}
           style={({ pressed }) => [styles.prevButton, pressed && styles.buttonPressed]}
         >
@@ -49,7 +49,7 @@ export function LessonNavigation({ previousLesson, nextLesson, pathSlug, isPathC
       {nextLesson ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Next lesson: ${nextLesson.title}`}
+          accessibilityLabel={`Go to next lesson ${nextLesson.title}`}
           onPress={() => router.navigate(`/lessons/${nextLesson.slug}`)}
           style={({ pressed }) => [styles.nextButton, pressed && styles.buttonPressed]}
         >
@@ -68,7 +68,7 @@ export function LessonNavigation({ previousLesson, nextLesson, pathSlug, isPathC
       ) : (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={isPathComplete ? "Back to path" : "Back to path"}
+          accessibilityLabel="Back to learning path"
           onPress={() => router.navigate(`/paths/${pathSlug}`)}
           style={({ pressed }) => [styles.pathButton, pressed && styles.buttonPressed]}
         >

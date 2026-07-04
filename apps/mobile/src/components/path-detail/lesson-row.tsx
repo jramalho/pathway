@@ -25,7 +25,7 @@ export type LessonRowProps = {
  */
 export function LessonRow({ lesson, isStartHere, isCompleted, isContinueHere }: LessonRowProps) {
   const router = useRouter();
-  const a11yLabel = `Open lesson ${lesson.title}${lesson.estimatedDuration ? `, ${lesson.estimatedDuration} minutes` : ""}`;
+  const a11yLabel = `Open lesson ${lesson.title}${isCompleted ? `, completed` : ""}${lesson.estimatedDuration ? `, ${lesson.estimatedDuration} minutes` : ""}`;
 
   return (
     <Pressable

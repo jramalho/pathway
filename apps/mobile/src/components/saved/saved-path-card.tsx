@@ -1,17 +1,14 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Image } from "expo-image";
 import { SymbolView } from "expo-symbols";
 import { useRouter } from "expo-router";
 
 import type { LearningPath } from "@pathway/api";
-import { resolveStrapiMediaUrl } from "@pathway/api";
 
-import { CoverFallback } from "@/components/home/cover-fallback";
+import { PathCover } from "@/components/ui/path-cover";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Tag } from "@/components/ui/tag";
 import { ThemedText } from "@/components/themed-text";
 import { Border, Shadow, Spacing } from "@/constants/theme";
-import { getStrapiUrl } from "@/lib/env";
 import { getDifficultyLabel } from "@/components/path-detail/learning-path-detail-utils";
 import { flattenNavigableLessons } from "@/components/lesson-detail/lesson-detail-utils";
 
@@ -28,11 +25,6 @@ export type SavedPathCardProps = {
  */
 export function SavedPathCard({ path, completedLessonSlugs, onRemove }: SavedPathCardProps) {
   const router = useRouter();
-  const baseUrl = getStrapiUrl();
-  const coverUrl = path.coverImage
-    ? resolveStrapiMediaUrl(path.coverImage.url, baseUrl)
-    : null;
-  const alt = path.coverImage?.alternativeText ?? path.title;
   const difficultyLabel = getDifficultyLabel(path.difficulty);
 
   const lessons = flattenNavigableLessons(path);
@@ -49,19 +41,12 @@ export function SavedPathCard({ path, completedLessonSlugs, onRemove }: SavedPat
       <View style={styles.shadow} />
       <View style={styles.card}>
         {/* Cover */}
-        {coverUrl ? (
-          <Image
-            source={coverUrl}
-            style={styles.cover}
-            contentFit="cover"
-            accessibilityLabel={alt}
-            transition={200}
-          />
-        ) : (
-          <View style={styles.cover}>
-            <CoverFallback />
-          </View>
-        )}
+        <PathCover
+          coverImage={path.coverImage}
+          fallbackTitle={path.title}
+          style={styles.cover}
+          decorative
+        />
         <View style={styles.coverBorder} />
 
         <View style={styles.body}>

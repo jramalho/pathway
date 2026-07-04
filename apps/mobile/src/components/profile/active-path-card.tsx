@@ -1,15 +1,13 @@
 import { Pressable, StyleSheet, View } from "react-native";
-import { Image } from "expo-image";
 import { SymbolView } from "expo-symbols";
 import { useRouter } from "expo-router";
 
 import type { LearningPath } from "@pathway/api";
-import { resolveStrapiMediaUrl } from "@pathway/api";
 
+import { PathCover } from "@/components/ui/path-cover";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { ThemedText } from "@/components/themed-text";
 import { Border, Shadow, Spacing } from "@/constants/theme";
-import { getStrapiUrl } from "@/lib/env";
 import { calculateLearningPathProgress } from "@/lib/profile-learning.utils";
 
 export type ActivePathCardProps = {
@@ -24,11 +22,6 @@ export type ActivePathCardProps = {
  */
 export function ActivePathCard({ path, completedLessonSlugs }: ActivePathCardProps) {
   const router = useRouter();
-  const baseUrl = getStrapiUrl();
-  const coverUrl = path.coverImage
-    ? resolveStrapiMediaUrl(path.coverImage.url, baseUrl)
-    : null;
-  const alt = path.coverImage?.alternativeText ?? path.title;
 
   const { completed, total, percentage } = calculateLearningPathProgress(path, completedLessonSlugs);
 
@@ -61,21 +54,12 @@ export function ActivePathCard({ path, completedLessonSlugs }: ActivePathCardPro
           >
             {/* Cover thumbnail */}
             <View style={styles.thumbnailContainer}>
-              {coverUrl ? (
-                <Image
-                  source={coverUrl}
-                  style={styles.thumbnail}
-                  contentFit="cover"
-                  accessibilityLabel={alt}
-                  transition={200}
-                />
-              ) : (
-                <View style={styles.thumbnailFallback} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-                  <View style={styles.fallbackBase} />
-                  <View style={styles.fallbackBlock} />
-                  <View style={styles.fallbackAccent} />
-                </View>
-              )}
+              <PathCover
+                coverImage={path.coverImage}
+                fallbackTitle={path.title}
+                fallbackVariant="thumbnail"
+                decorative
+              />
             </View>
 
             {/* Content */}
@@ -135,42 +119,6 @@ const styles = StyleSheet.create({
     borderColor: "#000000",
     overflow: "hidden",
     flexShrink: 0,
-  },
-  thumbnail: {
-    width: "100%",
-    height: "100%",
-  },
-  thumbnailFallback: {
-    flex: 1,
-    position: "relative",
-    backgroundColor: "#D4E7DD",
-    overflow: "hidden",
-  },
-  fallbackBase: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "#D4E7DD",
-  },
-  fallbackBlock: {
-    position: "absolute",
-    bottom: Spacing.one,
-    right: Spacing.one,
-    width: 20,
-    height: 20,
-    backgroundColor: "#000000",
-  },
-  fallbackAccent: {
-    position: "absolute",
-    top: Spacing.one,
-    right: Spacing.one,
-    width: 14,
-    height: 14,
-    backgroundColor: "#79FF5B",
-    borderWidth: Border.thin,
-    borderColor: "#000000",
   },
   content: {
     flex: 1,
