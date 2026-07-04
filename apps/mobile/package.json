@@ -8,6 +8,7 @@
     "@expo/ui": "~57.0.1",
     "@pathway/api": "workspace:*",
     "@pathway/ui-tokens": "workspace:*",
+    "@react-native-async-storage/async-storage": "2.2.0",
     "expo": "~57.0.1",
     "expo-constants": "~57.0.2",
     "expo-device": "~57.0.0",

@@ -19,13 +19,17 @@ export type LearningPathHeroProps = {
   firstLesson: LessonPreview | null;
   /** Progress percentage 0-100. Defaults to 0. */
   progressPercentage?: number;
+  /** While local state is being restored from storage. */
+  restoringProgress?: boolean;
 };
 
 /**
  * Learning Path hero — large card with cover image (or abstract fallback),
  * difficulty tag, title, description, metadata, progress, and CTA.
+ * While restoringProgress is true, shows "RESTORING PROGRESS" instead
+ * of a potentially misleading 0%.
  */
-export function LearningPathHero({ path, firstLesson, progressPercentage = 0 }: LearningPathHeroProps) {
+export function LearningPathHero({ path, firstLesson, progressPercentage = 0, restoringProgress }: LearningPathHeroProps) {
   const router = useRouter();
   const baseUrl = getStrapiUrl();
   const coverUrl = path.coverImage
@@ -113,10 +117,18 @@ export function LearningPathHero({ path, firstLesson, progressPercentage = 0 }: 
           {/* Progress */}
           <View style={styles.progressSection}>
             <View style={styles.progressLabelRow}>
-              <ThemedText type="smallBold" style={styles.progressLabel}>PATH PROGRESS</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary" style={styles.progressValue}>{progressPercentage}%</ThemedText>
+              <ThemedText type="smallBold" style={styles.progressLabel}>
+                {restoringProgress ? "RESTORING PROGRESS" : "PATH PROGRESS"}
+              </ThemedText>
+              {!restoringProgress && (
+                <ThemedText type="small" themeColor="textSecondary" style={styles.progressValue}>{progressPercentage}%</ThemedText>
+              )}
             </View>
-            <ProgressBar value={progressPercentage} />
+            {restoringProgress ? (
+              <View style={styles.progressSkeleton} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" />
+            ) : (
+              <ProgressBar value={progressPercentage} />
+            )}
           </View>
 
           {/* CTA */}
@@ -248,5 +260,11 @@ const styles = StyleSheet.create({
   ctaIcon: {
     alignItems: "center",
     justifyContent: "center",
+  },
+  progressSkeleton: {
+    height: 16,
+    backgroundColor: "#D4E7DD",
+    borderWidth: Border.primary,
+    borderColor: "#000000",
   },
 });

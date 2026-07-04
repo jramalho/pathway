@@ -1,4 +1,6 @@
-import { StyleSheet, View } from "react-native";
+import { useMemo } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import { SymbolView } from "expo-symbols";
 import { useRouter } from "expo-router";
 
 import type { LearningPath, LessonPreview } from "@pathway/api";
@@ -12,9 +14,12 @@ import { SectionHeader } from "@/components/home/section-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { Screen } from "@/components/ui/screen";
+import { Tag } from "@/components/ui/tag";
 import { ThemedText } from "@/components/themed-text";
-import { Spacing } from "@/constants/theme";
+import { Border, Spacing } from "@/constants/theme";
+import { useLearningActivity } from "@/features/learning-activity/use-learning-activity";
 import { useFeaturedLearningPathsQuery } from "@/hooks/use-learning-paths";
+import { getRecentlySaved } from "@/lib/saved-content";
 
 // ponytail: display name until authentication exists (Part 2.7).
 const DISPLAY_NAME = "Jonathan";
@@ -23,6 +28,8 @@ const DISPLAY_NAME = "Jonathan";
 const MAX_FEATURED_PATHS = 3;
 /** Maximum number of recommended lessons to show on Home. */
 const MAX_RECOMMENDED_LESSONS = 3;
+/** Maximum number of recently saved items to show on Home. */
+const MAX_RECENTLY_SAVED = 3;
 
 /** Time-based greeting based on local hour. */
 function getGreeting(): string {
@@ -64,6 +71,7 @@ function flattenLessons(paths: LearningPath[], maxCount: number): { lesson: Less
 export default function HomeScreen() {
   const router = useRouter();
   const { data: paths, isLoading, isError, errorMessage, refetch } = useFeaturedLearningPathsQuery();
+  const { savedLessonOrder, savedPathOrder, isHydrated } = useLearningActivity();
 
   // Derive data for sections from the real API response
   const allPaths = paths ?? [];
@@ -73,6 +81,14 @@ export default function HomeScreen() {
   const firstFeatured = featuredPaths[0] ?? null;
   const remainingPaths = featuredPaths.slice(1);
   const recommendedLessons = flattenLessons(allPaths, MAX_RECOMMENDED_LESSONS);
+
+  // Resolve recently saved items from persisted slugs + real API data.
+  const recentlySaved = useMemo(() => {
+    if (!paths || !isHydrated) return [];
+    return getRecentlySaved(savedLessonOrder, savedPathOrder, paths, MAX_RECENTLY_SAVED);
+  }, [paths, isHydrated, savedLessonOrder, savedPathOrder]);
+
+  const hasSavedItems = savedLessonOrder.length > 0 || savedPathOrder.length > 0;
 
   // --- Loading ---
   if (isLoading) {
@@ -160,17 +176,105 @@ export default function HomeScreen() {
         </View>
       )}
 
-      {/* 5. Recently Saved — empty state (save/persistence arrives in Part 2.6) */}
+      {/* 5. Recently Saved — uses persisted state */}
       <View style={styles.section}>
         <SectionHeader title="Recently Saved" />
-        <EmptyState
-          title="Nothing saved yet"
-          description="Save a path or lesson to return to it later."
-          actionLabel="Explore content"
-          onAction={() => router.navigate("/explore")}
-        />
+        {!isHydrated ? (
+          // Skeleton while hydrating — no empty state yet.
+          <View style={styles.recentlySavedSkeleton} accessibilityRole="alert" accessibilityLabel="Loading">
+            <View style={styles.recentlySavedSkeletonCard} />
+            <View style={styles.recentlySavedSkeletonCard} />
+          </View>
+        ) : recentlySaved.length > 0 ? (
+          <View style={styles.recentlySavedList}>
+            {recentlySaved.map((item) =>
+              item.type === "lesson" ? (
+                <RecentlySavedLessonCard
+                  key={`lesson-${item.lesson.slug}`}
+                  lesson={item.lesson}
+                  pathTitle={item.pathTitle}
+                />
+              ) : (
+                <RecentlySavedPathCard
+                  key={`path-${item.path.slug}`}
+                  path={item.path}
+                />
+              ),
+            )}
+          </View>
+        ) : hasSavedItems ? (
+          // Saved slugs exist but none are currently available.
+          <ThemedText type="small" themeColor="textSecondary" style={styles.unavailableText}>
+            Saved content is currently unavailable.
+          </ThemedText>
+        ) : (
+          <EmptyState
+            title="NOTHING SAVED YET"
+            description="Save a path or lesson to return to it later."
+            actionLabel="EXPLORE CONTENT"
+            onAction={() => router.navigate("/explore")}
+          />
+        )}
       </View>
     </Screen>
+  );
+}
+
+/** Compact recently-saved lesson card for Home. */
+function RecentlySavedLessonCard({ lesson, pathTitle }: { lesson: LessonPreview; pathTitle: string }) {
+  const router = useRouter();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${lesson.title} from ${pathTitle}. Opens lesson.`}
+      onPress={() => router.navigate(`/lessons/${lesson.slug}`)}
+      style={({ pressed }) => [styles.recentCard, pressed && styles.recentCardPressed]}
+    >
+      <View style={styles.recentCardTop}>
+        <Tag backgroundColor="#79FF5B">LESSON</Tag>
+        <View style={styles.recentCardArrow} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+          <SymbolView
+            name={{ ios: "arrow.right", android: "arrow_forward", web: "arrow_forward" }}
+            size={14}
+            tintColor="#000000"
+          />
+        </View>
+      </View>
+      <ThemedText style={styles.recentCardTitle} numberOfLines={2}>{lesson.title}</ThemedText>
+      {pathTitle ? (
+        <ThemedText type="small" themeColor="textSecondary" style={styles.recentCardContext} numberOfLines={1}>
+          {pathTitle}
+        </ThemedText>
+      ) : null}
+    </Pressable>
+  );
+}
+
+/** Compact recently-saved path card for Home. */
+function RecentlySavedPathCard({ path }: { path: LearningPath }) {
+  const router = useRouter();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${path.title}. Opens learning path details.`}
+      onPress={() => router.navigate(`/paths/${path.slug}`)}
+      style={({ pressed }) => [styles.recentCard, pressed && styles.recentCardPressed]}
+    >
+      <View style={styles.recentCardTop}>
+        <Tag backgroundColor="#D4E7DD">PATH</Tag>
+        <View style={styles.recentCardArrow} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+          <SymbolView
+            name={{ ios: "arrow.right", android: "arrow_forward", web: "arrow_forward" }}
+            size={14}
+            tintColor="#000000"
+          />
+        </View>
+      </View>
+      <ThemedText style={styles.recentCardTitle} numberOfLines={2}>{path.title}</ThemedText>
+      <ThemedText type="small" themeColor="textSecondary" style={styles.recentCardContext} numberOfLines={1}>
+        {path.lessonCount} lessons
+      </ThemedText>
+    </Pressable>
   );
 }
 
@@ -200,5 +304,59 @@ const styles = StyleSheet.create({
   },
   lessonList: {
     gap: Spacing.two,
+  },
+  recentlySavedList: {
+    gap: Spacing.two,
+  },
+  recentlySavedSkeleton: {
+    gap: Spacing.two,
+  },
+  recentlySavedSkeletonCard: {
+    height: 80,
+    backgroundColor: "#EFEEEA",
+    borderWidth: Border.primary,
+    borderColor: "#000000",
+  },
+  recentCard: {
+    backgroundColor: "#FAF9F5",
+    borderWidth: Border.primary,
+    borderColor: "#000000",
+    padding: Spacing.three,
+    gap: Spacing.one,
+  },
+  recentCardPressed: {
+    opacity: 0.7,
+  },
+  recentCardTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  recentCardArrow: {
+    width: 28,
+    height: 28,
+    backgroundColor: "#000000",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  recentCardTitle: {
+    fontFamily: "Inter",
+    fontSize: 15,
+    fontWeight: "600",
+    lineHeight: 21,
+    color: "#000000",
+  },
+  recentCardContext: {
+    fontFamily: "Inter",
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "500",
+  },
+  unavailableText: {
+    fontFamily: "Inter",
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "500",
+    paddingVertical: Spacing.three,
   },
 });

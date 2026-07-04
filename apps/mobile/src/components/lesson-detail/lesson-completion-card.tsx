@@ -9,18 +9,36 @@ export type LessonCompletionCardProps = {
   isCompleted: boolean;
   onMarkComplete: () => void;
   onMarkIncomplete: () => void;
+  /** While local state is being restored from storage. */
+  restoring?: boolean;
 };
 
 /**
  * Lesson completion card — shows "READY TO MOVE ON?" with MARK AS COMPLETE
  * when not completed, or "LESSON COMPLETED" with MARK AS INCOMPLETE when done.
+ * While restoring, shows "RESTORING PROGRESS" instead of a false 0% state.
  */
 export function LessonCompletionCard({
   lessonTitle,
   isCompleted,
   onMarkComplete,
   onMarkIncomplete,
+  restoring,
 }: LessonCompletionCardProps) {
+  if (restoring) {
+    return (
+      <View style={styles.wrapper}>
+        <View style={styles.shadow} />
+        <View style={styles.card}>
+          <ThemedText style={styles.title}>RESTORING PROGRESS</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary" style={styles.description}>
+            Your lesson progress is being restored.
+          </ThemedText>
+        </View>
+      </View>
+    );
+  }
+
   if (isCompleted) {
     return (
       <View style={styles.wrapper}>

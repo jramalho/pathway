@@ -5,12 +5,31 @@ import { useRouter } from "expo-router";
 
 import { Border, Layout } from "@/constants/theme";
 
+export type DetailHeaderProps = {
+  /** Show bookmark button on the right. */
+  showBookmark?: boolean;
+  /** Whether the path is saved. */
+  isSaved?: boolean;
+  /** Whether the bookmark is disabled (e.g. during hydration). */
+  bookmarkDisabled?: boolean;
+  /** Bookmark accessibility label. */
+  bookmarkLabel?: string;
+  /** Bookmark toggle handler. */
+  onToggleBookmark?: () => void;
+};
+
 /**
  * Detail header — same visual style as AppHeader but with a back button
- * on the left instead of menu, and no search button on the right.
- * PATHWAY brand stays centered.
+ * on the left instead of menu. PATHWAY brand stays centered. When
+ * showBookmark is true, a bookmark button replaces the right spacer.
  */
-export function DetailHeader() {
+export function DetailHeader({
+  showBookmark = false,
+  isSaved = false,
+  bookmarkDisabled = false,
+  bookmarkLabel,
+  onToggleBookmark,
+}: DetailHeaderProps) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -46,8 +65,30 @@ export function DetailHeader() {
           <Text style={styles.brandText}>PATHWAY</Text>
         </View>
 
-        {/* Right: empty spacer to keep brand centered */}
-        <View style={styles.side} />
+        {/* Right: bookmark or empty spacer */}
+        {showBookmark ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={bookmarkLabel ?? "Toggle saved"}
+            accessibilityState={{ disabled: bookmarkDisabled }}
+            hitSlop={12}
+            style={[styles.iconSlot, bookmarkDisabled && styles.iconDisabled]}
+            onPress={onToggleBookmark}
+            disabled={bookmarkDisabled}
+          >
+            <SymbolView
+              name={
+                isSaved
+                  ? { ios: "bookmark.fill", android: "bookmark", web: "bookmark" }
+                  : { ios: "bookmark", android: "bookmark_border", web: "bookmark_border" }
+              }
+              size={24}
+              tintColor="#000000"
+            />
+          </Pressable>
+        ) : (
+          <View style={styles.side} />
+        )}
       </View>
     </View>
   );
@@ -71,6 +112,9 @@ const styles = StyleSheet.create({
     minHeight: Layout.touchTarget,
     alignItems: "center",
     justifyContent: "center",
+  },
+  iconDisabled: {
+    opacity: 0.4,
   },
   brand: {
     flex: 1,

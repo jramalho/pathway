@@ -3,10 +3,12 @@ import { useContext, useCallback } from "react";
 import { LearningActivityContext } from "./learning-activity-provider";
 
 /**
- * Hook to access and manipulate in-memory learning activity state.
+ * Hook to access and manipulate learning activity state.
  *
  * Provides: toggleLessonSaved, markLessonCompleted, markLessonIncomplete,
- * isLessonSaved, isLessonCompleted.
+ * isLessonSaved, isLessonCompleted, togglePathSaved, isPathSaved,
+ * savedLessonSlugs, savedPathSlugs, completedLessonSlugs, isHydrated,
+ * storageStatus.
  */
 export function useLearningActivity() {
   const ctx = useContext(LearningActivityContext);
@@ -41,13 +43,31 @@ export function useLearningActivity() {
     [state.completedLessonSlugs],
   );
 
+  const togglePathSaved = useCallback(
+    (slug: string) => dispatch({ type: "TOGGLE_PATH_SAVED", slug }),
+    [dispatch],
+  );
+
+  const isPathSaved = useCallback(
+    (slug: string) => !!state.savedPathSlugs[slug],
+    [state.savedPathSlugs],
+  );
+
   return {
     toggleLessonSaved,
     markLessonCompleted,
     markLessonIncomplete,
     isLessonSaved,
     isLessonCompleted,
+    togglePathSaved,
+    isPathSaved,
     completedLessonSlugs: state.completedLessonSlugs,
     savedLessonSlugs: state.savedLessonSlugs,
+    savedPathSlugs: state.savedPathSlugs,
+    savedLessonOrder: state.savedLessonOrder,
+    savedPathOrder: state.savedPathOrder,
+    completedLessonOrder: state.completedLessonOrder,
+    isHydrated: state.isHydrated,
+    storageStatus: state.storageStatus,
   };
 }

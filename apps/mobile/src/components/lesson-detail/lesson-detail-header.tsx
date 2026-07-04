@@ -11,13 +11,16 @@ export type LessonDetailHeaderProps = {
   onToggleSave: () => void;
   /** Fallback path slug for back navigation. */
   pathSlug?: string;
+  /** Disable save button (e.g. during hydration). */
+  disabled?: boolean;
 };
 
 /**
  * Lesson detail header — back button (left), PATHWAY brand (center),
- * bookmark button (right). No menu, no search.
+ * bookmark button (right). No menu, no search. Bookmark is disabled
+ * while local state is being restored from AsyncStorage.
  */
-export function LessonDetailHeader({ lessonTitle, isSaved, onToggleSave, pathSlug }: LessonDetailHeaderProps) {
+export function LessonDetailHeader({ lessonTitle, isSaved, onToggleSave, pathSlug, disabled }: LessonDetailHeaderProps) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -62,9 +65,11 @@ export function LessonDetailHeader({ lessonTitle, isSaved, onToggleSave, pathSlu
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={saveLabel}
+          accessibilityState={{ disabled: !!disabled }}
           hitSlop={12}
-          style={styles.iconSlot}
+          style={[styles.iconSlot, disabled && styles.iconDisabled]}
           onPress={onToggleSave}
+          disabled={disabled}
         >
           <SymbolView
             name={
@@ -99,6 +104,9 @@ const styles = StyleSheet.create({
     minHeight: Layout.touchTarget,
     alignItems: "center",
     justifyContent: "center",
+  },
+  iconDisabled: {
+    opacity: 0.4,
   },
   brand: {
     flex: 1,

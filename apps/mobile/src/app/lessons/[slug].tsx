@@ -37,7 +37,7 @@ export default function LessonDetailScreen() {
   const params = useLocalSearchParams<{ slug: string }>();
   const slug = typeof params.slug === "string" ? params.slug.trim() : "";
 
-  const { isLessonSaved, isLessonCompleted, toggleLessonSaved, markLessonCompleted, markLessonIncomplete, completedLessonSlugs } = useLearningActivity();
+  const { isLessonSaved, isLessonCompleted, toggleLessonSaved, markLessonCompleted, markLessonIncomplete, completedLessonSlugs, isHydrated } = useLearningActivity();
 
   const { data: lesson, isLoading, isError, errorMessage, refetch } = useLessonBySlugQuery(slug || undefined);
 
@@ -135,6 +135,7 @@ export default function LessonDetailScreen() {
           isSaved={saved}
           onToggleSave={() => toggleLessonSaved(slug)}
           pathSlug={parentPath?.slug}
+          disabled={!isHydrated}
         />
       }
     >
@@ -185,15 +186,25 @@ export default function LessonDetailScreen() {
       {pathProgress && pathProgress.total > 0 && (
         <View style={styles.progressCard}>
           <View style={styles.progressLabelRow}>
-            <ThemedText type="smallBold" style={styles.progressLabel}>PATH PROGRESS</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary" style={styles.progressValue}>
-              {pathProgress.percentage}%
+            <ThemedText type="smallBold" style={styles.progressLabel}>
+              {isHydrated ? "PATH PROGRESS" : "RESTORING PROGRESS"}
             </ThemedText>
+            {isHydrated && (
+              <ThemedText type="small" themeColor="textSecondary" style={styles.progressValue}>
+                {pathProgress.percentage}%
+              </ThemedText>
+            )}
           </View>
-          <ProgressBar value={pathProgress.percentage} />
-          <ThemedText type="small" themeColor="textSecondary" style={styles.progressDetail}>
-            {pathProgress.completed} OF {pathProgress.total} LESSONS COMPLETED
-          </ThemedText>
+          {isHydrated ? (
+            <ProgressBar value={pathProgress.percentage} />
+          ) : (
+            <View style={styles.progressSkeleton} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" />
+          )}
+          {isHydrated && (
+            <ThemedText type="small" themeColor="textSecondary" style={styles.progressDetail}>
+              {pathProgress.completed} OF {pathProgress.total} LESSONS COMPLETED
+            </ThemedText>
+          )}
         </View>
       )}
 
@@ -218,6 +229,7 @@ export default function LessonDetailScreen() {
         isCompleted={completed}
         onMarkComplete={() => markLessonCompleted(slug)}
         onMarkIncomplete={() => markLessonIncomplete(slug)}
+        restoring={!isHydrated}
       />
 
       {/* 11. Navigation */}
@@ -343,6 +355,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 0.5,
+  },
+  progressSkeleton: {
+    height: 16,
+    backgroundColor: "#D4E7DD",
+    borderWidth: Border.primary,
+    borderColor: "#000000",
   },
   navSection: {
     gap: Spacing.three,

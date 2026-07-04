@@ -34,7 +34,7 @@ export default function PathDetailScreen() {
   const slug = typeof params.slug === "string" ? params.slug.trim() : "";
 
   const { data: path, isLoading, isError, errorMessage, refetch } = useLearningPathBySlugQuery(slug || undefined);
-  const { completedLessonSlugs } = useLearningActivity();
+  const { completedLessonSlugs, isPathSaved, togglePathSaved, isHydrated } = useLearningActivity();
 
   // Derive sorted modules and first lesson
   const sortedModules = useMemo(() => {
@@ -120,8 +120,8 @@ export default function PathDetailScreen() {
   // --- Path without lessons ---
   if (!hasLessons) {
     return (
-      <DetailScreenShell>
-        <LearningPathHero path={path} firstLesson={firstLesson} progressPercentage={pathProgress?.percentage ?? 0} />
+      <DetailScreenShell bookmark={<PathDetailHeader pathTitle={path.title} pathSlug={path.slug} isSaved={isPathSaved(path.slug)} isHydrated={isHydrated} onToggleSave={() => togglePathSaved(path.slug)} />}>
+        <LearningPathHero path={path} firstLesson={firstLesson} progressPercentage={isHydrated ? (pathProgress?.percentage ?? 0) : 0} restoringProgress={!isHydrated} />
         <View style={styles.section}>
           <SectionTitle title="CURRICULUM MODULES" />
           <EmptyState
@@ -137,12 +137,12 @@ export default function PathDetailScreen() {
 
   // --- Full content ---
   return (
-    <DetailScreenShell>
+    <DetailScreenShell bookmark={<PathDetailHeader pathTitle={path.title} pathSlug={path.slug} isSaved={isPathSaved(path.slug)} isHydrated={isHydrated} onToggleSave={() => togglePathSaved(path.slug)} />}>
       {/* Back link */}
       <BackLink />
 
       {/* Hero */}
-      <LearningPathHero path={path} firstLesson={firstLesson} />
+      <LearningPathHero path={path} firstLesson={firstLesson} restoringProgress={!isHydrated} />
 
       {/* Curriculum */}
       <View style={styles.section}>
@@ -167,12 +167,41 @@ export default function PathDetailScreen() {
 
 // --- Helper components ---
 
-function DetailScreenShell({ children }: { children: React.ReactNode }) {
+function DetailScreenShell({ children, bookmark }: { children: React.ReactNode; bookmark?: React.ReactNode }) {
   return (
     <>
-      <DetailHeader />
+      {bookmark ?? <DetailHeader />}
       <Screen bottomInset={Spacing.five}>{children}</Screen>
     </>
+  );
+}
+
+/** Detail header with path bookmark button. */
+function PathDetailHeader({
+  pathTitle,
+  pathSlug,
+  isSaved,
+  isHydrated,
+  onToggleSave,
+}: {
+  pathTitle: string;
+  pathSlug: string;
+  isSaved: boolean;
+  isHydrated: boolean;
+  onToggleSave: () => void;
+}) {
+  const bookmarkLabel = isSaved
+    ? `Remove learning path ${pathTitle} from saved items`
+    : `Save learning path ${pathTitle}`;
+
+  return (
+    <DetailHeader
+      showBookmark
+      isSaved={isSaved}
+      bookmarkDisabled={!isHydrated}
+      bookmarkLabel={bookmarkLabel}
+      onToggleBookmark={onToggleSave}
+    />
   );
 }
 
