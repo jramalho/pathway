@@ -6,7 +6,7 @@
     "status": "active",
     "goal": "Portfolio proof project for a Senior React Native, Expo, React and Next.js engineer."
   },
-  "activeMilestone": "M2",
+  "activeMilestone": "M3",
   "milestones": [
     {
       "id": "M0",
@@ -75,6 +75,37 @@
         { "id": "2.6", "title": "Mobile persistence and Saved", "status": "done" },
         { "id": "2.7", "title": "Profile", "status": "done" },
         { "id": "2.8", "title": "Mobile hardening — system states, accessibility, navigation review and milestone validation", "status": "done" }
+      ],
+      "evidence": [
+        "Expo Router navigation shell with 4 tabs (Home, Explore, Saved, Profile) and 2 detail routes (/paths/[slug], /lessons/[slug]) in apps/mobile/src/app/",
+        "Neo-Academic Brutalist design system: Epilogue headings, Inter body, #FAF9F5 background, #000000 borders (3px primary, 2px thin), hard shadows, mint #D4E7DD, acid green #79FF5B, active green #38FE13, error #BA1A1A — all from shared @pathway/ui-tokens",
+        "Home screen (apps/mobile/src/app/(tabs)/index.tsx) loads featured learning paths via useFeaturedLearningPathsQuery, shows greeting, continue learning card with real progress, featured paths, recommended lessons, recently saved with hydration skeleton",
+        "Explore screen (apps/mobile/src/app/(tabs)/explore.tsx) loads all published paths via usePublishedLearningPathsQuery, client-side search and topic filters (All, Mobile, Accessibility, Product, AI), no-results state, loading skeleton, error retry",
+        "Learning Path Detail (apps/mobile/src/app/paths/[slug].tsx) loads by slug via useLearningPathBySlugQuery, shows hero with cover/metadata/progress/CTA, module accordions with lesson rows, bookmark toggle, back navigation",
+        "Lesson Detail (apps/mobile/src/app/lessons/[slug].tsx) loads by slug via useLessonBySlugQuery, shows context link, tags, title, summary, author, media preview, path progress, body renderer, key takeaway, completion card, previous/next navigation",
+        "Saved screen (apps/mobile/src/app/(tabs)/saved.tsx) with segmented control (Lessons/Paths), resolves saved slugs against published content, distinguishes empty vs unavailable, storage error notice",
+        "Profile screen (apps/mobile/src/app/(tabs)/profile.tsx) with hero, learning overview grid (completed lessons, saved items, active paths, completed paths), active/completed path cards, completed lesson rows, local data notice",
+        "Local persistence via AsyncStorage (apps/mobile/src/features/learning-activity/): versioned payload (@pathway/learning-activity:v1), type-guarded read, single-flight write queue, hydration before any writes, storage error handling without data loss",
+        "LearningActivityProvider wraps the app in _layout.tsx, persists saved lessons, saved paths, and completed lessons across app restarts",
+        "packages/api extended with getLessonBySlug, LessonDetail domain model (body, author, category, media), lesson Zod schema and mapper — 41 tests pass",
+        "Loading states: structural skeletons (HomeSkeleton, ExploreSkeleton, LearningPathDetailSkeleton, LessonDetailSkeleton, SavedContentSkeleton, ProfileSkeleton) with black borders, no shimmer/gradient, not a broken screen",
+        "Empty states: EmptyState component with icon variants (bookmark, warning, grid) — NOTHING SAVED YET, VOID DETECTED, NO SAVED PATHS, CURRICULUM COMING SOON, LESSON CONTENT UNAVAILABLE, NO ACTIVE PATHS, NO COMPLETED PATHS, NO COMPLETED LESSONS",
+        "Error states: ErrorState component with retry (real refetch) and optional secondary action (BACK TO EXPLORE) — user-facing messages from @pathway/api USER_FACING_MESSAGES, no stack trace or JSON shown",
+        "Unavailable content: distinct from empty (warning icon) — SAVED CONTENT UNAVAILABLE, preserves local slugs, does not delete user data, discrete notice when some items are unavailable",
+        "Hydration: no screen shows empty state or 0% progress before isHydrated; ContinueLearningCard and LearningPathHero show RESTORING PROGRESS; bookmark and completion buttons disabled during hydration with accessibilityState.disabled",
+        "Image fallbacks: PathCover component with onError fallback to geometric CoverFallback (cover and thumbnail variants), LessonMediaPreview with onError fallback to AbstractMediaFallback — no broken image areas",
+        "Accessibility: tab labels (Home tab, Explore tab, Saved tab, Profile tab), card labels (Open learning path/lesson {title}), bookmark labels (Save/Remove {title}), completion labels (Mark lesson {title} as complete/incomplete), navigation labels (Go to previous/next lesson {title}), module accordion expand/collapse with accessibilityState.expanded, decorative icons hidden",
+        "Safe areas: Screen component adds bottom safe area inset to bottomInset automatically, BottomTabBar respects safe area bottom, detail routes do not show bottom tab bar",
+        "No Pressables nested that both fire: Saved cards have separate content area and bookmark button, touching bookmark does not navigate",
+        "No `any` types in apps/mobile/src or packages/api/src",
+        "pnpm --filter @pathway/mobile exec tsc --noEmit passes",
+        "pnpm --filter @pathway/mobile lint passes",
+        "pnpm --filter @pathway/api test passes (41 tests, 0 fail)",
+        "pnpm --filter @pathway/api exec tsc --noEmit passes",
+        "CMS running and API verified: curl http://localhost:1337/api/learning-paths returns published React Native Performance path, curl API for lessons returns published Optimizing Long Lists with FlashList lesson",
+        "Expo app running in iOS simulator (pnpm dev:mobile:ios)",
+        "docs/milestone-2-smoke-test.md created with manual validation checklist",
+        "ADR-003-local-persistence-strategy.md records the AsyncStorage persistence decision"
       ]
     },
     {
@@ -118,7 +149,7 @@
         "local-saved-items",
         "local-progress"
       ],
-      "status": "m1-home-ready"
+      "status": "m2-core-journey-ready"
     },
     {
       "id": "surface.web",
@@ -187,17 +218,17 @@
     }
   ],
   "nextTask": {
-    "id": "M2-mobile-foundation",
-    "summary": "Establish the Expo mobile app shell, navigation structure and the smallest complete discovery-to-lesson flow using the shared API contract.",
+    "id": "M3-web-public-foundation",
+    "summary": "Build the first public Next.js content route using the existing shared API contract, with a readable learning path or lesson page and page-level metadata.",
     "dependsOn": [
-      "M1"
+      "M2"
     ],
     "blocks": [
-      "M2-home",
-      "M2-explore",
-      "M2-learning-path-detail",
-      "M2-lesson-detail",
-      "M2-local-persistence"
+      "M3-web-homepage",
+      "M3-web-explore",
+      "M3-learning-path-route",
+      "M3-lesson-route",
+      "M3-seo-metadata"
     ]
   }
 }
