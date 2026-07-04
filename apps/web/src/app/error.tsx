@@ -1,7 +1,17 @@
-"use client";
+'use client';
 
-import { toUserFacingError, USER_FACING_MESSAGES } from "@pathway/api";
+import { useEffect } from 'react';
+import { ContentState } from '@/components/public/states';
+import { toUserFacingError, USER_FACING_MESSAGES } from '@pathway/api';
 
+/**
+ * Root error boundary.
+ *
+ * Required by Next.js to be a Client Component so it can receive the
+ * `reset()` callback. Shows a user-facing error state with retry and
+ * a safe link back to the homepage. Raw error details are logged to
+ * the console for developers — never shown to end users.
+ */
 export default function Error({
   error,
   reset,
@@ -9,24 +19,28 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    console.error('[Pathway] Route error:', error);
+  }, [error]);
+
   const userKind = toUserFacingError(error);
   const message = USER_FACING_MESSAGES[userKind];
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-24">
-      <h1 className="text-2xl font-bold text-zinc-900">
-        Something went wrong
-      </h1>
-      <p className="max-w-md text-center text-zinc-600">
-        {message}
-      </p>
-      <button
-        type="button"
-        onClick={reset}
-        className="rounded-none border-2 border-black bg-[#79FF5B] px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-black"
-      >
-        Try again
-      </button>
-    </main>
+    <ContentState
+      variant="error"
+      eyebrow="Error"
+      title="Couldn't load this page"
+      description={message}
+      primaryAction={{
+        label: 'Try again',
+        onClick: reset,
+      }}
+      secondaryAction={{
+        label: 'Back to home',
+        href: '/',
+        variant: 'secondary',
+      }}
+    />
   );
 }

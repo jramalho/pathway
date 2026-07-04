@@ -1,6 +1,17 @@
+import babelConfig from './babel.config.js';
+
 const config = {
   plugins: {
-    "@tailwindcss/postcss": {},
+    '@stylexjs/postcss-plugin': {
+      include: ['src/**/*.{js,jsx,ts,tsx}'],
+      babelConfig: {
+        babelrc: false,
+        parserOpts: { plugins: ['typescript', 'jsx'] },
+        plugins: babelConfig.plugins,
+      },
+      useCSSLayers: true,
+    },
+    autoprefixer: {},
   },
 };
 

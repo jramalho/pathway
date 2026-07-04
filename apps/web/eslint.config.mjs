@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // StyleX Babel config uses CommonJS require() by convention.
+    "babel.config.js",
   ]),
 ]);
 
