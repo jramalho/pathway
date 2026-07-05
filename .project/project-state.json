@@ -111,7 +111,16 @@
     {
       "id": "M3",
       "title": "Next.js Public Web Experience",
-      "status": "planned"
+      "status": "active",
+      "currentPart": "3.5.1",
+      "parts": [
+        { "id": "3.4.1", "title": "Public dynamic Learning Path routes", "status": "done" },
+        { "id": "3.4.2", "title": "Complete public Learning Path detail experience", "status": "done" },
+        { "id": "3.4.3", "title": "Related learning paths and final quality pass", "status": "done" },
+        { "id": "3.5.1", "title": "Public dynamic Lesson routes — shell, metadata, safe navigation", "status": "done" },
+        { "id": "3.5.2", "title": "Complete editorial reading experience for lesson routes", "status": "done" },
+        { "id": "3.5.3", "title": "Sharing controls, related lessons, previous/next navigation, final quality pass", "status": "done" }
+      ]
     },
     {
       "id": "M4",

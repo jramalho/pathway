@@ -92,3 +92,54 @@ export function buildPathMetadata(input: PathMetadataInput): Metadata {
     },
   };
 }
+
+export interface LessonMetadataInput {
+  title: string;
+  summary: string;
+  slug: string;
+  /** Resolved absolute cover/thumbnail image URL, or null. */
+  coverImageUrl: string | null;
+  /** ISO published/updated date, or null. */
+  publishedAt: string | null;
+}
+
+/**
+ * Build route-level Metadata for a published lesson.
+ *
+ * Title uses the root template (`%s | Pathway`). Description is derived
+ * from the lesson summary and truncated for meta tags. Canonical and
+ * Open Graph URLs are absolute. OG image is included only when a valid
+ * cover/thumbnail image URL exists. `og:type` is `article` for lessons.
+ * The published date is surfaced via `article:published_time` when
+ * available so social platforms can attribute the original publication.
+ */
+export function buildLessonMetadata(input: LessonMetadataInput): Metadata {
+  const canonical = buildCanonicalUrl(`/lessons/${input.slug}`);
+  const description = truncateForMeta(input.summary);
+  const ogImage = buildAbsoluteImageUrl(input.coverImageUrl);
+
+  return {
+    title: input.title,
+    description,
+    alternates: {
+      canonical,
+    },
+    openGraph: {
+      title: input.title,
+      description,
+      url: canonical,
+      type: "article",
+      siteName: "Pathway",
+      ...(ogImage ? { images: [{ url: ogImage }] } : {}),
+      ...(input.publishedAt
+        ? { publishedTime: input.publishedAt }
+        : {}),
+    },
+    twitter: {
+      card: ogImage ? "summary_large_image" : "summary",
+      title: input.title,
+      description,
+      ...(ogImage ? { images: [ogImage] } : {}),
+    },
+  };
+}

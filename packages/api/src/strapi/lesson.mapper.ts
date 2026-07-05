@@ -5,8 +5,9 @@
 import type {
   Author,
   Category,
-  LessonBodyBlock,
   LessonDetail,
+  LessonLearningPathRef,
+  LessonModuleRef,
 } from "../domain/lesson.ts";
 import type { ContentImage, Difficulty } from "../domain/learning-path.ts";
 import type { StrapiLessonDocument } from "./lesson.schema.ts";
@@ -41,19 +42,45 @@ function mapCategory(raw: StrapiLessonDocument["category"]): Category | null {
   };
 }
 
+function mapLearningPathRef(
+  raw: StrapiLessonDocument["learningPath"],
+): LessonLearningPathRef | null {
+  if (!raw) return null;
+  return {
+    id: raw.documentId,
+    title: raw.title,
+    slug: raw.slug,
+    description: raw.description ?? null,
+  };
+}
+
+function mapModuleRef(
+  raw: StrapiLessonDocument["module"],
+): LessonModuleRef | null {
+  if (!raw) return null;
+  return {
+    id: raw.documentId,
+    title: raw.title,
+    description: raw.description ?? null,
+    order: raw.order,
+  };
+}
+
 export function mapLessonDetail(raw: StrapiLessonDocument): LessonDetail {
   return {
     id: raw.documentId,
     slug: raw.slug,
     title: raw.title,
     summary: raw.summary,
-    body: raw.body as LessonBodyBlock[],
+    body: raw.body,
     estimatedDuration: raw.estimatedDurationMinutes,
     difficulty: raw.difficulty as Difficulty,
     videoUrl: raw.videoUrl ?? null,
     videoThumbnail: mapMedia(raw.videoThumbnail),
     author: mapAuthor(raw.author),
     category: mapCategory(raw.category),
+    learningPath: mapLearningPathRef(raw.learningPath),
+    module: mapModuleRef(raw.module),
     publishedAt: raw.publishedAt ?? null,
   };
 }

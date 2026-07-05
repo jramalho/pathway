@@ -152,8 +152,8 @@ Turn the same Strapi content into a discoverable, shareable, SEO-friendly public
 - [x] Audit Next.js foundation and API integration
 - [x] Homepage with real content
 - [x] Public Learning Path route (M3.4.1: route, metadata, safe navigation)
-- [ ] Public Lesson route
-- [x] Metadata, canonical URL, and Open Graph (path route)
+- [x] Public Lesson route (M3.5.1: shell, metadata, safe navigation)
+- [x] Metadata, canonical URL, and Open Graph (path route + lesson route)
 - [x] Explore with search and filters (if in scope)
 - [x] Responsiveness and states (path route: sticky sidebar, mobile stacking, empty curriculum)
 - [x] URL validation and handoff (path route: stable URLs, valid/invalid/missing slugs, card navigation)
@@ -207,6 +207,78 @@ Turn the same Strapi content into a discoverable, shareable, SEO-friendly public
 - Targeted test (`related-paths.test.ts`): 7 tests covering exclusion of current path, category prioritization, difficulty fallback, deterministic fallback, empty result, limit enforcement, deterministic sort stability
 - Verification: API tests (42 pass), API typecheck, web typecheck, web lint, web build, related-paths test (7 pass), explore-filters test (25 pass) all pass
 - Manual: valid path renders with category in metadata + summary; related path card navigates to valid path URL; nonexistent slug renders 404 with noindex; no lesson links
+
+### M3.5.1 — Public dynamic Lesson routes, typed lesson loading, metadata, safe navigation
+
+- `/lessons/[slug]` route created at `apps/web/src/app/(public)/lessons/[slug]/page.tsx`
+  - Server Component, loads published lesson via `@pathway/api` `getLessonBySlug`
+  - `notFound()` for missing/unpublished/invalid slugs; public 404 with `noindex` renders
+  - `generateMetadata` derives title, description, canonical URL, Open Graph (article type), published time from real Strapi content
+  - `generateStaticParams` prerenders known published lessons (slugs derived from published learning-path tree); `revalidate = 300` (ISR)
+  - Minimal shell: breadcrumb (Home → Learning paths → parent path → current lesson), h1, summary, real metadata (duration, difficulty, author, published date), link back to parent learning path, transition area
+- Shared API package corrected to match real Strapi response:
+  - **Body format discovery:** Strapi `body` is a richtext field configured with the default Markdown editor — Strapi returns it as a plain Markdown string (not a JSON array of blocks). The previous schema assumed Strapi Blocks format (`z.array(bodyBlockSchema)`) which would fail validation against real data.
+  - `LessonDetail.body` is now `string` (Markdown); `LessonBodyBlock` type removed; `LessonBody` type added
+  - `learningPath` and `module` manyToOne relations added to schema, mapper, domain model, and populate tree
+  - `LessonLearningPathRef` and `LessonModuleRef` domain types added (title, slug, description / title, description, order)
+  - Mobile `LessonBodyRenderer` updated to accept Markdown string (structured Markdown renderer deferred to a separate mobile task)
+  - 47 API tests pass (42 existing + 5 new lesson schema/mapper tests)
+- Web lesson data layer: `apps/web/src/lib/lesson-data.ts` (`getLessonDetailView`, `getPublishedLessonSlugs`)
+  - Wrapped in React `cache()` for request deduplication across `generateMetadata` and page render
+  - Returns `status` discriminator: "ok" / "missing" / "error"
+  - Maps typed `LessonDetail` into route-specific `LessonDetailView` (resolves media URLs against Strapi base)
+- Web metadata helpers: `buildLessonMetadata` added to `apps/web/src/lib/metadata.ts` (article OG type, publishedTime, canonical, safe image fallback)
+- Lesson hero component (`lesson-hero.tsx`): forest-green field, breadcrumb with parent path link, h1, summary, real metadata (duration, difficulty, author, published date), link back to parent learning path
+- Lesson transition component (`lesson-transition.tsx`): polished placeholder making clear the complete editorial reading experience is being built below
+- Safe lesson navigation enabled:
+  - `ExploreLessonCard` renders as Next.js Link when `href` is provided; Explore workbench passes `/lessons/[slug]` hrefs for lessons with valid slugs
+  - Curriculum `LessonRow` renders as Next.js Link to `/lessons/[slug]` when lesson has a valid slug; preserves non-interactive fallback when slug is absent
+  - Homepage has no lesson cards (only featured path route steps and a "Browse lessons" CTA) — no homepage lesson navigation to update
+- Accessibility: semantic breadcrumb nav with aria-current, one h1, keyboard-accessible lesson links with visible focus states, decorative elements aria-hidden, metadata readable at narrow widths
+- Verification: API tests (47 pass), API typecheck, web typecheck, web lint, web build, mobile typecheck, mobile lint all pass
+- Manual: valid slug renders with correct title/canonical/OG/article:published_time; nonexistent slug renders 404 with noindex; Explore and curriculum lesson links resolve to real lesson URLs
+
+### M3.5.2 — Complete editorial reading experience for lesson routes
+
+- Full lesson article hero (`lesson-hero.tsx` updated): forest-green field, breadcrumb (Home → Learning paths → parent path → current lesson), h1, summary, real metadata (duration, difficulty, topic/category, published date), author section (name, avatar when valid image exists, short bio when available), link back to parent learning path
+- Lesson media area (`lesson-media.tsx`): honest media rendering — native HTML5 `<video>` with controls for direct video URLs (mp4/webm/ogg), real Strapi video thumbnail as `<img>` when no direct video, decorative geometric fallback (aria-hidden) when neither exists; no fake playback controls, no autoplay, no third-party embedded player; stable 16:9 aspect ratio prevents layout shift
+- Safe structured body renderer (`lesson-body-renderer.tsx`): typed Markdown → semantic HTML via `parseLessonBody` — renders `<article>`, headings (`h2`–`h4` with anchor IDs and permalink `#`), `<p>`, `<ul>`/`<ol>`, `<blockquote>`, `<pre><code>` (horizontal scroll inside bounded region), inline `<strong>`, `<em>`, `<code>`, `<a>` (external links get `target="_blank"`, `rel="noopener noreferrer"`, and ↗ indicator); no `dangerouslySetInnerHTML`, no raw HTML injection; raw HTML in Markdown is treated as plain text
+- Typed Markdown parser (`lesson-body-parser.ts`): focused parser for the actual content subset — ATX headings (level 1–4), paragraphs, ordered/unordered lists, block quotes, fenced code blocks (with optional language), inline emphasis (**bold**, *italic*, `code`, [link](url)); deterministic anchor ID generation with deduplication; `extractTocEntries` for TOC; 14 parser tests pass
+- Table of contents (`lesson-toc.tsx`): desktop sticky aside (≥1024px) with real headings and deterministic anchor IDs; mobile/tablet in-flow "On this page" section (compact, non-dominant); omitted when fewer than 2 headings; `scroll-margin-top: 5rem` on heading anchors accounts for the sticky site header; no scroll-spy or JS active-state tracking
+- Parent-path CTA (`lesson-path-cta.tsx`): forest-green panel after article body with "Continue the learning path" eyebrow, real parent path title, real path description, honest context ("This lesson is part of a structured curriculum. Open the learning path to see the surrounding modules and lessons."), "View full curriculum" CTA linking to `/paths/[slug]`; omitted entirely when no valid learning-path relationship; no implication of saved progress, resume, enrollment, or account state
+- Responsive two-column layout: article body (max 48rem reading measure) + sticky TOC (16rem) on desktop (≥1024px); natural stacking on mobile/tablet; media fits naturally above the article; code blocks scroll horizontally inside their own bounded region — no page-level overflow
+- Key takeaway callout: intentionally omitted — the Strapi lesson schema has no `keyTakeaway` or equivalent field. The component is not created rather than fabricating takeaway content from the summary or body
+- Missing-content handling: no cover image → decorative fallback; no video URL/thumbnail → decorative fallback; no author → author section omitted; no category → topic omitted from metadata; no headings → TOC omitted; short body → renders as-is; long body → readable with editorial spacing; code blocks → horizontal scroll within bounded region
+- Accessibility: one clear h1, logical heading hierarchy (h1 → h2 → h3 → h4), semantic `<article>` structure, visible focus states on all links, `<time dateTime>` for published date, decorative fallback aria-hidden, TOC nav with aria-label, code blocks keyboard-scrollable, external links marked with ↗ and safe rel attributes, no color-only meaning
+- Verification: parser tests (14 pass), web lib tests (32 pass), API tests (47 pass), web typecheck, web lint, web build all pass
+- Manual: valid lesson renders full article with hero + media + TOC + body + CTA; headings have correct anchor IDs; TOC links resolve to correct sections; parent-path CTA links to valid `/paths/[slug]`; nonexistent slug renders 404 with noindex; metadata (title, description, canonical, OG article, published_time) correct
+
+### M3.5.3 — Sharing controls, related lessons, previous/next navigation, final quality pass
+
+- Related lessons section (`lesson-related.tsx`): renders after parent-path CTA; section title "Related lessons" with "Keep learning" h2; uses real published Strapi content only; cards link to valid `/lessons/[slug]` routes; renders nothing when no alternatives exist (no forced empty section); responsive grid (1 column mobile, 2 column tablet, 3 column desktop)
+- Related-lesson selection logic (`getRelatedLessons` in `lesson-navigation.ts`): deterministic server-side data boundary; selection rules in order: (1) lessons sharing a real category with the current lesson, (2) lessons from the same real learning path excluding self, (3) lessons matching real difficulty, (4) deterministic published-lesson fallback; never includes the current lesson; limited to 3; stable sort by slug; does not fetch lesson bodies to choose related items
+- Previous/next lesson navigation (`lesson-nav.tsx`): server-rendered; derives ordering from real Strapi module `order` field and lesson position within each module — not alphabetical or date-based; shows parent learning-path context as a real link; concise truthful labels ("Previous lesson", "Next lesson") with actual lesson title as supporting context; no fake locked/current/completed states; gracefully omits missing previous or next; renders nothing when reliable path ordering is unavailable
+- Previous/next selection logic (`getLessonNav` in `lesson-navigation.ts`): fetches the parent learning path, sorts modules by `order`, flattens lessons in content order, finds the current lesson's index, returns previous/next targets; returns null when the lesson is not in the path or the path is unavailable
+- Sharing controls (`lesson-share.tsx`): the only Client Component on the lesson page; receives minimal typed values (URL, title, summary) from the Server Component — never fetches lesson content; "Share lesson" uses Web Share API when available with real URL/title/summary; "Copy link" uses Clipboard API with `aria-live` success confirmation and `execCommand` fallback for environments without Clipboard API; LinkedIn and WhatsApp direct external share URLs using real canonical lesson URL with safe `rel="noopener noreferrer"` and visible text labels; no tracking parameters; no social analytics
+- LessonTransition component removed — the full editorial reading experience is now built; the placeholder is no longer needed
+- Final quality pass: metadata reviewed (title, description, canonical, OG article, published_time all correct and stable); no duplicate metadata between page and helper functions; route revalidation/SG remains consistent with `/paths/[slug]` (both `●` SSG with `revalidate = 300`); no `any` types; no unsafe type assertions; no dead code; no broken links across homepage, Explore, Learning Path, related content, and lesson navigation
+- Accessibility: breadcrumb semantics with aria-current; one clear h1; logical heading hierarchy; semantic article landmark; TOC nav with aria-label; visible focus states on all links; previous/next link labels with aria-label; related-card link semantics with aria-label; sharing control accessible names and `aria-live` status feedback for copied-link confirmation; decorative elements aria-hidden; reduced-motion preferences respected via globals.css; touch-target sizes meet 44px minimum
+- Targeted test (`lesson-navigation.test.ts`): 12 tests covering related-lesson selection (excludes current, prioritizes category, falls back to path/difficulty/deterministic, respects limit, returns empty) and previous/next navigation (middle lesson, first lesson, last lesson, not-in-list, single-lesson path)
+- Verification: navigation tests (12 pass), parser tests (14 pass), web lib tests (32 pass), API tests (47 pass), web typecheck, web lint, web build all pass
+- Manual: valid lesson renders full article with hero + media + TOC + body + share + nav + CTA + related; previous/next links resolve to valid `/lessons/[slug]` routes; related cards link to valid lesson routes; parent-path CTA links to valid `/paths/[slug]`; sharing controls render with accessible labels; nonexistent slug renders 404 with noindex; metadata correct
+
+## Milestone 3.5 acceptance checklist
+
+- [x] Public lesson has a stable URL (`/lessons/[slug]`)
+- [x] Real CMS-driven article content (Markdown body → typed parser → semantic HTML)
+- [x] Readable media and layout (honest video/image/fallback, responsive two-column with sticky TOC)
+- [x] Correct metadata (title, description, canonical, OG article, published_time)
+- [x] Valid internal navigation (previous/next within parent path, related lessons, parent-path CTA, breadcrumb)
+- [x] Useful sharing (Web Share API, Clipboard API with confirmation, LinkedIn, WhatsApp)
+- [x] Related lessons based on real content relationships (category → path → difficulty → fallback)
+- [x] Polished responsive experience (320px, 390px, 768px, 1024px, wide desktop)
+- [x] No fake user state (no progress, enrollment, completion, saved items, or account behavior)
+- [x] No scope creep (no authentication, payments, analytics, video pipeline, or CMS redesign)
 
 ## Handoff to M4
 

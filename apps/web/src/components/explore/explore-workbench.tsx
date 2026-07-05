@@ -232,7 +232,11 @@ export function ExploreWorkbench({ data, initialFilters }: ExploreWorkbenchProps
               <h2 {...stylex.props(styles.groupTitle)}>Lessons</h2>
               <div {...stylex.props(styles.grid)}>
                 {results.lessons.map((lesson) => (
-                  <ExploreLessonCard key={lesson.slug} lesson={lesson} />
+                  <ExploreLessonCard
+                    key={lesson.slug}
+                    lesson={lesson}
+                    href={lesson.slug ? `/lessons/${lesson.slug}` : undefined}
+                  />
                 ))}
               </div>
             </div>

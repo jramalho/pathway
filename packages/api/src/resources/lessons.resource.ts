@@ -11,12 +11,14 @@ import { mapLessonDetail } from "../strapi/lesson.mapper.ts";
 import type { LessonDetail } from "../domain/lesson.ts";
 import type { QueryParams } from "../types/api.ts";
 
-/** Populate tree for a full Lesson: videoThumbnail, author, category. */
+/** Populate tree for a full Lesson: videoThumbnail, author, category, learningPath, module. */
 const lessonPopulate: QueryParams = {
   "populate[0]": "videoThumbnail",
   "populate[1]": "author",
   "populate[2]": "author.avatar",
   "populate[3]": "category",
+  "populate[4]": "learningPath",
+  "populate[5]": "module",
 };
 
 export function createLessonsResource(client: ApiClient) {

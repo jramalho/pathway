@@ -111,3 +111,89 @@ export const publishedLearningPathListFixture = {
     pagination: { page: 1, pageSize: 25, pageCount: 1, total: 1 },
   },
 };
+
+/**
+ * Fixture mirroring the REAL Strapi 5 REST response for a published Lesson.
+ *
+ * Strapi 5 flat format: fields direct on `data`, manyToOne relations as
+ * bare object or null, media as bare object or null, documentId + id on
+ * every document. The `body` field is a richtext field configured with
+ * the default Markdown editor — Strapi returns it as a plain Markdown
+ * string (not a JSON array of blocks).
+ *
+ * Internal use (tests only) — not exported from the package entrypoint.
+ */
+export const publishedLessonFixture = {
+  data: [
+    {
+      id: 2,
+      documentId: "les-renders-001",
+      title: "Understanding React Native Re-renders",
+      slug: "understanding-react-native-re-renders",
+      summary:
+        "Learn what triggers a re-render in React Native and why unnecessary re-renders slow down your app.",
+      body: "## Why re-renders matter\n\nEvery re-render runs your component function and reconciles the virtual tree.\n\n## Common triggers\n\n- Parent re-renders without memoized children\n- New object/array literals in props",
+      videoUrl: null,
+      estimatedDurationMinutes: 15,
+      difficulty: "intermediate",
+      createdAt: "2026-06-30T10:00:00.000Z",
+      updatedAt: "2026-06-30T10:00:00.000Z",
+      publishedAt: "2026-06-30T10:00:00.000Z",
+      videoThumbnail: null,
+      category: {
+        id: 1,
+        documentId: "cat-mobile-001",
+        name: "Mobile",
+        slug: "mobile",
+        description: null,
+        createdAt: "2026-06-30T10:00:00.000Z",
+        updatedAt: "2026-06-30T10:00:00.000Z",
+        publishedAt: "2026-06-30T10:00:00.000Z",
+      },
+      learningPath: {
+        id: 2,
+        documentId: "lp-rn-perf-001",
+        title: "React Native Performance",
+        slug: "react-native-performance",
+        description:
+          "Identify, diagnose, and fix performance bottlenecks in React Native apps.",
+        createdAt: "2026-06-30T10:00:00.000Z",
+        updatedAt: "2026-06-30T10:00:00.000Z",
+        publishedAt: "2026-06-30T10:00:00.000Z",
+      },
+      module: {
+        id: 1,
+        documentId: "mod-renders-001",
+        title: "Understanding Re-renders",
+        description: "How React Native decides to re-render and how to control it.",
+        order: 1,
+        createdAt: "2026-06-30T10:00:00.000Z",
+        updatedAt: "2026-06-30T10:00:00.000Z",
+        publishedAt: "2026-06-30T10:00:00.000Z",
+      },
+      author: {
+        id: 1,
+        documentId: "auth-001",
+        name: "Jonathan Ramalho",
+        shortBio:
+          "React Native and Expo engineer focused on production mobile apps.",
+        email: null,
+        createdAt: "2026-06-30T10:00:00.000Z",
+        updatedAt: "2026-06-30T10:00:00.000Z",
+        publishedAt: "2026-06-30T10:00:00.000Z",
+        avatar: null,
+      },
+    },
+  ],
+  meta: {
+    pagination: { page: 1, pageSize: 25, pageCount: 1, total: 1 },
+  },
+};
+
+/** List envelope with no published lessons (missing slug). */
+export const emptyLessonListFixture = {
+  data: [],
+  meta: {
+    pagination: { page: 1, pageSize: 25, pageCount: 0, total: 0 },
+  },
+};

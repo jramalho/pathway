@@ -3,8 +3,10 @@
  *
  * Strapi 5 response format:
  *  - Flat: attributes are direct on `data` (no `data.attributes` wrapper).
- *  - `body` is a richtext field — Strapi returns it as a JSON array of blocks.
- *  - `author` and `category` are manyToOne relations — bare object or null.
+ *  - `body` is a richtext field configured with the default Markdown editor —
+ *    Strapi returns it as a plain Markdown string (not a JSON array of blocks).
+ *  - `author`, `category`, `learningPath`, and `module` are manyToOne relations —
+ *    bare object or null.
  *  - `videoThumbnail` is a media field — bare object or null.
  *  - `publishedAt` is a top-level field on the document.
  */
@@ -21,69 +23,6 @@ const mediaSchema = z
     height: z.number().int().nullable().optional(),
   })
   .nullable();
-
-// --- Rich text blocks (Strapi blocks format) ---
-
-const textBlock = z.object({
-  type: z.literal("text"),
-  text: z.string(),
-  bold: z.boolean().optional(),
-  italic: z.boolean().optional(),
-  code: z.boolean().optional(),
-});
-
-const paragraphBlock = z.object({
-  type: z.literal("paragraph"),
-  children: z.array(textBlock),
-});
-
-const headingBlock = z.object({
-  type: z.literal("heading"),
-  level: z.number().int(),
-  children: z.array(textBlock),
-});
-
-const listItemChild = z.object({
-  type: z.literal("text"),
-  text: z.string(),
-});
-
-const listItemBlock = z.object({
-  type: z.literal("list-item"),
-  children: z.array(listItemChild),
-});
-
-const listBlock = z.object({
-  type: z.literal("list"),
-  ordered: z.boolean(),
-  children: z.array(listItemBlock),
-});
-
-const quoteBlock = z.object({
-  type: z.literal("quote"),
-  children: z.array(textBlock),
-});
-
-const codeBlock = z.object({
-  type: z.literal("code"),
-  language: z.string().nullable().optional(),
-  children: z.array(textBlock),
-});
-
-const linkBlock = z.object({
-  type: z.literal("link"),
-  url: z.string(),
-  children: z.array(textBlock),
-});
-
-export const bodyBlockSchema = z.union([
-  paragraphBlock,
-  headingBlock,
-  listBlock,
-  quoteBlock,
-  codeBlock,
-  linkBlock,
-]);
 
 // --- Author ---
 
@@ -103,6 +42,24 @@ const categorySchema = z.object({
   description: z.string().nullable().optional(),
 }).nullable();
 
+// --- Learning path (manyToOne relation — populated on request) ---
+
+const learningPathRefSchema = z.object({
+  documentId: z.string(),
+  title: z.string(),
+  slug: z.string(),
+  description: z.string().nullable().optional(),
+}).nullable();
+
+// --- Module (manyToOne relation — populated on request) ---
+
+const moduleRefSchema = z.object({
+  documentId: z.string(),
+  title: z.string(),
+  description: z.string().nullable().optional(),
+  order: z.number().int(),
+}).nullable();
+
 // --- Lesson document ---
 
 const lessonDocumentSchema = z.object({
@@ -110,13 +67,16 @@ const lessonDocumentSchema = z.object({
   title: z.string(),
   slug: z.string(),
   summary: z.string(),
-  body: z.array(bodyBlockSchema),
+  // body is Markdown (Strapi richtext default editor) — a plain string.
+  body: z.string(),
   estimatedDurationMinutes: z.number().int(),
   difficulty: difficultyEnum,
   videoUrl: z.string().nullable().optional(),
   videoThumbnail: mediaSchema.optional(),
   author: authorSchema.optional(),
   category: categorySchema.optional(),
+  learningPath: learningPathRefSchema.optional(),
+  module: moduleRefSchema.optional(),
   publishedAt: z.string().nullable().optional(),
 });
 

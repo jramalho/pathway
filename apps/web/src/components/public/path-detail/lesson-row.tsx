@@ -1,4 +1,5 @@
 import * as stylex from '@stylexjs/stylex';
+import Link from 'next/link';
 import { tokens } from '../../../styles/tokens.stylex';
 import type { PathDetailLesson } from '@/lib/path-data';
 
@@ -21,15 +22,19 @@ type LessonRowProps = {
 /**
  * A single lesson row inside a module.
  *
- * This is a semantic information row — not a link. The `/lessons/[slug]`
- * route does not exist yet, so lesson rows intentionally do not navigate.
- * No disabled links, no "coming soon" labels, no fabricated completion
- * or video states. The row presents real lesson metadata: title,
- * summary (when it helps scanning), estimated duration, and difficulty.
+ * When the lesson has a valid slug, the row renders as a Next.js Link
+ * to `/lessons/[slug]` so visitors can open the public lesson page.
+ * When the lesson unexpectedly lacks a slug, the row renders as a
+ * non-interactive semantic information row — no disabled links, no
+ * "coming soon" labels, no fabricated completion or video states. The
+ * row presents real lesson metadata: title, summary (when it helps
+ * scanning), estimated duration, and difficulty.
  */
 export function LessonRow({ lesson, index }: LessonRowProps) {
-  return (
-    <li {...stylex.props(styles.row)}>
+  const href = lesson.slug ? `/lessons/${lesson.slug}` : undefined;
+
+  const bodyContent = (
+    <>
       <span aria-hidden="true" {...stylex.props(styles.number)}>
         {String(index).padStart(2, '0')}
       </span>
@@ -48,6 +53,22 @@ export function LessonRow({ lesson, index }: LessonRowProps) {
           </span>
         </div>
       </div>
+    </>
+  );
+
+  if (!href) {
+    return <li {...stylex.props(styles.row)}>{bodyContent}</li>;
+  }
+
+  return (
+    <li {...stylex.props(styles.row)}>
+      <Link
+        href={href}
+        aria-label={`Open lesson: ${lesson.title}`}
+        {...stylex.props(styles.link)}
+      >
+        {bodyContent}
+      </Link>
     </li>
   );
 }
@@ -55,15 +76,33 @@ export function LessonRow({ lesson, index }: LessonRowProps) {
 const styles = stylex.create({
   row: {
     display: 'flex',
-    gap: tokens.spaceMd,
-    paddingBlock: tokens.spaceMd,
-    paddingInline: tokens.spaceLg,
+    paddingBlock: 0,
+    paddingInline: 0,
     backgroundColor: tokens.surfacePage,
     borderBottomWidth: tokens.borderWidthThin,
     borderBottomStyle: 'solid',
     borderBottomColor: tokens.borderThin,
     ':last-child': {
       borderBottomWidth: 0,
+    },
+  },
+  link: {
+    display: 'flex',
+    gap: tokens.spaceMd,
+    width: '100%',
+    paddingBlock: tokens.spaceMd,
+    paddingInline: tokens.spaceLg,
+    textDecoration: 'none',
+    color: 'inherit',
+    transition: tokens.transitionFast,
+    ':hover': {
+      backgroundColor: tokens.surfaceAccent,
+    },
+    ':focus': {
+      outlineWidth: tokens.borderWidthThin,
+      outlineStyle: 'solid',
+      outlineColor: tokens.accentFocus,
+      outlineOffset: '-2px',
     },
   },
   number: {

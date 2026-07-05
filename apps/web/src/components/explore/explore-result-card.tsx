@@ -73,31 +73,43 @@ export function ExplorePathCard({
 /**
  * Presentational card for a lesson result.
  *
- * Route safety: dynamic `/lessons/[slug]` routes are intentionally not
- * implemented yet. This card renders as a non-interactive panel — no
- * `href` — so no result leads to a missing route. The component API
- * accepts an optional `href` so later work can pass a real link
- * without changing the card shape.
+ * When `href` is provided (a valid `/lessons/[slug]` URL), the card
+ * renders as a Next.js Link so the result navigates to the real
+ * public lesson page. When `href` is absent (e.g. the lesson lacks a
+ * slug), the card renders as a non-interactive panel — no result
+ * leads to a missing route.
  */
 export function ExploreLessonCard({
   lesson,
+  href,
 }: {
   lesson: ExploreLessonItem;
-  /** Reserved for future dynamic route linking. Not rendered yet. */
   href?: string;
 }) {
-  return (
-    <article {...stylex.props(styles.card)}>
-      <div {...stylex.props(styles.body)}>
-        <p {...stylex.props(styles.context)}>{lesson.pathTitle}</p>
-        <h3 {...stylex.props(styles.title)}>{lesson.title}</h3>
-        <p {...stylex.props(styles.description)}>{lesson.summary}</p>
-        <div {...stylex.props(styles.meta)}>
-          <ExploreBadge label={DIFFICULTY_LABELS[lesson.difficulty] ?? lesson.difficulty} tone="difficulty" />
-          <ExploreBadge label={formatDuration(lesson.estimatedDuration)} />
-        </div>
+  const bodyContent = (
+    <div {...stylex.props(styles.body)}>
+      <p {...stylex.props(styles.context)}>{lesson.pathTitle}</p>
+      <h3 {...stylex.props(styles.title)}>{lesson.title}</h3>
+      <p {...stylex.props(styles.description)}>{lesson.summary}</p>
+      <div {...stylex.props(styles.meta)}>
+        <ExploreBadge label={DIFFICULTY_LABELS[lesson.difficulty] ?? lesson.difficulty} tone="difficulty" />
+        <ExploreBadge label={formatDuration(lesson.estimatedDuration)} />
       </div>
-    </article>
+    </div>
+  );
+
+  if (!href) {
+    return <article {...stylex.props(styles.card)}>{bodyContent}</article>;
+  }
+
+  return (
+    <Link
+      href={href}
+      aria-label={`Open lesson: ${lesson.title}`}
+      {...stylex.props(styles.card, styles.cardLink)}
+    >
+      {bodyContent}
+    </Link>
   );
 }
 
