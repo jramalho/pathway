@@ -55,6 +55,7 @@ export type {
   ContentImage,
   Difficulty,
   LearningPath,
+  LearningPathCategory,
   LearningPathModule,
   LessonPreview,
 } from "./domain/learning-path.ts";

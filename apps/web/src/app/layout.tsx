@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Epilogue } from 'next/font/google';
 import * as stylex from '@stylexjs/stylex';
 import { tokens } from '../styles/tokens.stylex';
+import { getSiteUrl } from '@/lib/env';
 import './globals.css';
 
 const inter = Inter({
@@ -17,6 +18,7 @@ const epilogue = Epilogue({
 
 export const metadata: Metadata = {
   applicationName: 'Pathway',
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: 'Pathway',
     template: '%s | Pathway',

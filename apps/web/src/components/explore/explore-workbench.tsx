@@ -218,7 +218,11 @@ export function ExploreWorkbench({ data, initialFilters }: ExploreWorkbenchProps
               <h2 {...stylex.props(styles.groupTitle)}>Learning paths</h2>
               <div {...stylex.props(styles.grid)}>
                 {results.paths.map((path) => (
-                  <ExplorePathCard key={path.slug} path={path} />
+                  <ExplorePathCard
+                    key={path.slug}
+                    path={path}
+                    href={path.slug ? `/paths/${path.slug}` : undefined}
+                  />
                 ))}
               </div>
             </div>

@@ -40,6 +40,14 @@ export interface LearningPathModule {
   lessons: LessonPreview[];
 }
 
+/** Category assigned to a learning path (manyToOne relation). */
+export interface LearningPathCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+}
+
 /** A structured learning path made of modules and lessons. */
 export interface LearningPath {
   /**
@@ -58,6 +66,8 @@ export interface LearningPath {
   /** Total estimated duration in minutes. */
   estimatedDuration: number;
   coverImage: ContentImage | null;
+  /** Category relation (manyToOne). Null when unassigned or unpopulated. */
+  category: LearningPathCategory | null;
   modules: LearningPathModule[];
   /** Total count of lessons across all modules. */
   lessonCount: number;

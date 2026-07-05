@@ -149,18 +149,64 @@ Turn the same Strapi content into a discoverable, shareable, SEO-friendly public
 
 ## Progress checklist
 
-- [ ] Audit Next.js foundation and API integration
-- [ ] Homepage with real content
-- [ ] Public Learning Path route
+- [x] Audit Next.js foundation and API integration
+- [x] Homepage with real content
+- [x] Public Learning Path route (M3.4.1: route, metadata, safe navigation)
 - [ ] Public Lesson route
-- [ ] Metadata, canonical URL, and Open Graph
-- [ ] Explore with search and filters (if in scope)
-- [ ] Responsiveness and states
-- [ ] URL validation and handoff
+- [x] Metadata, canonical URL, and Open Graph (path route)
+- [x] Explore with search and filters (if in scope)
+- [x] Responsiveness and states (path route: sticky sidebar, mobile stacking, empty curriculum)
+- [x] URL validation and handoff (path route: stable URLs, valid/invalid/missing slugs, card navigation)
 
 ## Evidence
 
-_To be filled as slices are completed._
+### M3.4.1 — Public dynamic Learning Path routes
+
+- `/paths/[slug]` route created at `apps/web/src/app/(public)/paths/[slug]/page.tsx`
+  - Server Component, loads published path via `@pathway/api` `getLearningPathBySlug`
+  - `notFound()` for missing/unpublished/invalid slugs; public 404 with `noindex` renders
+  - `generateMetadata` derives title, description, canonical URL, Open Graph from real Strapi content
+  - `generateStaticParams` prerenders known published paths; `revalidate = 300` (ISR)
+  - Minimal shell: breadcrumb (Home → Learning paths → path title), h1, description, real metadata (difficulty, duration, lesson count, topic), transition area, structural module preview
+- Shared API package extended:
+  - `LearningPath` domain model now includes `category: LearningPathCategory | null`
+  - Zod schema, mapper, populate tree updated to include the `category` manyToOne relation
+  - 42 API tests pass (including new category assertions)
+- Web metadata helpers: `apps/web/src/lib/metadata.ts` (`buildPathMetadata`, `buildCanonicalUrl`, `truncateForMeta`)
+- Web path data layer: `apps/web/src/lib/path-data.ts` (`getPathDetailView`, `getPublishedPathSlugs`)
+- Site URL config: `SITE_URL` env var + `getSiteUrl()` in `apps/web/src/lib/env.ts`; `metadataBase` set in root layout
+- Breadcrumb component: `apps/web/src/components/public/breadcrumbs.tsx` (semantic nav, `aria-current="page"`)
+- Safe card navigation enabled:
+  - `ExplorePathCard` renders as Next.js Link when `href` is provided
+  - Explore workbench passes `/paths/[slug]` hrefs for paths with valid slugs
+  - Homepage hero route steps link to real `/paths/[slug]` URLs with accessible labels
+  - `ExploreLessonCard` remains non-linked (lesson routes deferred)
+- Verification: API tests (42 pass), API typecheck, web typecheck, web lint, web build all pass
+- Manual: valid slug renders with correct title/canonical/OG; nonexistent slug renders 404 with noindex; homepage and Explore cards link to valid path URLs
+
+### M3.4.2 — Complete public Learning Path detail experience
+
+- Full path hero (`path-hero.tsx`): forest-green field, breadcrumb, cover media (real image or Pathway-built geometric fallback), h1 title, full description, real metadata (difficulty, duration, lessons, topic), primary CTA "View curriculum" (in-page anchor to #curriculum), secondary CTA "Explore all paths" (links to /paths)
+- Cover media component (`cover-media.tsx`): renders real Strapi cover image when available; decorative geometric fallback (aria-hidden) with path title when no image
+- Path summary component (`path-summary.tsx`): reusable semantic description list with difficulty, duration, lesson count, module count (derived from actual modules), topic/category; "Explore all paths" action; used as sticky desktop sidebar
+- Path curriculum (`path-curriculum.tsx`): section with `id="curriculum"`, "Path curriculum" h2, real module/lesson totals, modules in content order; graceful empty state when no modules
+- Module row (`module-row.tsx`): always-visible (no accordion — portfolio content set is small), order number from Strapi `order` field, title, optional description, lesson count, lessons in content order; "Lessons will appear here" message when module has no lessons
+- Lesson row (`lesson-row.tsx`): semantic information row — not a link; title, summary (when available), duration, difficulty; no fabricated completion/video/locked states; no disabled links
+- Responsive two-column layout: main curriculum column + sticky summary sidebar on desktop (≥1024px); natural stacking on mobile/tablet; CSS sticky (no JS scroll tracking); `scroll-margin-top` on curriculum anchor so it doesn't hide behind the sticky header
+- Edge cases handled: path with no modules (graceful empty state), module with no lessons (inline message), missing cover image (geometric fallback), missing category (omitted from metadata), short/long description (max-width constraint)
+- Heading hierarchy: h1 (path title) → h2 ("Path curriculum") → h3 (module titles) → h4 (lesson titles)
+- Accessibility: semantic breadcrumb nav with aria-current, one h1, logical heading hierarchy, in-page anchor with scroll-margin-top, decorative fallback aria-hidden, no color-only metadata, keyboard-accessible CTAs with visible focus states
+- Verification: API tests (42 pass), API typecheck, web typecheck, web lint, web build all pass; valid path renders full hero + curriculum + sticky sidebar; nonexistent slug renders 404 with noindex; no lesson links to missing routes
+
+### M3.4.3 — Related learning paths and final quality pass
+
+- Related learning paths section (`related-paths.tsx`): renders after curriculum; uses existing `ExplorePathCard` for visual consistency; cards link to real `/paths/[slug]` URLs; renders nothing when no other published path exists (no forced empty block); labelled "Related learning paths" (not "Recommended")
+- Related-path selection logic (`getRelatedPaths` in `path-data.ts`): deterministic server-side data boundary; selection rules in order: (1) paths sharing a real category, (2) paths with matching difficulty, (3) deterministic published-path fallback; never includes the current path; limited to 3; stable sort by slug
+- Category populate fix: Strapi 5 qs parser conflicts when mixing indexed array syntax (`populate[0]`) with nested object syntax (`populate[modules]`); fixed to use object-key syntax for all populate entries (`populate[coverImage]=true`, `populate[category]=true`, `populate[modules][populate][0]=lessons`); categories now correctly populated in API responses
+- Metadata deduplication: `getPathDetailView` wrapped in React `cache()` so the same slug fetch is deduplicated across `generateMetadata` and page render within a single request
+- Targeted test (`related-paths.test.ts`): 7 tests covering exclusion of current path, category prioritization, difficulty fallback, deterministic fallback, empty result, limit enforcement, deterministic sort stability
+- Verification: API tests (42 pass), API typecheck, web typecheck, web lint, web build, related-paths test (7 pass), explore-filters test (25 pass) all pass
+- Manual: valid path renders with category in metadata + summary; related path card navigates to valid path URL; nonexistent slug renders 404 with noindex; no lesson links
 
 ## Handoff to M4
 

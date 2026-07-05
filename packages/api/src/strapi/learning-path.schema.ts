@@ -67,6 +67,17 @@ const moduleSchema = z.object({
 });
 
 // ---------------------------------------------------------------------------
+// Category (manyToOne relation on LearningPath)
+// ---------------------------------------------------------------------------
+
+const categorySchema = z.object({
+  documentId: z.string(),
+  name: z.string(),
+  slug: z.string(),
+  description: z.string().nullable().optional(),
+}).nullable();
+
+// ---------------------------------------------------------------------------
 // LearningPath
 // ---------------------------------------------------------------------------
 
@@ -79,6 +90,8 @@ const learningPathDocumentSchema = z.object({
   difficulty: difficultyEnum,
   estimatedDurationMinutes: z.number().int(),
   featured: z.boolean(),
+  // manyToOne: bare object or null. Optional because populate may omit it.
+  category: categorySchema.optional(),
   // oneToMany: bare array. Optional because populate may omit it.
   modules: relationList(moduleSchema).optional(),
 });
@@ -103,3 +116,4 @@ export const learningPathListResponseSchema = z.object({
 export type StrapiLearningPathDocument = z.infer<typeof learningPathDocumentSchema>;
 export type StrapiModule = z.infer<typeof moduleSchema>;
 export type StrapiLesson = z.infer<typeof lessonSchema>;
+export type StrapiLearningPathCategory = z.infer<typeof categorySchema>;

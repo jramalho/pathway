@@ -24,6 +24,17 @@ export const publishedLearningPathFixture = {
     updatedAt: "2026-06-30T10:00:00.000Z",
     publishedAt: "2026-06-30T10:00:00.000Z",
     locale: null,
+    category: {
+      id: 30,
+      documentId: "cat-mobile-001",
+      name: "Mobile",
+      slug: "mobile",
+      description: "Mobile engineering learning content.",
+      createdAt: "2026-06-30T10:00:00.000Z",
+      updatedAt: "2026-06-30T10:00:00.000Z",
+      publishedAt: null,
+      locale: null,
+    },
     modules: [
       {
         id: 10,

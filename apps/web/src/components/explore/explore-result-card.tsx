@@ -1,4 +1,5 @@
 import * as stylex from '@stylexjs/stylex';
+import Link from 'next/link';
 import { tokens } from '../../styles/tokens.stylex';
 import { ExploreBadge } from './explore-badge';
 import type { ExplorePathItem, ExploreLessonItem } from '@/lib/explore-data';
@@ -16,28 +17,28 @@ function formatDuration(minutes: number): string {
 /**
  * Presentational card for a learning-path result.
  *
- * Route safety: dynamic `/paths/[slug]` routes are intentionally not
- * implemented yet (Milestone 3.3.3). This card therefore renders as a
- * non-interactive panel — no `href` — so no result leads to a missing
- * route. The component API accepts an optional `href` so later work can
- * pass a real link without changing the card shape.
+ * When `href` is provided (a valid `/paths/[slug]` URL), the card
+ * renders as a Next.js Link so the result navigates to the real
+ * public path page. When `href` is absent (e.g. the path lacks a
+ * slug), the card renders as a non-interactive panel — no result
+ * leads to a missing route.
  */
 export function ExplorePathCard({
   path,
+  href,
 }: {
   path: ExplorePathItem;
-  /** Reserved for future dynamic route linking. Not rendered yet. */
   href?: string;
 }) {
-  return (
-    <article {...stylex.props(styles.card)}>
+  const bodyContent = (
+    <>
       {path.coverImageUrl && (
         <div {...stylex.props(styles.media)} aria-hidden="true">
-          {/* ponytail: next/image deferred until dynamic routes + remote image optimization land in M3.3.3 */}
+          {/* ponytail: next/image deferred until remote image optimization lands in a later M3 slice. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={path.coverImageUrl}
-            alt={path.coverImageAlt ?? ""}
+            alt={path.coverImageAlt ?? ''}
             {...stylex.props(styles.image)}
           />
         </div>
@@ -51,7 +52,21 @@ export function ExplorePathCard({
           <ExploreBadge label={formatDuration(path.estimatedDuration)} />
         </div>
       </div>
-    </article>
+    </>
+  );
+
+  if (!href) {
+    return <article {...stylex.props(styles.card)}>{bodyContent}</article>;
+  }
+
+  return (
+    <Link
+      href={href}
+      aria-label={`Open learning path: ${path.title}`}
+      {...stylex.props(styles.card, styles.cardLink)}
+    >
+      {bodyContent}
+    </Link>
   );
 }
 
@@ -59,10 +74,10 @@ export function ExplorePathCard({
  * Presentational card for a lesson result.
  *
  * Route safety: dynamic `/lessons/[slug]` routes are intentionally not
- * implemented yet (Milestone 3.3.3). This card renders as a
- * non-interactive panel — no `href` — so no result leads to a missing
- * route. The component API accepts an optional `href` so later work can
- * pass a real link without changing the card shape.
+ * implemented yet. This card renders as a non-interactive panel — no
+ * `href` — so no result leads to a missing route. The component API
+ * accepts an optional `href` so later work can pass a real link
+ * without changing the card shape.
  */
 export function ExploreLessonCard({
   lesson,
@@ -96,6 +111,26 @@ const styles = stylex.create({
     borderStyle: 'solid',
     borderColor: tokens.borderStrong,
     boxShadow: tokens.shadowResting,
+    textDecoration: 'none',
+    color: 'inherit',
+    transition: tokens.transitionFast,
+  },
+  cardLink: {
+    cursor: 'pointer',
+    ':hover': {
+      transform: 'translate(-1px, -1px)',
+      boxShadow: '6px 6px 0 0 #000000',
+    },
+    ':active': {
+      transform: 'translate(2px, 2px)',
+      boxShadow: tokens.shadowPressed,
+    },
+    ':focus': {
+      outlineWidth: tokens.borderWidthThin,
+      outlineStyle: 'solid',
+      outlineColor: tokens.accentFocus,
+      outlineOffset: tokens.spaceXs,
+    },
   },
   media: {
     display: 'block',

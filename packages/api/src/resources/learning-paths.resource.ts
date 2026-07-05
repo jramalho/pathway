@@ -14,10 +14,19 @@ import { mapLearningPath } from "../strapi/learning-path.mapper.ts";
 import type { LearningPath } from "../domain/learning-path.ts";
 import type { QueryParams } from "../types/api.ts";
 
-/** Populate tree for a full LearningPath: cover + modules + lessons. */
+/**
+ * Populate tree for a full LearningPath: cover + category + modules + lessons.
+ *
+ * Strapi 5's qs parser conflicts when mixing indexed array syntax
+ * (`populate[0]=coverImage`) with nested object syntax
+ * (`populate[modules][populate][0]=lessons`) — the array indices and
+ * object keys can't coexist on the same `populate` root. We therefore
+ * use object-key syntax for every populate entry, with `=true` for
+ * scalar relations and the nested populate object for modules + lessons.
+ */
 const learningPathPopulate: QueryParams = {
-  "populate[0]": "coverImage",
-  "populate[1]": "modules",
+  "populate[coverImage]": "true",
+  "populate[category]": "true",
   "populate[modules][populate][0]": "lessons",
 };
 

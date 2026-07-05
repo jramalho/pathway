@@ -31,9 +31,16 @@ type HomeHeroProps = {
 export function HomeHero({ data }: HomeHeroProps) {
   const hasContent = data !== null && data.counts.featuredPaths > 0;
   // Use up to 4 real topic labels from featured paths for the pathway steps.
+  // When content is available, each step links to its real /paths/[slug] page.
   const routeSteps = hasContent
-    ? data!.featuredPaths.slice(0, 4).map((path) => path.title)
-    : ['Fundamentals', 'Patterns', 'Performance', 'Shipping'];
+    ? data!.featuredPaths.slice(0, 4).map((path) => ({
+        label: path.title,
+        href: path.slug ? `/paths/${path.slug}` : undefined,
+      }))
+    : ['Fundamentals', 'Patterns', 'Performance', 'Shipping'].map((label) => ({
+        label,
+        href: undefined,
+      }));
 
   return (
     <section {...stylex.props(styles.section)}>
@@ -86,34 +93,41 @@ export function HomeHero({ data }: HomeHeroProps) {
             )}
           </div>
 
-          {/* Decorative learning-route composition */}
-          <div
-            aria-hidden="true"
-            {...stylex.props(styles.route)}
-          >
+          {/* Learning-route composition — real path links when content exists. */}
+          <div {...stylex.props(styles.route)}>
             <div {...stylex.props(styles.routePanel)}>
               <div {...stylex.props(styles.routeHeader)}>
                 <span {...stylex.props(styles.routeLabel)}>Learning route</span>
-                <span {...stylex.props(styles.routeProgress)}>01 → 04</span>
+                <span aria-hidden="true" {...stylex.props(styles.routeProgress)}>01 → 04</span>
               </div>
               <ol {...stylex.props(styles.routeList)}>
-                {routeSteps.map((label, index) => (
+                {routeSteps.map((step, index) => (
                   <li
-                    key={label}
+                    key={`${step.label}-${index}`}
                     {...stylex.props(styles.routeStep)}
                   >
-                    <span {...stylex.props(styles.routeStepNumber)}>
+                    <span aria-hidden="true" {...stylex.props(styles.routeStepNumber)}>
                       {String(index + 1).padStart(2, '0')}
                     </span>
-                    <span {...stylex.props(styles.routeStepLabel)}>{label}</span>
+                    {step.href ? (
+                      <Link
+                        href={step.href}
+                        aria-label={`Open learning path: ${step.label}`}
+                        {...stylex.props(styles.routeStepLabel, styles.routeStepLink)}
+                      >
+                        {step.label}
+                      </Link>
+                    ) : (
+                      <span {...stylex.props(styles.routeStepLabel)}>{step.label}</span>
+                    )}
                     {index < routeSteps.length - 1 && (
-                      <span {...stylex.props(styles.routeStepConnector)} />
+                      <span aria-hidden="true" {...stylex.props(styles.routeStepConnector)} />
                     )}
                   </li>
                 ))}
               </ol>
               <div {...stylex.props(styles.routeFooter)}>
-                <span {...stylex.props(styles.routeFooterDot)} />
+                <span aria-hidden="true" {...stylex.props(styles.routeFooterDot)} />
                 <span {...stylex.props(styles.routeFooterText)}>
                   Structured · Self-paced
                 </span>
@@ -399,6 +413,24 @@ const styles = stylex.create({
     fontWeight: tokens.fontWeightSemibold,
     color: tokens.textPrimary,
     lineHeight: tokens.lineHeightNormal,
+  },
+  routeStepLink: {
+    textDecoration: 'none',
+    color: tokens.textPrimary,
+    borderBottomWidth: tokens.borderWidthThin,
+    borderBottomStyle: 'solid',
+    borderBottomColor: 'transparent',
+    transition: tokens.transitionFast,
+    ':hover': {
+      color: tokens.surfaceAction,
+      borderBottomColor: tokens.surfaceAction,
+    },
+    ':focus': {
+      outlineWidth: tokens.borderWidthThin,
+      outlineStyle: 'solid',
+      outlineColor: tokens.accentFocus,
+      outlineOffset: tokens.spaceXs,
+    },
   },
   routeStepConnector: {
     position: 'absolute',

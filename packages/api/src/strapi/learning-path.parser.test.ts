@@ -29,6 +29,10 @@ test("valid single payload maps to a clean LearningPath", () => {
   assert.equal(lp.estimatedDuration, 180);
   assert.equal(lp.coverImage, null);
   assert.equal(lp.modules.length, 2);
+  assert.equal(lp.category?.id, "cat-mobile-001");
+  assert.equal(lp.category?.slug, "mobile");
+  assert.equal(lp.category?.name, "Mobile");
+  assert.equal(lp.category?.description, "Mobile engineering learning content.");
 
   const firstModule = lp.modules[0];
   assert.equal(firstModule.id, "mod-renders-001");
@@ -87,6 +91,25 @@ test("missing optional relations do not break the parser", () => {
   assert.deepEqual(lp.modules, []);
   assert.equal(lp.lessonCount, 0);
   assert.equal(lp.coverImage, null);
+  assert.equal(lp.category, null);
+});
+
+test("null category maps to null", () => {
+  const withNullCategory = {
+    data: {
+      documentId: "lp-nocat-001",
+      title: "Uncategorized Path",
+      slug: "uncategorized-path",
+      description: "No category assigned.",
+      difficulty: "beginner",
+      estimatedDurationMinutes: 30,
+      featured: false,
+      category: null,
+    },
+    meta: {},
+  };
+  const lp = parseLearningPathResponse(withNullCategory);
+  assert.equal(lp.category, null);
 });
 
 test("module with no lessons populated yields empty lessons array", () => {

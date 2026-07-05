@@ -10,15 +10,17 @@
  * needed for published-only queries.
  */
 
-/** Populate tree for a full LearningPath: cover + modules + lessons. */
+/** Populate tree for a full LearningPath: cover + category + modules + lessons. */
 export function learningPathPopulateParams(): URLSearchParams {
-  // Strapi 5 nested populate syntax:
-  //   populate[0]=coverImage
-  //   populate[1]=modules
+  // Strapi 5's qs parser conflicts when mixing indexed array syntax
+  // (populate[0]=...) with nested object syntax (populate[modules]...).
+  // We use object-key syntax for every entry to avoid the conflict.
+  //   populate[coverImage]=true
+  //   populate[category]=true
   //   populate[modules][populate][0]=lessons
   return new URLSearchParams({
-    "populate[0]": "coverImage",
-    "populate[1]": "modules",
+    "populate[coverImage]": "true",
+    "populate[category]": "true",
     "populate[modules][populate][0]": "lessons",
   });
 }

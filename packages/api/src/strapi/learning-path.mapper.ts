@@ -9,11 +9,13 @@ import type {
   ContentImage,
   Difficulty,
   LearningPath,
+  LearningPathCategory,
   LearningPathModule,
   LessonPreview,
 } from "../domain/learning-path.ts";
 import type {
   StrapiLearningPathDocument,
+  StrapiLearningPathCategory,
   StrapiModule,
   StrapiLesson,
 } from "./learning-path.schema.ts";
@@ -40,6 +42,16 @@ function mapLesson(raw: StrapiLesson): LessonPreview {
     summary: raw.summary,
     estimatedDuration: raw.estimatedDurationMinutes,
     difficulty: raw.difficulty as Difficulty,
+  };
+}
+
+function mapCategory(raw: StrapiLearningPathCategory): LearningPathCategory | null {
+  if (!raw) return null;
+  return {
+    id: raw.documentId,
+    name: raw.name,
+    slug: raw.slug,
+    description: raw.description ?? null,
   };
 }
 
@@ -73,6 +85,7 @@ export function mapLearningPath(raw: StrapiLearningPathDocument): LearningPath {
     difficulty: raw.difficulty as Difficulty,
     estimatedDuration: raw.estimatedDurationMinutes,
     coverImage: mapMedia(raw.coverImage),
+    category: mapCategory(raw.category ?? null),
     modules,
     lessonCount,
   };
