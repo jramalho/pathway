@@ -6,8 +6,10 @@ import { ExploreWorkbench } from '@/components/explore/explore-workbench';
 import { getExploreContent } from '@/lib/explore-data';
 import {
   parseExploreFilters,
+  hasActiveFilters,
   type ExploreSearchParams,
 } from '@/lib/explore-filters';
+import { buildCanonicalUrl } from '@/lib/metadata';
 import { tokens } from '../../../styles/tokens.stylex';
 
 /**
@@ -20,11 +22,43 @@ import { tokens } from '../../../styles/tokens.stylex';
  */
 export const revalidate = 300;
 
-export const metadata: Metadata = {
-  title: 'Explore',
-  description:
-    'Browse published learning paths and focused lessons on Pathway. Search by text and filter by topic or difficulty.',
-};
+/**
+ * Route-level metadata for Explore.
+ *
+ * The base `/explore` URL (no query params) is indexable with a
+ * self-referencing canonical. Any URL with active query params
+ * (`q`, `topic`, `difficulty`) represents a filtered/search state —
+ * an unbounded set of indexable URLs — so those variants carry
+ * `noindex, follow` and canonicalize to `/explore`. The visible
+ * browser URL is preserved (query params are not stripped); only
+ * the canonical and robots directives consolidate indexing.
+ */
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<ExploreSearchParams>;
+}): Promise<Metadata> {
+  const raw = await searchParams;
+  const filters = parseExploreFilters(raw);
+  const canonical = buildCanonicalUrl('/explore');
+
+  if (hasActiveFilters(filters)) {
+    return {
+      title: 'Explore',
+      description:
+        'Browse published learning paths and focused lessons on Pathway. Search by text and filter by topic or difficulty.',
+      alternates: { canonical },
+      robots: { index: false, follow: true },
+    };
+  }
+
+  return {
+    title: 'Explore',
+    description:
+      'Browse published learning paths and focused lessons on Pathway. Search by text and filter by topic or difficulty.',
+    alternates: { canonical },
+  };
+}
 
 /**
  * Explore page — public content discovery.

@@ -6,7 +6,7 @@
     "status": "active",
     "goal": "Portfolio proof project for a Senior React Native, Expo, React and Next.js engineer."
   },
-  "activeMilestone": "M3",
+  "activeMilestone": "M4",
   "milestones": [
     {
       "id": "M0",
@@ -111,8 +111,8 @@
     {
       "id": "M3",
       "title": "Next.js Public Web Experience",
-      "status": "active",
-      "currentPart": "3.5.1",
+      "status": "done",
+      "currentPart": "3.5.3",
       "parts": [
         { "id": "3.4.1", "title": "Public dynamic Learning Path routes", "status": "done" },
         { "id": "3.4.2", "title": "Complete public Learning Path detail experience", "status": "done" },
@@ -120,6 +120,48 @@
         { "id": "3.5.1", "title": "Public dynamic Lesson routes — shell, metadata, safe navigation", "status": "done" },
         { "id": "3.5.2", "title": "Complete editorial reading experience for lesson routes", "status": "done" },
         { "id": "3.5.3", "title": "Sharing controls, related lessons, previous/next navigation, final quality pass", "status": "done" }
+      ],
+      "evidence": [
+        "Public routes: / (homepage), /explore, /paths/[slug], /lessons/[slug] — all server-rendered via @pathway/api",
+        "Homepage (apps/web/src/app/(public)/page.tsx): fetches featured paths via getHomepageData, HomeHero with real path links, revalidate=300",
+        "Explore (apps/web/src/app/(public)/explore/page.tsx): getExploreContent, client-side search + topic/difficulty filters, noindex on filtered variants, canonical to /explore",
+        "Learning Path route (apps/web/src/app/(public)/paths/[slug]/page.tsx): getPathDetailView via @pathway/api, notFound() for missing/unpublished, generateStaticParams, revalidate=300, full hero + curriculum + sticky summary + related paths",
+        "Lesson route (apps/web/src/app/(public)/lessons/[slug]/page.tsx): getLessonDetailView via @pathway/api, notFound() for missing/unpublished, generateStaticParams, revalidate=300, full hero + media + TOC + Markdown body renderer + share + prev/next nav + parent CTA + related lessons",
+        "Metadata: buildPathMetadata, buildLessonMetadata, buildCanonicalUrl in apps/web/src/lib/metadata.ts — title, description, canonical, OG (website/article), twitter card, article:published_time for lessons",
+        "404/not-found: root not-found.tsx + (public)/not-found.tsx with noindex, ContentState component with Back to home + Explore actions",
+        "Error boundary: error.tsx Client Component with toUserFacingError, USER_FACING_MESSAGES, retry + back to home",
+        "Sitemap (apps/web/src/app/sitemap.ts): dynamic, lists /, /explore, /paths/[slug], /lessons/[slug] from published content, revalidate=300",
+        "Robots (apps/web/src/app/robots.ts): allows /, /explore, /paths/, /lessons/, disallows /api/, /signin, /topics",
+        "On-demand revalidation: POST /api/revalidate route handler with Bearer auth (timingSafeEqual), parseWebhookPayload + routesToRevalidate, ADR-004 documents the strategy",
+        "ISR: revalidate=300 on all public content routes; on-demand webhook is an optimization with ISR fallback",
+        "Data layers: path-data.ts, lesson-data.ts, homepage-data.ts, explore-data.ts — all server-only, React cache() for request dedup, status discriminator (ok/missing/error)",
+        "Lesson body parser: lesson-body-parser.ts — typed Markdown → semantic HTML, no dangerouslySetInnerHTML, 14 parser tests",
+        "Web lib tests: 70 tests pass (explore-filters 25, lesson-body-parser 14, lesson-navigation 12, related-paths 7, revalidation 12)",
+        "API tests: 47 tests pass",
+        "pnpm --filter @pathway/api exec tsc --noEmit passes",
+        "pnpm --filter @pathway/web exec tsc --noEmit passes",
+        "pnpm --filter @pathway/web lint passes",
+        "pnpm --filter @pathway/web build passes — /paths/[slug] and /lessons/[slug] are SSG (●), / and /explore are dynamic (ƒ), sitemap revalidate 5m",
+        "pnpm --filter @pathway/mobile exec tsc --noEmit passes (M3 did not break mobile)",
+        "No `any` types in apps/web/src (grep for ': any|as any|<any>' returns empty)",
+        "No raw Strapi payload interpretation in web components — all components receive typed view models from data layers",
+        "No hardcoded production content in web — all content from @pathway/api",
+        "No custom CMS admin, CRUD, or editorial dashboard in Next.js",
+        "No V2 features introduced (no auth, payments, analytics, sync, video player)",
+        "Manual demo (2026-07-06): Strapi CMS started on localhost:1337 with published React Native Performance path (3 modules, 9 published lessons); Next.js dev server on localhost:3001",
+        "Manual demo: GET / → 200, <title>Pathway</title>, meta description, canonical, OG tags, h1 'Build sharper product and engineering skills.'",
+        "Manual demo: GET /paths/react-native-performance → 200, <title>React Native Performance | Pathway</title>, meta description from Strapi, canonical, OG (type=website), h1 with real title",
+        "Manual demo: GET /lessons/optimizing-long-lists-with-flashlist → 200, <title>Optimizing Long Lists with FlashList | Pathway</title>, meta description from Strapi summary, canonical, OG (type=article), article:published_time, h1 with real title, article body with 3 h2 headings (Why FlashList, Key props, Common mistake), author Jonathan Ramalho with bio",
+        "Manual demo: GET /explore → 200, <title>Explore | Pathway</title>, meta description, canonical, h1 'Explore practical technical learning'",
+        "Manual demo: GET /paths/slug-que-nao-existe → not-found with noindex, <title>Learning path not found | Pathway</title>",
+        "Manual demo: GET /lessons/slug-que-nao-existe → not-found with noindex, <title>Lesson not found | Pathway</title>",
+        "Manual demo: GET /sitemap.xml → 200, lists /, /explore, /paths/react-native-performance, 9 lesson URLs",
+        "Manual demo: GET /robots.txt → 200, allows public routes, disallows /api/, /signin, /topics, points to sitemap",
+        "Manual demo: mobile User-Agent (iPhone) — all routes render with viewport meta and h1 content",
+        "Manual demo: path page links to lessons (/lessons/[slug]); lesson page links to parent path (/paths/[slug]) and related lessons",
+        "Manual demo: lesson article body contains real Strapi Markdown content rendered to semantic HTML (h2, p, code blocks)",
+        "Manual demo NOT executed: on-demand revalidation via Strapi webhook — could not obtain admin credentials or valid API token to trigger a content change; ISR (revalidate=300) and webhook endpoint are implemented and unit-tested (12 revalidation tests pass) but end-to-end webhook trigger was not validated manually",
+        "ADR-004-on-demand-revalidation.md records the cache, render, and revalidation strategy for public Next.js content"
       ]
     },
     {
@@ -171,7 +213,7 @@
         "shareable-routes",
         "long-form-reading"
       ],
-      "status": "m1-home-and-path-ready"
+      "status": "m3-public-web-ready"
     },
     {
       "id": "package.api",
@@ -227,17 +269,19 @@
     }
   ],
   "nextTask": {
-    "id": "M3-web-public-foundation",
-    "summary": "Build the first public Next.js content route using the existing shared API contract, with a readable learning path or lesson page and page-level metadata.",
+    "id": "M4-design-foundations-audit",
+    "summary": "Audit and consolidate the shared visual foundation across mobile and web, then implement the smallest set of reusable primitives needed to make the primary flows visually coherent and production-minded.",
     "dependsOn": [
-      "M2"
+      "M3"
     ],
     "blocks": [
-      "M3-web-homepage",
-      "M3-web-explore",
-      "M3-learning-path-route",
-      "M3-lesson-route",
-      "M3-seo-metadata"
+      "M4-token-consolidation",
+      "M4-mobile-visual-polish",
+      "M4-web-visual-polish",
+      "M4-product-states",
+      "M4-accessibility-review",
+      "M4-meaningful-test",
+      "M4-ci-validation"
     ]
   }
 }

@@ -25,6 +25,13 @@ export const metadata: Metadata = {
   },
   description:
     'Short, structured learning paths for mobile engineers, product builders, and modern technical teams.',
+  openGraph: {
+    type: 'website',
+    siteName: 'Pathway',
+    title: 'Pathway',
+    description:
+      'Short, structured learning paths for mobile engineers, product builders, and modern technical teams.',
+  },
 };
 
 export const viewport: Viewport = {

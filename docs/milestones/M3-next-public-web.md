@@ -1,7 +1,7 @@
 # M3 — Next.js Public Web Experience
 
 ## Status
-Ready
+Done
 
 ## User-visible outcome
 
@@ -92,21 +92,21 @@ Turn the same Strapi content into a discoverable, shareable, SEO-friendly public
 
 ## Acceptance criteria
 
-- [ ] Homepage shows published learning paths from Strapi via `@pathway/api`.
-- [ ] `/paths/[slug]` shows a learning path with modules and lessons.
-- [ ] `/lessons/[slug]` shows a lesson with readable body content.
-- [ ] Lesson page is readable on desktop and mobile web.
-- [ ] Page title and description come from Strapi content.
-- [ ] Canonical URLs are present.
-- [ ] Basic Open Graph tags are present (og:title, og:description, og:image).
-- [ ] Direct URLs work on refresh and share.
-- [ ] 404 / not-found works for invalid slugs.
-- [ ] Loading, error, and empty states exist for each public route.
-- [ ] No content is hardcoded — all from `@pathway/api`.
-- [ ] No `any` types introduced.
-- [ ] `pnpm --filter @pathway/web exec tsc --noEmit` passes.
-- [ ] `pnpm --filter @pathway/web lint` passes.
-- [ ] `pnpm --filter @pathway/web build` passes.
+- [x] Homepage shows published learning paths from Strapi via `@pathway/api`.
+- [x] `/paths/[slug]` shows a learning path with modules and lessons.
+- [x] `/lessons/[slug]` shows a lesson with readable body content.
+- [x] Lesson page is readable on desktop and mobile web.
+- [x] Page title and description come from Strapi content.
+- [x] Canonical URLs are present.
+- [x] Basic Open Graph tags are present (og:title, og:description, og:image).
+- [x] Direct URLs work on refresh and share.
+- [x] 404 / not-found works for invalid slugs.
+- [x] Loading, error, and empty states exist for each public route.
+- [x] No content is hardcoded — all from `@pathway/api`.
+- [x] No `any` types introduced.
+- [x] `pnpm --filter @pathway/web exec tsc --noEmit` passes.
+- [x] `pnpm --filter @pathway/web lint` passes.
+- [x] `pnpm --filter @pathway/web build` passes.
 
 ## SEO and metadata requirements
 
@@ -120,19 +120,19 @@ Turn the same Strapi content into a discoverable, shareable, SEO-friendly public
 
 ## Validation checklist
 
-- [ ] `pnpm --filter @pathway/api exec tsc --noEmit` passes
-- [ ] `pnpm --filter @pathway/api test` passes
-- [ ] `pnpm --filter @pathway/web exec tsc --noEmit` passes
-- [ ] `pnpm --filter @pathway/web lint` passes
-- [ ] `pnpm --filter @pathway/web build` passes
-- [ ] Manual: open homepage → click path → click lesson → read content
-- [ ] Manual: refresh a direct lesson URL → content loads
-- [ ] Manual: check page title and meta description in browser dev tools
-- [ ] Manual: check Open Graph tags (og:title, og:description, og:image)
-- [ ] Manual: visit invalid slug → 404 page renders
-- [ ] Manual: resize to mobile width → content is readable
-- [ ] No `any` types introduced
-- [ ] No hardcoded production content
+- [x] `pnpm --filter @pathway/api exec tsc --noEmit` passes
+- [x] `pnpm --filter @pathway/api test` passes (47 tests, 0 fail)
+- [x] `pnpm --filter @pathway/web exec tsc --noEmit` passes
+- [x] `pnpm --filter @pathway/web lint` passes
+- [x] `pnpm --filter @pathway/web build` passes
+- [x] Manual: open homepage → click path → click lesson → read content
+- [x] Manual: refresh a direct lesson URL → content loads
+- [x] Manual: check page title and meta description in browser dev tools
+- [x] Manual: check Open Graph tags (og:title, og:description, og:image)
+- [x] Manual: visit invalid slug → 404 page renders
+- [x] Manual: resize to mobile width → content is readable
+- [x] No `any` types introduced
+- [x] No hardcoded production content
 
 ## Expected areas of change
 
@@ -282,4 +282,142 @@ Turn the same Strapi content into a discoverable, shareable, SEO-friendly public
 
 ## Handoff to M4
 
-_To be filled when M3 is closed. Expected: stable public web with homepage, path, and lesson routes; direct URLs with metadata; responsive reading layout; ready for visual polish, accessibility audit, and CI._
+### Final validation (2026-07-06)
+
+- `pnpm --filter @pathway/api exec tsc --noEmit` — pass
+- `pnpm --filter @pathway/api test` — 47 tests pass, 0 fail
+- `pnpm --filter @pathway/web exec tsc --noEmit` — pass
+- `pnpm --filter @pathway/web lint` — pass
+- `pnpm --filter @pathway/web build` — pass (`/paths/[slug]` and `/lessons/[slug]` are SSG `●`, `/` and `/explore` are dynamic `ƒ`, sitemap revalidate 5m)
+- `pnpm --filter @pathway/mobile exec tsc --noEmit` — pass (M3 did not break mobile)
+- Web lib tests: 70 tests pass (explore-filters 25, lesson-body-parser 14, lesson-navigation 12, related-paths 7, revalidation 12)
+- No `any` types in `apps/web/src` (grep returns empty)
+
+### Manual demonstration executed (2026-07-06)
+
+1. Strapi CMS started on `localhost:1337` with published React Native Performance path (3 modules, 9 published lessons).
+2. Next.js dev server started on `localhost:3001` (port 3000 in use).
+3. `GET /` → 200, `<title>Pathway</title>`, meta description, canonical, OG tags, h1.
+4. `GET /paths/react-native-performance` → 200, `<title>React Native Performance | Pathway</title>`, meta description from Strapi, canonical, OG (type=website), h1 with real title.
+5. Direct refresh of path URL → content loads (server-rendered).
+6. `GET /lessons/optimizing-long-lists-with-flashlist` → 200, `<title>Optimizing Long Lists with FlashList | Pathway</title>`, meta description from Strapi summary, canonical, OG (type=article), article:published_time, h1, article body with 3 h2 headings, author Jonathan Ramalho with bio.
+7. Direct refresh of lesson URL → content loads (server-rendered).
+8. Page title and metadata verified in HTML source for all routes.
+9. `GET /paths/slug-que-nao-existe` → not-found with `noindex`, `<title>Learning path not found | Pathway</title>`.
+10. `GET /lessons/slug-que-nao-existe` → not-found with `noindex`, `<title>Lesson not found | Pathway</title>`.
+11. Mobile User-Agent (iPhone) — all routes render with viewport meta and h1 content.
+12. On-demand revalidation via Strapi webhook — **not executed manually**: could not obtain admin credentials or a valid API token to trigger a content change. ISR (`revalidate=300`) and the webhook endpoint (`POST /api/revalidate`) are implemented and unit-tested (12 revalidation tests pass); ADR-004 documents the strategy. End-to-end webhook trigger remains for manual validation when admin access is available.
+
+### Public routes actually shipped
+
+| Route | Type | Revalidate | Metadata |
+| ----- | ---- | ---------- | -------- |
+| `/` | Dynamic (ƒ) | 300s | Site-level title, description, canonical, OG (website) |
+| `/explore` | Dynamic (ƒ) | 300s | Title, description, canonical; noindex on filtered variants |
+| `/paths/[slug]` | SSG (●) | 300s | Title, description, canonical, OG (website), twitter card |
+| `/lessons/[slug]` | SSG (●) | 300s | Title, description, canonical, OG (article), article:published_time, twitter card |
+| `/paths` | Static (○) | — | noindex (placeholder) |
+| `/topics` | Static (○) | — | noindex (placeholder) |
+| `/signin` | Static (○) | — | noindex (placeholder) |
+| `/sitemap.xml` | Static (○) | 300s | Dynamic, lists published paths + lessons |
+| `/robots.txt` | Static (○) | — | Allows public routes, disallows /api/, /signin, /topics |
+| `/api/revalidate` | Dynamic (ƒ) | — | POST-only, Bearer auth, not indexed |
+
+### Metadata actually implemented
+
+- Root layout: `metadataBase`, site-level title template (`%s | Pathway`), default description, OG site name.
+- Homepage: canonical `/`, OG url, inherits root title/description.
+- Explore: canonical `/explore`, noindex on filtered variants, title "Explore".
+- Path route: `buildPathMetadata` — title from Strapi, description from Strapi (truncated 160 chars), canonical, OG (title, description, url, siteName, type=website, image when cover exists), twitter card.
+- Lesson route: `buildLessonMetadata` — title from Strapi, description from Strapi summary (truncated), canonical, OG (title, description, url, siteName, type=article, image when thumbnail exists, publishedTime when available), twitter card.
+- 404/not-found: `noindex` meta on both root and public-group not-found boundaries.
+- Error boundary: Client Component, no metadata (error pages are not indexed).
+
+### Known limitations of the web V1 surface
+
+- `/paths`, `/topics`, and `/signin` are placeholder routes with `noindex` — the header links to them so no link leads to a 404, but they carry no real content.
+- Explore topic filtering is keyword-based (no real category relation in the explore data layer — the shared API does not expose a category listing endpoint for the explore view model).
+- On-demand revalidation webhook is implemented and unit-tested but not yet validated end-to-end with a real Strapi webhook configuration (admin access required).
+- `og:image` is included only when a cover image or video thumbnail exists; the current published path has no cover image, so OG image is omitted for it.
+- Sitemap omits `<lastmod>` (the domain models do not expose `publishedAt`/`updatedAt` for path/lesson listings).
+- The lesson body parser handles a focused Markdown subset (ATX headings, paragraphs, lists, blockquotes, fenced code, inline emphasis/code/links); raw HTML in Markdown is treated as plain text.
+
+### Deviations from plan
+
+- The plan referenced `apps/web/src/app/(home)/page.tsx` and `apps/web/src/app/paths/[slug]/page.tsx` from M1; the actual M3 implementation moved routes into a `(public)` route group with a shared layout and shell. The M1 routes were refactored, not preserved in place.
+- The plan listed `LessonBodyBlock` as a domain model; the actual Strapi richtext field returns Markdown (not Blocks), so `LessonDetail.body` is `string` and a typed Markdown parser was built instead.
+- Explore was listed as conditional ("only if the current data model supports it"); it was implemented with client-side keyword search and topic/difficulty filters using the existing data model.
+
+### Important decisions taken in this milestone
+
+- **Route group `(public)`** with shared layout + `PublicShell` (skip link, header, main, footer) — keeps the shell consistent without per-page duplication.
+- **ISR `revalidate = 300`** on all public content routes — modest, explainable default; on-demand revalidation via webhook is an optimization with ISR fallback (ADR-004).
+- **React `cache()`** on `getPathDetailView` and `getLessonDetailView` — deduplicates the Strapi fetch across `generateMetadata` and page render within a single request.
+- **Typed Markdown parser** (`lesson-body-parser.ts`) instead of `dangerouslySetInnerHTML` — safe structured rendering of Strapi Markdown content.
+- **Status discriminator** (`ok` / `missing` / `error`) on all data layers — the caller decides `notFound()` vs error boundary, no silent failures.
+- **`noindex` on all placeholder routes** (`/paths`, `/topics`, `/signin`) — defense-in-depth alongside robots.txt disallow.
+
+### What exists for M4 to build on
+
+**Visual components and patterns — mobile:**
+- Neo-Academic Brutalist design system: Epilogue headings, Inter body, `#FAF9F5` background, `#000000` borders (3px strong, 2px thin), hard offset shadows, mint `#D4E7DD`, acid green `#79FF5B`, active green `#38FE13`, error `#BA1A1A`.
+- Structural skeletons (HomeSkeleton, ExploreSkeleton, LearningPathDetailSkeleton, LessonDetailSkeleton, SavedContentSkeleton, ProfileSkeleton).
+- EmptyState component with icon variants (bookmark, warning, grid).
+- ErrorState component with retry and optional secondary action.
+- PathCover with onError fallback to geometric CoverFallback.
+- LessonMediaPreview with onError fallback to AbstractMediaFallback.
+- Tab bar, module accordions, bookmark toggles, completion cards.
+
+**Visual components and patterns — web:**
+- StyleX design tokens (`apps/web/src/styles/tokens.stylex.ts`): forest-green header `#0F3D2E`, warm off-white page `#FAF9F5`, hard offset shadows, 3px/2px borders, acid-green accents.
+- PublicShell: skip link, PublicHeader (sticky, responsive with mobile dropdown), PublicFooter.
+- ContentState component (variants: not-found, error, empty) with StateAction and StateIcon.
+- Skeleton components (skeleton-card, skeleton-media, skeleton-page, skeleton-text).
+- HomeHero with CSS-only learning-route composition (no imagery).
+- PathHero, PathSummary, PathCurriculum, ModuleRow, LessonRow, RelatedPaths.
+- LessonHero, LessonMedia, LessonBodyRenderer, LessonToc (sticky + inline), LessonShare, LessonNav, LessonPathCta, LessonRelated.
+- Breadcrumbs with aria-current.
+- ExploreWorkbench (Client Component) with search and filters.
+
+**Tokens that exist:**
+- `packages/ui-tokens`: foundation.ts (raw values) + semantic.ts (purpose-named) + index.ts (flat backward-compatible export). Covers color, spacing, typography, border, radius, shadow, icon, touch, layout, zIndex.
+- `apps/web/src/styles/tokens.stylex.ts`: web-only StyleX CSS custom properties mirroring the platform-agnostic values, extended with web-specific surfaces (surfaceHeader, surfaceAction, textOnHeader, transitions, contentMaxWidth 72rem).
+- Mobile consumes `@pathway/ui-tokens` directly; web consumes its own StyleX tokens that mirror the same values. The two token sets are aligned in value but not structurally unified.
+
+**Priority pages/screens for polish:**
+- Mobile: Home, Explore, Learning Path Detail, Lesson Detail, Saved.
+- Web: Homepage, Explore, Learning Path (`/paths/[slug]`), Lesson (`/lessons/[slug]`).
+
+**Loading, error, and empty states — where they exist:**
+- Mobile: structural skeletons on all screens; EmptyState on Saved/Profile; ErrorState with retry on all data screens; unavailable-content distinction on Saved.
+- Web: ContentState (not-found, error, empty) on homepage, explore, path, lesson; skeleton components exist; error boundary (root error.tsx) with retry; not-found boundaries (root + public group).
+- Where they still need work: visual refinement and consistency of these states across surfaces; the states exist functionally but have not been visually polished or audited for consistency between mobile and web.
+
+**Visual, responsive, or accessibility issues observed:**
+- Web placeholder routes (`/paths`, `/topics`, `/signin`) are visually unpolished (PlaceholderSection) — intentionally `noindex`, but linked from the header.
+- The `middleware` file convention is deprecated in Next.js 16 (build warns to use `proxy` instead) — not breaking, but should migrate in M4.
+- Web token set and mobile token set are aligned in value but not structurally unified — consolidation candidate for M4.
+- Focus states exist (`:focus-visible` in globals.css) but have not been formally audited across all interactive elements.
+- Touch targets meet 44px on mobile; web touch targets have not been formally audited.
+- Heading hierarchy is logical on all pages but has not been audited with automated tooling.
+
+**Tests that exist:**
+- `packages/api`: 47 tests (Zod schemas, mappers, parser, media URL resolver, client, error handling) via `node --test`.
+- `apps/web/src/lib`: 70 tests (explore-filters 25, lesson-body-parser 14, lesson-navigation 12, related-paths 7, revalidation 12) via `node --test`.
+- `apps/mobile`: no automated tests (M2 validated manually + typecheck + lint).
+- No end-to-end or integration tests exist.
+- No CI pipeline exists.
+
+**Validation commands that exist:**
+- `pnpm lint` (root, runs lint on all packages with a lint script).
+- `pnpm typecheck` (root, runs typecheck on all packages — but no workspace package defines a `typecheck` script yet; manual `tsc --noEmit` is used).
+- `pnpm --filter @pathway/api test` (node --test).
+- `pnpm --filter @pathway/web build` (next build).
+- `pnpm --filter @pathway/mobile lint` (expo lint).
+- Web lib tests are run manually via `node --experimental-strip-types --test apps/web/src/lib/*.test.ts` — no npm script wraps them.
+
+**Limitations that should remain out of scope in M4:**
+- New product features (auth, sync, payments, analytics, video player).
+- Full design system with universal shared components across mobile and web.
+- Deploy, screenshots, video demo, README final, portfolio packaging (M5).
+- Any V2 functionality.

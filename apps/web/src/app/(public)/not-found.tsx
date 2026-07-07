@@ -1,5 +1,13 @@
+import type { Metadata } from 'next';
 import { PublicPageContainer } from '@/components/public/public-page-container';
 import { ContentState } from '@/components/public/states';
+
+/**
+ * `noindex` — 404 pages must never be indexed.
+ */
+export const metadata: Metadata = {
+  robots: { index: false, follow: true },
+};
 
 /**
  * Public not-found boundary.

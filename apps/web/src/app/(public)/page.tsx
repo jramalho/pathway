@@ -1,8 +1,10 @@
 import * as stylex from '@stylexjs/stylex';
+import type { Metadata } from 'next';
 import { tokens } from '../../styles/tokens.stylex';
 import { PublicPageContainer } from '@/components/public/public-page-container';
 import { HomeHero } from '@/components/home/home-hero';
 import { getHomepageData } from '@/lib/homepage-data';
+import { buildCanonicalUrl } from '@/lib/metadata';
 
 /**
  * Revalidation interval for the homepage.
@@ -14,6 +16,18 @@ import { getHomepageData } from '@/lib/homepage-data';
  * default for published content.
  */
 export const revalidate = 300;
+
+/**
+ * Homepage metadata — indexable with a self-referencing canonical.
+ * Title and description are inherited from the root metadata; the
+ * canonical and Open Graph URL are made explicit here.
+ */
+export const metadata: Metadata = {
+  alternates: { canonical: buildCanonicalUrl('/') },
+  openGraph: {
+    url: buildCanonicalUrl('/'),
+  },
+};
 
 /**
  * Pathway homepage — public discovery entry point.
