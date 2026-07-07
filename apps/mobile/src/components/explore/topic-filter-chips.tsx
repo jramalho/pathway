@@ -1,6 +1,7 @@
-import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 
-import { Border, Shadow, Spacing } from "@/constants/theme";
+import { FilterChip } from "@/components/ui/filter-chip";
+import { Spacing } from "@/constants/theme";
 import type { Topic } from "./explore-filters";
 
 export type TopicFilterChipsProps = {
@@ -10,9 +11,8 @@ export type TopicFilterChipsProps = {
 };
 
 /**
- * Horizontal scrollable filter chips. Inactive = mint/off-white with 2px
- * border. Active = acid green with 3px border and hard shadow. Press
- * animation shifts 3px and reduces shadow.
+ * Horizontal scrollable filter chips. Delegates to the reusable FilterChip
+ * primitive. Active chips use acid green with 3px border and a checkmark.
  */
 export function TopicFilterChips({ topics, selected, onSelect }: TopicFilterChipsProps) {
   return (
@@ -21,27 +21,15 @@ export function TopicFilterChips({ topics, selected, onSelect }: TopicFilterChip
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.container}
     >
-      {topics.map((topic) => {
-        const isActive = topic === selected;
-        return (
-          <Pressable
-            key={topic}
-            accessibilityRole="tab"
-            accessibilityState={{ selected: isActive }}
-            accessibilityLabel={`Filter by ${topic}`}
-            onPress={() => onSelect(topic)}
-            style={({ pressed }) => [
-              styles.chip,
-              isActive && styles.chipActive,
-              pressed && styles.chipPressed,
-            ]}
-          >
-            <Text style={[styles.label, isActive && styles.labelActive]}>
-              {topic}
-            </Text>
-          </Pressable>
-        );
-      })}
+      {topics.map((topic) => (
+        <FilterChip
+          key={topic}
+          label={topic}
+          active={topic === selected}
+          onPress={() => onSelect(topic)}
+          accessibilityLabel={`Filter by ${topic}`}
+        />
+      ))}
     </ScrollView>
   );
 }
@@ -51,33 +39,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: Spacing.three,
     paddingVertical: Spacing.one,
-  },
-  chip: {
-    minHeight: 36,
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.two,
-    backgroundColor: "#D4E7DD",
-    borderWidth: Border.thin,
-    borderColor: "#000000",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  chipActive: {
-    backgroundColor: "#79FF5B",
-    borderWidth: Border.primary,
-  },
-  chipPressed: {
-    transform: [{ translateX: Shadow.offsetPressed }, { translateY: Shadow.offsetPressed }],
-  },
-  label: {
-    fontFamily: "Inter",
-    fontWeight: "700",
-    fontSize: 13,
-    color: "#000000",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  labelActive: {
-    fontWeight: "800",
   },
 });

@@ -2,7 +2,8 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SymbolView } from "expo-symbols";
 
 import { ThemedText } from "@/components/themed-text";
-import { Border, Shadow, Spacing } from "@/constants/theme";
+import { Border, Shadow, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type SavedEmptyStateProps = {
   title: string;
@@ -30,7 +31,7 @@ export function SavedEmptyState({ title, description, actionLabel, onAction, ico
                 : { ios: "bookmark", android: "bookmark_border", web: "bookmark_border" }
             }
             size={32}
-            tintColor="#000000"
+            tintColor={tokens.color.black}
           />
         </View>
 
@@ -63,15 +64,15 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     transform: [{ translateX: Shadow.offset }, { translateY: Shadow.offset }],
   },
   card: {
     position: "relative",
     zIndex: 1,
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     padding: Spacing.four,
     gap: Spacing.three,
     alignItems: "flex-start",
@@ -79,30 +80,30 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 48,
     height: 48,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     alignItems: "center",
     justifyContent: "center",
   },
   title: {
-    fontFamily: "Epilogue",
+    fontFamily: Typography.headingFamily,
     fontSize: 24,
-    fontWeight: "800",
+    fontWeight: String(Typography.headingWeightBlack) as "800",
     lineHeight: 30,
-    color: "#000000",
+    color: tokens.color.black,
   },
   description: {
-    fontFamily: "Inter",
+    fontFamily: Typography.bodyFamily,
     fontSize: 15,
     lineHeight: 22,
-    fontWeight: "500",
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
   },
   button: {
     minHeight: 44,
-    backgroundColor: "#79FF5B",
+    backgroundColor: tokens.color.accentGreen,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.two,
     alignItems: "center",
@@ -112,11 +113,11 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   buttonLabel: {
-    fontFamily: "Inter",
-    fontWeight: "700",
-    fontSize: 14,
+    fontFamily: Typography.bodyFamily,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
+    fontSize: Typography.fontSizeSm,
     textTransform: "uppercase",
     letterSpacing: 0.5,
-    color: "#000000",
+    color: tokens.color.black,
   },
 });

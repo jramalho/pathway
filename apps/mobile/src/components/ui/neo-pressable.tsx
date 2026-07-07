@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, View, type ViewStyle } from "react-native";
 
 import { Border, Shadow } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 /**
  * Neo-brutalist pressable: 3px black border + hard black shadow offset
@@ -20,8 +21,8 @@ export type NeoPressableProps = React.ComponentProps<typeof Pressable> & {
 };
 
 export function NeoPressable({
-  backgroundColor = "#FAF9F5",
-  borderColor = "#000000",
+  backgroundColor = tokens.color.surface,
+  borderColor = tokens.color.black,
   shadowOffset = Shadow.offset,
   style,
   children,
@@ -44,7 +45,7 @@ export function NeoPressable({
             style={[
               styles.shadow,
               {
-                backgroundColor: "#000000",
+                backgroundColor: tokens.color.black,
                 right: -(pressed ? Shadow.offsetPressed : shadowOffset),
                 bottom: -(pressed ? Shadow.offsetPressed : shadowOffset),
               },

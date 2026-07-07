@@ -24,7 +24,8 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Screen } from "@/components/ui/screen";
 import { ThemedText } from "@/components/themed-text";
-import { Border, Spacing } from "@/constants/theme";
+import { Border, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 import { usePublishedLearningPathsQuery } from "@/hooks/use-learning-paths";
 
 const MAX_FEATURED_PATHS = 3;
@@ -253,17 +254,17 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.four,
   },
   title: {
-    fontFamily: "Epilogue",
-    fontSize: 32,
-    fontWeight: "800",
+    fontFamily: Typography.headingFamily,
+    fontSize: Typography.fontSize2xl,
+    fontWeight: String(Typography.headingWeightBlack) as "800",
     lineHeight: 38,
     textTransform: "uppercase",
     letterSpacing: 1,
-    color: "#000000",
+    color: tokens.color.black,
   },
   titleDivider: {
     height: Border.primary,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     width: "100%",
   },
   resultsHeader: {
@@ -271,17 +272,17 @@ const styles = StyleSheet.create({
     marginTop: Spacing.two,
   },
   resultsTitle: {
-    fontFamily: "Epilogue",
-    fontSize: 24,
-    fontWeight: "800",
+    fontFamily: Typography.headingFamily,
+    fontSize: Typography.fontSizeXl,
+    fontWeight: String(Typography.headingWeightBlack) as "800",
     lineHeight: 30,
     textTransform: "uppercase",
     letterSpacing: 1,
-    color: "#000000",
+    color: tokens.color.black,
   },
   resultSummary: {
-    fontFamily: "Inter",
-    fontSize: 14,
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeSm,
     lineHeight: 20,
   },
   resultsContainer: {

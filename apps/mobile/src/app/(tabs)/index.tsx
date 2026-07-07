@@ -16,7 +16,8 @@ import { ErrorState } from "@/components/ui/error-state";
 import { Screen } from "@/components/ui/screen";
 import { Tag } from "@/components/ui/tag";
 import { ThemedText } from "@/components/themed-text";
-import { Border, Spacing } from "@/constants/theme";
+import { Border, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 import { useLearningActivity } from "@/features/learning-activity/use-learning-activity";
 import { useFeaturedLearningPathsQuery } from "@/hooks/use-learning-paths";
 import { getRecentlySaved } from "@/lib/saved-content";
@@ -249,12 +250,12 @@ function RecentlySavedLessonCard({ lesson, pathTitle }: { lesson: LessonPreview;
       style={({ pressed }) => [styles.recentCard, pressed && styles.recentCardPressed]}
     >
       <View style={styles.recentCardTop}>
-        <Tag backgroundColor="#79FF5B">LESSON</Tag>
+        <Tag backgroundColor={tokens.color.accentGreen}>LESSON</Tag>
         <View style={styles.recentCardArrow} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <SymbolView
             name={{ ios: "arrow.right", android: "arrow_forward", web: "arrow_forward" }}
             size={14}
-            tintColor="#000000"
+            tintColor={tokens.color.black}
           />
         </View>
       </View>
@@ -279,12 +280,12 @@ function RecentlySavedPathCard({ path }: { path: LearningPath }) {
       style={({ pressed }) => [styles.recentCard, pressed && styles.recentCardPressed]}
     >
       <View style={styles.recentCardTop}>
-        <Tag backgroundColor="#D4E7DD">PATH</Tag>
+        <Tag backgroundColor={tokens.color.mint}>PATH</Tag>
         <View style={styles.recentCardArrow} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <SymbolView
             name={{ ios: "arrow.right", android: "arrow_forward", web: "arrow_forward" }}
             size={14}
-            tintColor="#000000"
+            tintColor={tokens.color.black}
           />
         </View>
       </View>
@@ -301,18 +302,18 @@ const styles = StyleSheet.create({
     gap: 0,
   },
   greetingLine: {
-    fontFamily: "Epilogue",
-    fontSize: 32,
-    fontWeight: "800",
+    fontFamily: Typography.headingFamily,
+    fontSize: Typography.fontSize2xl,
+    fontWeight: String(Typography.headingWeightBlack) as "800",
     lineHeight: 38,
-    color: "#000000",
+    color: tokens.color.black,
   },
   greetingName: {
-    fontFamily: "Epilogue",
-    fontSize: 32,
-    fontWeight: "800",
+    fontFamily: Typography.headingFamily,
+    fontSize: Typography.fontSize2xl,
+    fontWeight: String(Typography.headingWeightBlack) as "800",
     lineHeight: 38,
-    color: "#000000",
+    color: tokens.color.black,
   },
   section: {
     gap: Spacing.three,
@@ -331,14 +332,14 @@ const styles = StyleSheet.create({
   },
   recentlySavedSkeletonCard: {
     height: 80,
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   recentCard: {
-    backgroundColor: "#FAF9F5",
+    backgroundColor: tokens.color.surface,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     padding: Spacing.three,
     gap: Spacing.one,
   },
@@ -353,21 +354,21 @@ const styles = StyleSheet.create({
   recentCardArrow: {
     width: 28,
     height: 28,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     alignItems: "center",
     justifyContent: "center",
   },
   recentCardTitle: {
-    fontFamily: "Inter",
+    fontFamily: Typography.bodyFamily,
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: String(Typography.bodyWeightSemibold) as "600",
     lineHeight: 21,
-    color: "#000000",
+    color: tokens.color.black,
   },
   recentCardContext: {
-    fontFamily: "Inter",
+    fontFamily: Typography.bodyFamily,
     fontSize: 13,
     lineHeight: 18,
-    fontWeight: "500",
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
   },
 });

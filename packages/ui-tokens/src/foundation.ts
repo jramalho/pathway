@@ -7,23 +7,35 @@
  */
 export const foundation = {
   color: {
-    // Surfaces
+    // Surfaces — warm off-whites
     canvas: "#FAF9F5",
     raised: "#EFEEEA",
     raisedHigh: "#E9E8E4",
 
+    // Header surface — deep forest green
+    header: "#0F3D2E",
+    headerHover: "#14503B",
+
+    // Accent surfaces
+    mint: "#D4E7DD",
+    accentGreen: "#79FF5B",
+    accentGreenHover: "#5FE03D",
+    activeGreen: "#38FE13",
+
     // Text
     ink: "#1B1C1A",
     inkMuted: "#424845",
+    onHeader: "#FAF9F5",
+    onHeaderMuted: "#C9D6CF",
 
-    // Accents
+    // Borders
     black: "#000000",
-    mint: "#D4E7DD",
-    accentGreen: "#79FF5B",
-    activeGreen: "#38FE13",
 
     // Feedback
     danger: "#BA1A1A",
+    success: "#1B6B3A",
+    warning: "#8B5A1A",
+    focus: "#38FE13",
   },
   spacing: {
     s0: 0,
@@ -44,6 +56,18 @@ export const foundation = {
     bodyWeightMedium: 500,
     bodyWeightSemibold: 600,
     bodyWeightBold: 700,
+    // Numeric font sizes (px) — web converts to rem in tokens.stylex.ts
+    fontSizeXs: 12,
+    fontSizeSm: 14,
+    fontSizeMd: 16,
+    fontSizeLg: 20,
+    fontSizeXl: 24,
+    fontSize2xl: 32,
+    fontSize3xl: 40,
+    // Numeric line heights (px)
+    lineHeightTight: 1.15,
+    lineHeightNormal: 1.5,
+    lineHeightRelaxed: 1.7,
   },
   border: {
     widthStrong: 3,
@@ -51,10 +75,13 @@ export const foundation = {
   },
   radius: {
     none: 0,
+    sm: 2,
+    md: 4,
   },
   shadow: {
     offsetResting: 6,
     offsetPressed: 3,
+    offsetHeader: 4,
   },
   icon: {
     sizeSm: 16,

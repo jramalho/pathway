@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 
 import { Border, Spacing } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 /**
  * Explore skeleton — structural loading state matching the Explore layout:
@@ -52,21 +53,21 @@ const styles = StyleSheet.create({
   titleBlock: {
     height: 36,
     width: "50%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   titleDivider: {
     height: Border.primary,
     width: "100%",
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   searchBlock: {
     height: 48,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   chipsRow: {
     flexDirection: "row",
@@ -75,41 +76,41 @@ const styles = StyleSheet.create({
   chip: {
     height: 36,
     width: 80,
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   sectionHeader: {
     height: 28,
     width: "60%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   sectionDivider: {
     height: Border.primary,
     width: "100%",
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   heroCard: {
     height: 200,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   compactCard: {
     height: 100,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   lessonCard: {
     height: 70,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
 });

@@ -8,7 +8,8 @@ import { NeoButton } from "@/components/ui/neo-button";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Tag } from "@/components/ui/tag";
 import { ThemedText } from "@/components/themed-text";
-import { Border, Shadow, Spacing } from "@/constants/theme";
+import { Border, Shadow, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type ContinueLearningCardProps = {
   path: LearningPath;
@@ -45,9 +46,9 @@ export function ContinueLearningCard({ path, lesson, progressPercentage = 0, res
               <SymbolView
                 name={{ ios: "bolt.fill", android: "bolt", web: "bolt" }}
                 size={12}
-                tintColor="#000000"
+                tintColor={tokens.color.black}
               />
-              <Tag backgroundColor="#FAF9F5">START LEARNING</Tag>
+              <Tag backgroundColor={tokens.color.surface}>START LEARNING</Tag>
             </View>
           </View>
 
@@ -100,15 +101,15 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     transform: [{ translateX: Shadow.offset }, { translateY: Shadow.offset }],
   },
   card: {
     position: "relative",
     zIndex: 1,
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     overflow: "hidden",
   },
   decorBlock: {
@@ -117,11 +118,11 @@ const styles = StyleSheet.create({
     right: 0,
     width: 64,
     height: 64,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     borderLeftWidth: Border.primary,
-    borderLeftColor: "#000000",
+    borderLeftColor: tokens.color.black,
     borderBottomWidth: Border.primary,
-    borderBottomColor: "#000000",
+    borderBottomColor: tokens.color.black,
   },
   content: {
     padding: Spacing.four,
@@ -137,17 +138,17 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
   },
   pathTitle: {
-    fontFamily: "Epilogue",
+    fontFamily: Typography.headingFamily,
     fontSize: 24,
-    fontWeight: "800",
+    fontWeight: String(Typography.headingWeightBlack) as "800",
     lineHeight: 30,
-    color: "#000000",
+    color: tokens.color.black,
   },
   lessonTitle: {
-    fontFamily: "Inter",
+    fontFamily: Typography.bodyFamily,
     fontSize: 17,
     lineHeight: 24,
-    fontWeight: "500",
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
   },
   progressSection: {
     gap: Spacing.two,
@@ -158,16 +159,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   progressLabel: {
-    color: "#000000",
+    color: tokens.color.black,
   },
   progressValue: {
-    color: "#424845",
+    color: tokens.color.textSecondary,
   },
   progressSkeleton: {
     height: 16,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   cta: {
     marginTop: Spacing.one,

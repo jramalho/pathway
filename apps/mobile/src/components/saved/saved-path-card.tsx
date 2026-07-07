@@ -4,11 +4,13 @@ import { useRouter } from "expo-router";
 
 import type { LearningPath } from "@pathway/api";
 
+import { BookmarkControl } from "@/components/ui/bookmark-control";
+import { DifficultyBadge } from "@/components/ui/difficulty-badge";
 import { PathCover } from "@/components/ui/path-cover";
 import { ProgressBar } from "@/components/ui/progress-bar";
-import { Tag } from "@/components/ui/tag";
 import { ThemedText } from "@/components/themed-text";
-import { Border, Shadow, Spacing } from "@/constants/theme";
+import { Border, Shadow, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 import { getDifficultyLabel } from "@/components/path-detail/learning-path-detail-utils";
 import { flattenNavigableLessons } from "@/components/lesson-detail/lesson-detail-utils";
 
@@ -19,9 +21,9 @@ export type SavedPathCardProps = {
 };
 
 /**
- * Saved path card — mint or off-white surface, 3px black border, hard 6px
- * shadow. Cover image (or abstract fallback), tag, remove bookmark, title,
- * description, real progress, and VIEW/CONTINUE PATH button.
+ * Saved path card — mint surface, 3px black border, hard 6px shadow.
+ * Cover image (or abstract fallback), difficulty badge, remove bookmark,
+ * title, description, real progress, and VIEW/CONTINUE PATH button.
  */
 export function SavedPathCard({ path, completedLessonSlugs, onRemove }: SavedPathCardProps) {
   const router = useRouter();
@@ -50,24 +52,17 @@ export function SavedPathCard({ path, completedLessonSlugs, onRemove }: SavedPat
         <View style={styles.coverBorder} />
 
         <View style={styles.body}>
-          {/* Top row: tag + remove bookmark */}
+          {/* Top row: badge + remove bookmark */}
           <View style={styles.topRow}>
             <View style={styles.tagRow}>
-              {difficultyLabel && <Tag backgroundColor="#D4E7DD">{difficultyLabel}</Tag>}
+              {difficultyLabel && <DifficultyBadge level={path.difficulty} />}
             </View>
-            <Pressable
-              accessibilityRole="button"
+            <BookmarkControl
+              bookmarked
+              onToggle={onRemove}
               accessibilityLabel={`Remove learning path ${path.title} from saved items`}
-              hitSlop={12}
-              style={styles.bookmark}
-              onPress={onRemove}
-            >
-              <SymbolView
-                name={{ ios: "bookmark.fill", android: "bookmark", web: "bookmark" }}
-                size={22}
-                tintColor="#000000"
-              />
-            </Pressable>
+              size="sm"
+            />
           </View>
 
           {/* Content area — navigates to path */}
@@ -101,7 +96,7 @@ export function SavedPathCard({ path, completedLessonSlugs, onRemove }: SavedPat
                 <SymbolView
                   name={{ ios: "arrow.right", android: "arrow_forward", web: "arrow_forward" }}
                   size={16}
-                  tintColor="#000000"
+                  tintColor={tokens.color.black}
                 />
               </View>
             </View>
@@ -122,15 +117,15 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     transform: [{ translateX: Shadow.offset }, { translateY: Shadow.offset }],
   },
   card: {
     position: "relative",
     zIndex: 1,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     overflow: "hidden",
   },
   cover: {
@@ -139,7 +134,7 @@ const styles = StyleSheet.create({
   },
   coverBorder: {
     height: Border.primary,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   body: {
     padding: Spacing.four,
@@ -157,13 +152,6 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
     flex: 1,
   },
-  bookmark: {
-    minWidth: 44,
-    minHeight: 44,
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
-  },
   contentArea: {
     gap: Spacing.two,
   },
@@ -171,23 +159,23 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   title: {
-    fontFamily: "Epilogue",
+    fontFamily: Typography.headingFamily,
     fontSize: 24,
-    fontWeight: "700",
+    fontWeight: String(Typography.headingWeightBold) as "700",
     lineHeight: 30,
-    color: "#000000",
+    color: tokens.color.black,
   },
   description: {
-    fontFamily: "Inter",
+    fontFamily: Typography.bodyFamily,
     fontSize: 15,
     lineHeight: 22,
-    fontWeight: "500",
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
   },
   progressSection: {
     gap: Spacing.one,
   },
   progressLabel: {
-    color: "#000000",
+    color: tokens.color.black,
   },
   ctaButton: {
     flexDirection: "row",
@@ -195,20 +183,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: Spacing.two,
     minHeight: 48,
-    backgroundColor: "#79FF5B",
+    backgroundColor: tokens.color.accentGreen,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.three,
     alignSelf: "flex-start",
   },
   ctaLabel: {
-    fontFamily: "Inter",
-    fontWeight: "700",
+    fontFamily: Typography.bodyFamily,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
     fontSize: 14,
     textTransform: "uppercase",
     letterSpacing: 0.5,
-    color: "#000000",
+    color: tokens.color.black,
   },
   ctaIcon: {
     alignItems: "center",

@@ -11,7 +11,8 @@ import { UnavailableSavedContentNotice } from "@/components/saved/unavailable-no
 import { ErrorState } from "@/components/ui/error-state";
 import { Screen } from "@/components/ui/screen";
 import { ThemedText } from "@/components/themed-text";
-import { Border, Spacing } from "@/constants/theme";
+import { Border, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 import { useLearningActivity } from "@/features/learning-activity/use-learning-activity";
 import { usePublishedLearningPathsQuery } from "@/hooks/use-learning-paths";
 import { getSavedLessons, getSavedPaths } from "@/lib/saved-content";
@@ -205,39 +206,39 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.three,
   },
   title: {
-    fontFamily: "Epilogue",
-    fontSize: 32,
-    fontWeight: "800",
+    fontFamily: Typography.headingFamily,
+    fontSize: Typography.fontSize2xl,
+    fontWeight: String(Typography.headingWeightBlack) as "800",
     lineHeight: 38,
     textTransform: "uppercase",
-    color: "#000000",
+    color: tokens.color.black,
   },
   divider: {
     height: Border.primary,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     width: "100%",
   },
   description: {
-    fontFamily: "Inter",
-    fontSize: 16,
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeMd,
     lineHeight: 24,
-    fontWeight: "500",
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
   },
   content: {
     gap: Spacing.three,
     paddingTop: Spacing.three,
   },
   storageNotice: {
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     padding: Spacing.two,
     marginBottom: Spacing.two,
   },
   storageText: {
-    fontFamily: "Inter",
+    fontFamily: Typography.bodyFamily,
     fontSize: 13,
     lineHeight: 18,
-    fontWeight: "500",
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
   },
 });

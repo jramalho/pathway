@@ -18,13 +18,25 @@ export const Colors = {
     background: tokens.color.surface,
     backgroundElement: tokens.color.surfaceContainer,
     backgroundSelected: tokens.color.surfaceContainerHigh,
+    surfaceHeader: tokens.color.surfaceHeader,
+    surfaceHeaderHover: tokens.color.surfaceHeaderHover,
+    surfaceAccent: tokens.color.surfaceAccent,
+    surfaceAction: tokens.color.surfaceAction,
+    surfaceActionHover: tokens.color.surfaceActionHover,
+    surfaceActionPressed: tokens.color.activeGreen,
     text: tokens.color.text,
     textSecondary: tokens.color.textSecondary,
+    textOnHeader: tokens.color.textOnHeader,
+    textOnHeaderMuted: tokens.color.textOnHeaderMuted,
+    textOnAccent: tokens.color.textOnAccent,
     black: tokens.color.black,
     mint: tokens.color.mint,
     accentGreen: tokens.color.accentGreen,
     activeGreen: tokens.color.activeGreen,
+    accentFocus: tokens.color.accentFocus,
     error: tokens.color.error,
+    success: tokens.color.success,
+    warning: tokens.color.warning,
   },
   dark: {
     // The Neo-Academic aesthetic is a light, editorial surface. Dark mode
@@ -32,13 +44,25 @@ export const Colors = {
     background: tokens.color.surface,
     backgroundElement: tokens.color.surfaceContainer,
     backgroundSelected: tokens.color.surfaceContainerHigh,
+    surfaceHeader: tokens.color.surfaceHeader,
+    surfaceHeaderHover: tokens.color.surfaceHeaderHover,
+    surfaceAccent: tokens.color.surfaceAccent,
+    surfaceAction: tokens.color.surfaceAction,
+    surfaceActionHover: tokens.color.surfaceActionHover,
+    surfaceActionPressed: tokens.color.activeGreen,
     text: tokens.color.text,
     textSecondary: tokens.color.textSecondary,
+    textOnHeader: tokens.color.textOnHeader,
+    textOnHeaderMuted: tokens.color.textOnHeaderMuted,
+    textOnAccent: tokens.color.textOnAccent,
     black: tokens.color.black,
     mint: tokens.color.mint,
     accentGreen: tokens.color.accentGreen,
     activeGreen: tokens.color.activeGreen,
+    accentFocus: tokens.color.accentFocus,
     error: tokens.color.error,
+    success: tokens.color.success,
+    warning: tokens.color.warning,
   },
 } as const;
 
@@ -91,9 +115,43 @@ export const Border = {
   thin: tokens.border.thin,
 } as const;
 
+export const Radius = {
+  none: tokens.radius.none,
+  sm: tokens.radius.sm,
+  md: tokens.radius.md,
+} as const;
+
 export const Shadow = {
   offset: tokens.shadow.offset,
   offsetPressed: tokens.shadow.offsetPressed,
+  offsetHeader: tokens.shadow.offsetHeader,
+} as const;
+
+export const IconSize = {
+  sm: tokens.icon.sizeSm,
+  md: tokens.icon.sizeMd,
+  lg: tokens.icon.sizeLg,
+} as const;
+
+export const Typography = {
+  headingFamily: tokens.typography.heading,
+  bodyFamily: tokens.typography.body,
+  headingWeightBold: tokens.typography.headingWeightBold,
+  headingWeightBlack: tokens.typography.headingWeightBlack,
+  bodyWeightRegular: tokens.typography.bodyWeightRegular,
+  bodyWeightMedium: tokens.typography.bodyWeightMedium,
+  bodyWeightSemibold: tokens.typography.bodyWeightSemibold,
+  bodyWeightBold: tokens.typography.bodyWeightBold,
+  fontSizeXs: tokens.typography.fontSizeXs,
+  fontSizeSm: tokens.typography.fontSizeSm,
+  fontSizeMd: tokens.typography.fontSizeMd,
+  fontSizeLg: tokens.typography.fontSizeLg,
+  fontSizeXl: tokens.typography.fontSizeXl,
+  fontSize2xl: tokens.typography.fontSize2xl,
+  fontSize3xl: tokens.typography.fontSize3xl,
+  lineHeightTight: tokens.typography.lineHeightTight,
+  lineHeightNormal: tokens.typography.lineHeightNormal,
+  lineHeightRelaxed: tokens.typography.lineHeightRelaxed,
 } as const;
 
 export const Layout = {

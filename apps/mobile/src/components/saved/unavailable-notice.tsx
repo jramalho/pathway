@@ -1,7 +1,8 @@
 import { StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
-import { Spacing } from "@/constants/theme";
+import { Border, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 /**
  * Discrete notice shown when some saved slugs no longer match published
@@ -19,12 +20,15 @@ export function UnavailableSavedContentNotice({ message }: { message: string }) 
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: Spacing.two,
+    backgroundColor: tokens.color.surfaceContainer,
+    borderWidth: Border.thin,
+    borderColor: tokens.color.black,
+    padding: Spacing.two,
   },
   text: {
-    fontFamily: "Inter",
+    fontFamily: Typography.bodyFamily,
     fontSize: 13,
     lineHeight: 18,
-    fontWeight: "500",
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
   },
 });

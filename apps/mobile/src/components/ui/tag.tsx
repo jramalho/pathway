@@ -1,6 +1,7 @@
 import { StyleSheet, Text, type TextProps } from "react-native";
 
-import { Border } from "@/constants/theme";
+import { Border, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type TagProps = TextProps & {
   /** Background color. Defaults to mint. */
@@ -14,15 +15,15 @@ export type TagProps = TextProps & {
  * no rounded corners. Mint or off-white background.
  */
 export function Tag({
-  backgroundColor = "#D4E7DD",
-  color = "#000000",
+  backgroundColor = tokens.color.mint,
+  color = tokens.color.black,
   style,
   children,
   ...rest
 }: TagProps) {
   return (
     <Text
-      style={[styles.tag, { backgroundColor, color, borderWidth: Border.thin, borderColor: "#000000" }, style]}
+      style={[styles.tag, { backgroundColor, color, borderWidth: Border.thin, borderColor: tokens.color.black }, style]}
       {...rest}
     >
       {children}
@@ -32,8 +33,8 @@ export function Tag({
 
 const styles = StyleSheet.create({
   tag: {
-    fontFamily: "Inter",
-    fontWeight: "700",
+    fontFamily: Typography.bodyFamily,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
     fontSize: 11,
     lineHeight: 16,
     textTransform: "uppercase",

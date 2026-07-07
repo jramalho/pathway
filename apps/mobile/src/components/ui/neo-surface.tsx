@@ -1,6 +1,7 @@
 import { StyleSheet, View, type ViewProps } from "react-native";
 
 import { Border, Shadow } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type NeoSurfaceProps = ViewProps & {
   /** Background color. Defaults to surface container. */
@@ -19,8 +20,8 @@ export type NeoSurfaceProps = ViewProps & {
  * prominent elements. No button behaviour by default.
  */
 export function NeoSurface({
-  backgroundColor = "#EFEEEA",
-  borderColor = "#000000",
+  backgroundColor = tokens.color.surfaceContainer,
+  borderColor = tokens.color.black,
   borderWidth = Border.primary,
   withShadow = false,
   style,
@@ -33,7 +34,7 @@ export function NeoSurface({
         <View
           style={[
             styles.shadow,
-            { backgroundColor: "#000000", right: -Shadow.offset, bottom: -Shadow.offset },
+            { backgroundColor: tokens.color.black, right: -Shadow.offset, bottom: -Shadow.offset },
           ]}
         />
       )}

@@ -8,18 +8,38 @@ import { foundation as f } from "./foundation.ts";
 
 export const semantic = {
   color: {
+    // Surfaces
     surfaceCanvas: f.color.canvas,
     surfaceRaised: f.color.raised,
     surfaceMuted: f.color.raisedHigh,
+    surfaceHeader: f.color.header,
+    surfaceHeaderHover: f.color.headerHover,
+    surfaceAccent: f.color.mint,
+    surfaceAction: f.color.accentGreen,
+    surfaceActionHover: f.color.accentGreenHover,
+    surfaceActionPressed: f.color.activeGreen,
+
+    // Text
     textPrimary: f.color.ink,
     textSecondary: f.color.inkMuted,
+    textOnHeader: f.color.onHeader,
+    textOnHeaderMuted: f.color.onHeaderMuted,
+    textOnAccent: f.color.ink,
+
+    // Borders
     borderStrong: f.color.black,
-    borderThin: f.color.black,
+    borderThin: f.color.ink,
+
+    // Accents
     accentPrimary: f.color.accentGreen,
     accentSecondary: f.color.mint,
     accentActive: f.color.activeGreen,
+    accentFocus: f.color.focus,
+
+    // Feedback
     feedbackDanger: f.color.danger,
-    onAccent: f.color.black,
+    feedbackSuccess: f.color.success,
+    feedbackWarning: f.color.warning,
   },
   spacing: {
     none: f.spacing.s0,
@@ -40,6 +60,16 @@ export const semantic = {
     bodyWeightMedium: f.typography.bodyWeightMedium,
     bodyWeightSemibold: f.typography.bodyWeightSemibold,
     bodyWeightBold: f.typography.bodyWeightBold,
+    fontSizeXs: f.typography.fontSizeXs,
+    fontSizeSm: f.typography.fontSizeSm,
+    fontSizeMd: f.typography.fontSizeMd,
+    fontSizeLg: f.typography.fontSizeLg,
+    fontSizeXl: f.typography.fontSizeXl,
+    fontSize2xl: f.typography.fontSize2xl,
+    fontSize3xl: f.typography.fontSize3xl,
+    lineHeightTight: f.typography.lineHeightTight,
+    lineHeightNormal: f.typography.lineHeightNormal,
+    lineHeightRelaxed: f.typography.lineHeightRelaxed,
   },
   border: {
     widthStrong: f.border.widthStrong,
@@ -47,10 +77,13 @@ export const semantic = {
   },
   radius: {
     none: f.radius.none,
+    sm: f.radius.sm,
+    md: f.radius.md,
   },
   shadow: {
     offsetResting: f.shadow.offsetResting,
     offsetPressed: f.shadow.offsetPressed,
+    offsetHeader: f.shadow.offsetHeader,
   },
   icon: {
     sizeSm: f.icon.sizeSm,

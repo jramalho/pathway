@@ -12,6 +12,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { tokens } from '../../styles/tokens.stylex';
 import { ContentState } from '@/components/public/states';
+import { SearchInput, FilterChip } from '@/components/primitives';
 import { ExplorePathCard, ExploreLessonCard } from './explore-result-card';
 import type { ExploreData } from '@/lib/explore-data';
 import {
@@ -133,6 +134,9 @@ export function ExploreWorkbench({ data, initialFilters }: ExploreWorkbenchProps
         <SearchInput
           value={filters.q}
           onChange={(q) => updateFilters({ q })}
+          placeholder="Search lessons and learning paths"
+          aria-label="Search learning paths and lessons"
+          id="explore-search"
         />
 
         {availableTopics.length > 0 && (
@@ -291,100 +295,6 @@ function buildResultSummary(
   return summary;
 }
 
-// ---------------------------------------------------------------------------
-// SearchInput — isolated interactive control with clear button
-// ---------------------------------------------------------------------------
-
-type SearchInputProps = {
-  value: string;
-  onChange: (value: string) => void;
-};
-
-function SearchInput({ value, onChange }: SearchInputProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleClear = useCallback(() => {
-    onChange('');
-    // Return focus to the input after clearing so keyboard users stay in context.
-    inputRef.current?.focus();
-  }, [onChange]);
-
-  return (
-    <div {...stylex.props(styles.searchField)}>
-      <label htmlFor="explore-search" {...stylex.props(styles.label)}>
-        Search
-      </label>
-      <div {...stylex.props(styles.searchInputWrap)}>
-        <input
-          ref={inputRef}
-          id="explore-search"
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Search lessons and learning paths"
-          aria-label="Search learning paths and lessons"
-          autoComplete="off"
-          spellCheck={false}
-          {...stylex.props(styles.input)}
-        />
-        {value && (
-          <button
-            type="button"
-            onClick={handleClear}
-            aria-label="Clear search"
-            {...stylex.props(styles.clearBtn)}
-          >
-            <ClearIcon />
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function ClearIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M4 4l8 8M12 4l-8 8"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// FilterChip — accessible toggle chip with non-color selected indicator
-// ---------------------------------------------------------------------------
-
-type FilterChipProps = {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-};
-
-function FilterChip({ label, active, onClick }: FilterChipProps) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      {...stylex.props(styles.chip, active && styles.chipActive)}
-    >
-      {active && <span aria-hidden="true" {...stylex.props(styles.checkmark)}>✓</span>}
-      {label}
-    </button>
-  );
-}
-
 const styles = stylex.create({
   workbench: {
     display: 'flex',
@@ -404,60 +314,6 @@ const styles = stylex.create({
     borderStyle: 'solid',
     borderColor: tokens.borderStrong,
     boxShadow: tokens.shadowResting,
-  },
-  searchField: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spaceXs,
-  },
-  searchInputWrap: {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  input: {
-    width: '100%',
-    minHeight: '2.75rem',
-    paddingBlock: tokens.spaceSm,
-    paddingInline: tokens.spaceMd,
-    paddingRight: '2.5rem',
-    fontFamily: tokens.fontFamilyBody,
-    fontSize: tokens.fontSizeMd,
-    color: tokens.textPrimary,
-    backgroundColor: tokens.surfacePage,
-    borderWidth: tokens.borderWidthThin,
-    borderStyle: 'solid',
-    borderColor: tokens.borderStrong,
-    '::placeholder': {
-      color: tokens.textSecondary,
-    },
-    ':focus-visible': {
-      outline: `2px solid ${tokens.accentFocus}`,
-      outlineOffset: '2px',
-    },
-  },
-  clearBtn: {
-    position: 'absolute',
-    right: tokens.spaceSm,
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '2rem',
-    height: '2rem',
-    padding: 0,
-    border: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.textSecondary,
-    cursor: 'pointer',
-    borderRadius: tokens.radiusSm,
-    transition: tokens.transitionFast,
-    ':hover': {
-      color: tokens.textPrimary,
-    },
-    ':focus-visible': {
-      outline: `2px solid ${tokens.accentFocus}`,
-      outlineOffset: '2px',
-    },
   },
   fieldset: {
     display: 'flex',
@@ -479,45 +335,6 @@ const styles = stylex.create({
     display: 'flex',
     flexWrap: 'wrap',
     gap: tokens.spaceSm,
-  },
-  chip: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: tokens.spaceXs,
-    minHeight: '2.25rem',
-    paddingBlock: tokens.spaceXs,
-    paddingInline: tokens.spaceMd,
-    fontFamily: tokens.fontFamilyBody,
-    fontSize: tokens.fontSizeSm,
-    fontWeight: tokens.fontWeightBold,
-    color: tokens.textPrimary,
-    backgroundColor: tokens.surfacePage,
-    borderWidth: tokens.borderWidthThin,
-    borderStyle: 'solid',
-    borderColor: tokens.borderStrong,
-    cursor: 'pointer',
-    transition: tokens.transitionFast,
-    whiteSpace: 'nowrap',
-    ':hover': {
-      backgroundColor: tokens.surfaceMuted,
-    },
-    ':focus-visible': {
-      outline: `2px solid ${tokens.accentFocus}`,
-      outlineOffset: '2px',
-    },
-  },
-  chipActive: {
-    backgroundColor: tokens.surfaceAction,
-    color: tokens.textOnAccent,
-    borderColor: tokens.borderStrong,
-    ':hover': {
-      backgroundColor: tokens.surfaceActionHover,
-    },
-  },
-  checkmark: {
-    fontSize: tokens.fontSizeSm,
-    fontWeight: tokens.fontWeightBlack,
-    lineHeight: 1,
   },
   resultBar: {
     display: 'flex',

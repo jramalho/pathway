@@ -5,15 +5,11 @@ import { useRouter } from "expo-router";
 import type { LearningPath } from "@pathway/api";
 
 import { PathCover } from "@/components/ui/path-cover";
-import { Tag } from "@/components/ui/tag";
+import { DifficultyBadge } from "@/components/ui/difficulty-badge";
+import { DurationLabel } from "@/components/ui/duration-label";
 import { ThemedText } from "@/components/themed-text";
-import { Border, Spacing } from "@/constants/theme";
-
-const difficultyLabels: Record<string, string> = {
-  beginner: "Beginner",
-  intermediate: "Intermediate",
-  advanced: "Advanced",
-};
+import { Border, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type FeaturedPathCardProps = {
   path: LearningPath;
@@ -21,7 +17,7 @@ export type FeaturedPathCardProps = {
 
 /**
  * Featured path card — large card with cover image (or abstract fallback),
- * mint body, difficulty tag, title, description, and navigation arrow.
+ * mint body, difficulty badge, title, description, duration, and navigation arrow.
  * Entire card is pressable and navigates to /paths/[slug].
  */
 export function FeaturedPathCard({ path }: FeaturedPathCardProps) {
@@ -33,7 +29,7 @@ export function FeaturedPathCard({ path }: FeaturedPathCardProps) {
       accessibilityRole="button"
       accessibilityLabel={a11yLabel}
       onPress={() => router.navigate(`/paths/${path.slug}`)}
-      style={styles.pressable}
+      style={({ pressed }) => [styles.pressable, pressed && styles.pressed]}
     >
       <View style={styles.card}>
         {/* Cover image or fallback */}
@@ -49,11 +45,16 @@ export function FeaturedPathCard({ path }: FeaturedPathCardProps) {
         {/* Body */}
         <View style={styles.body}>
           <View style={styles.tagRow}>
-            <Tag backgroundColor="#FAF9F5">
-              {difficultyLabels[path.difficulty] ?? path.difficulty}
-            </Tag>
+            <DifficultyBadge level={path.difficulty} backgroundColor={tokens.color.surface} />
             {path.featured && (
-              <Tag backgroundColor="#79FF5B">★ Featured</Tag>
+              <View style={styles.featuredTag}>
+                <SymbolView
+                  name={{ ios: "star.fill", android: "star", web: "star" }}
+                  size={10}
+                  tintColor={tokens.color.black}
+                />
+                <ThemedText type="smallBold" style={styles.featuredText}>FEATURED</ThemedText>
+              </View>
             )}
           </View>
           <ThemedText style={styles.title}>{path.title}</ThemedText>
@@ -65,16 +66,15 @@ export function FeaturedPathCard({ path }: FeaturedPathCardProps) {
               <ThemedText type="small" themeColor="textSecondary">
                 {path.lessonCount} lessons
               </ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                · {path.estimatedDuration} min
-              </ThemedText>
+              <ThemedText type="small" themeColor="textSecondary"> · </ThemedText>
+              <DurationLabel minutes={path.estimatedDuration} />
             </View>
             {/* Navigation arrow */}
             <View style={styles.arrowBox} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
               <SymbolView
                 name={{ ios: "arrow.right", android: "arrow_forward", web: "arrow_forward" }}
                 size={20}
-                tintColor="#000000"
+                tintColor={tokens.color.black}
               />
             </View>
           </View>
@@ -88,10 +88,13 @@ const styles = StyleSheet.create({
   pressable: {
     width: "100%",
   },
+  pressed: {
+    opacity: 0.85,
+  },
   card: {
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     overflow: "hidden",
   },
   cover: {
@@ -100,7 +103,7 @@ const styles = StyleSheet.create({
   },
   coverBorder: {
     height: Border.primary,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   body: {
     padding: Spacing.three,
@@ -112,18 +115,35 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
     flexWrap: "wrap",
   },
+  featuredTag: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: tokens.color.accentGreen,
+    borderWidth: Border.thin,
+    borderColor: tokens.color.black,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  featuredText: {
+    fontSize: 11,
+    lineHeight: 16,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    color: tokens.color.black,
+  },
   title: {
-    fontFamily: "Epilogue",
+    fontFamily: Typography.headingFamily,
     fontSize: 20,
-    fontWeight: "800",
+    fontWeight: String(Typography.headingWeightBlack) as "800",
     lineHeight: 26,
-    color: "#000000",
+    color: tokens.color.black,
   },
   description: {
-    fontFamily: "Inter",
-    fontSize: 14,
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeSm,
     lineHeight: 20,
-    fontWeight: "500",
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
   },
   footer: {
     flexDirection: "row",
@@ -139,7 +159,7 @@ const styles = StyleSheet.create({
   arrowBox: {
     width: 36,
     height: 36,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     alignItems: "center",
     justifyContent: "center",
   },

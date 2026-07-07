@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 
 import { Border, Spacing } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 /**
  * Skeleton for the Saved screen content area — solid blocks with borders,
@@ -22,8 +23,8 @@ const styles = StyleSheet.create({
   },
   card: {
     height: 200,
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
 });

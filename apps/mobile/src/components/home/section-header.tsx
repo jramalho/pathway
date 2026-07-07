@@ -1,7 +1,8 @@
 import { StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
-import { Border, Spacing } from "@/constants/theme";
+import { Border, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type SectionHeaderProps = {
   title: string;
@@ -25,17 +26,17 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   title: {
-    fontFamily: "Epilogue",
-    fontSize: 24,
-    fontWeight: "800",
+    fontFamily: Typography.headingFamily,
+    fontSize: Typography.fontSizeLg,
+    fontWeight: String(Typography.headingWeightBlack) as "800",
     lineHeight: 30,
     textTransform: "uppercase",
     letterSpacing: 1,
-    color: "#000000",
+    color: tokens.color.black,
   },
   divider: {
     height: Border.primary,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     width: "100%",
   },
 });

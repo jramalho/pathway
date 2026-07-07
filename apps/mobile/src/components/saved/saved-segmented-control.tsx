@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { Border, Shadow, Spacing } from "@/constants/theme";
+import { Border, Shadow, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type SavedTab = "lessons" | "paths";
 
@@ -79,17 +80,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     paddingVertical: Spacing.two,
     paddingHorizontal: Spacing.three,
   },
   buttonActive: {
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   buttonInactive: {
-    backgroundColor: "#FAF9F5",
+    backgroundColor: tokens.color.surface,
     // Hard shadow on inactive tabs.
-    shadowColor: "#000000",
+    shadowColor: tokens.color.black,
     shadowOffset: { width: Shadow.offset, height: Shadow.offset },
     shadowOpacity: 1,
     shadowRadius: 0,
@@ -102,14 +103,14 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   label: {
-    fontFamily: "Inter",
-    fontWeight: "700",
-    fontSize: 14,
+    fontFamily: Typography.bodyFamily,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
+    fontSize: Typography.fontSizeSm,
     textTransform: "uppercase",
     letterSpacing: 0.5,
-    color: "#000000",
+    color: tokens.color.black,
   },
   labelActive: {
-    color: "#FAF9F5",
+    color: tokens.color.surface,
   },
 });

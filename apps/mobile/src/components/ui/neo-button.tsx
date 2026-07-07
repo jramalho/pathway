@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View, type ViewStyle } from "react-native";
 
-import { Border, Layout, Shadow } from "@/constants/theme";
+import { Border, Layout, Shadow, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type NeoButtonVariant = "primary" | "secondary" | "ghost";
 
@@ -8,12 +9,14 @@ export type NeoButtonProps = Omit<React.ComponentProps<typeof Pressable>, "style
   label: string;
   variant?: NeoButtonVariant;
   accessibilityLabel: string;
+  /** Show a loading indicator instead of the label. */
+  loading?: boolean;
   style?: ViewStyle;
 };
 
 const variantColors: Record<NeoButtonVariant, { bg: string; border: boolean; shadow: boolean }> = {
-  primary: { bg: "#79FF5B", border: true, shadow: true },
-  secondary: { bg: "#D4E7DD", border: true, shadow: true },
+  primary: { bg: tokens.color.surfaceAction, border: true, shadow: true },
+  secondary: { bg: tokens.color.surfaceAccent, border: true, shadow: true },
   ghost: { bg: "transparent", border: false, shadow: false },
 };
 
@@ -26,6 +29,7 @@ export function NeoButton({
   label,
   variant = "primary",
   accessibilityLabel,
+  loading = false,
   style,
   onPress,
   disabled,
@@ -37,14 +41,15 @@ export function NeoButton({
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
-      accessibilityState={{ disabled: !!disabled }}
+      accessibilityState={{ disabled: !!disabled || loading }}
       onPress={onPress}
-      disabled={disabled}
+      disabled={disabled || loading}
       style={({ pressed }) => [
         styles.base,
         { backgroundColor: config.bg },
-        config.border && { borderWidth: Border.primary, borderColor: "#000000" },
+        config.border && { borderWidth: Border.primary, borderColor: tokens.color.black },
         variant === "ghost" && styles.ghost,
+        (disabled || loading) && styles.disabled,
         style,
       ]}
       {...rest}
@@ -60,7 +65,11 @@ export function NeoButton({
             },
           ]}
         >
-          <Text style={styles.label}>{label}</Text>
+          {loading ? (
+            <Text style={styles.label}>···</Text>
+          ) : (
+            <Text style={styles.label}>{label}</Text>
+          )}
         </View>
       )}
     </Pressable>
@@ -82,15 +91,18 @@ const styles = StyleSheet.create({
   },
   ghost: {
     borderBottomWidth: Border.primary,
-    borderBottomColor: "#000000",
+    borderBottomColor: tokens.color.black,
     paddingHorizontal: 4,
     paddingVertical: 8,
   },
+  disabled: {
+    opacity: 0.5,
+  },
   label: {
-    fontFamily: "Inter",
-    fontWeight: "700",
-    fontSize: 14,
-    color: "#000000",
+    fontFamily: Typography.bodyFamily,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
+    fontSize: Typography.fontSizeSm,
+    color: tokens.color.black,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },

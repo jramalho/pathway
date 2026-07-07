@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 
 import { Border, Spacing } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 /**
  * Home skeleton — structural loading state that mimics the Home layout:
@@ -43,62 +44,62 @@ const styles = StyleSheet.create({
   greetingLine1: {
     height: 32,
     width: "70%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   greetingLine2: {
     height: 32,
     width: "40%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   continueCard: {
     height: 220,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   sectionHeader: {
     height: 28,
     width: "60%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   sectionDivider: {
     height: Border.primary,
     width: "100%",
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   pathCard1: {
     height: 160,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   pathCard2: {
     height: 100,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   lessonCard1: {
     height: 70,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   lessonCard2: {
     height: 70,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
 });

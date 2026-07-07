@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 
 import { Border } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type ProgressBarProps = {
   /** Progress value from 0 to 100. */
@@ -17,8 +18,8 @@ export type ProgressBarProps = {
  */
 export function ProgressBar({
   value,
-  trackColor = "#EFEEEA",
-  fillColor = "#38FE13",
+  trackColor = tokens.color.surfaceContainer,
+  fillColor = tokens.color.activeGreen,
 }: ProgressBarProps) {
   const clamped = Math.max(0, Math.min(100, value));
   return (

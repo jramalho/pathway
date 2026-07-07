@@ -45,6 +45,11 @@ export const tokens = stylex.defineVars({
   accentActive: '#38FE13',
   accentFocus: '#38FE13',
 
+  /* ── Feedback ───────────────────────────────────────────── */
+  feedbackDanger: '#BA1A1A',
+  feedbackSuccess: '#1B6B3A',
+  feedbackWarning: '#8B5A1A',
+
   /* ── Typography ────────────────────────────────────────── */
   fontFamilyHeading: 'var(--font-heading), system-ui, sans-serif',
   fontFamilyBody: 'var(--font-sans), system-ui, sans-serif',

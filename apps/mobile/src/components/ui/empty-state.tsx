@@ -4,6 +4,7 @@ import { SymbolView } from "expo-symbols";
 import { NeoButton } from "./neo-button";
 import { ThemedText } from "@/components/themed-text";
 import { Border, Spacing } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type EmptyStateIcon = "none" | "bookmark" | "warning" | "grid";
 
@@ -36,7 +37,7 @@ export function EmptyState({ title, description, actionLabel, onAction, icon = "
           <SymbolView
             name={iconNames[icon]}
             size={28}
-            tintColor="#000000"
+            tintColor={tokens.color.black}
           />
         </View>
       )}
@@ -64,9 +65,9 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 48,
     height: 48,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     alignItems: "center",
     justifyContent: "center",
   },

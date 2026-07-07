@@ -4,14 +4,11 @@ import { useRouter } from "expo-router";
 
 import type { LessonPreview } from "@pathway/api";
 
+import { DifficultyBadge } from "@/components/ui/difficulty-badge";
+import { DurationLabel } from "@/components/ui/duration-label";
 import { ThemedText } from "@/components/themed-text";
-import { Border, Spacing } from "@/constants/theme";
-
-const difficultyLabels: Record<string, string> = {
-  beginner: "Beginner",
-  intermediate: "Intermediate",
-  advanced: "Advanced",
-};
+import { Border, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type CompactLessonCardProps = {
   lesson: LessonPreview;
@@ -33,7 +30,7 @@ export function CompactLessonCard({ lesson, pathTitle }: CompactLessonCardProps)
       accessibilityRole="button"
       accessibilityLabel={a11yLabel}
       onPress={() => router.navigate(`/lessons/${lesson.slug}`)}
-      style={styles.pressable}
+      style={({ pressed }) => [styles.pressable, pressed && styles.pressed]}
     >
       <View style={styles.card}>
         {/* Icon block */}
@@ -41,7 +38,7 @@ export function CompactLessonCard({ lesson, pathTitle }: CompactLessonCardProps)
           <SymbolView
             name={{ ios: "play.fill", android: "play_arrow", web: "play_arrow" }}
             size={18}
-            tintColor="#79FF5B"
+            tintColor={tokens.color.accentGreen}
           />
         </View>
 
@@ -54,12 +51,9 @@ export function CompactLessonCard({ lesson, pathTitle }: CompactLessonCardProps)
             </ThemedText>
           )}
           <View style={styles.metaRow}>
-            <ThemedText type="small" themeColor="textSecondary">
-              {lesson.estimatedDuration} min
-            </ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              · {difficultyLabels[lesson.difficulty] ?? lesson.difficulty}
-            </ThemedText>
+            <DurationLabel minutes={lesson.estimatedDuration} />
+            <ThemedText type="small" themeColor="textSecondary"> · </ThemedText>
+            <DifficultyBadge level={lesson.difficulty} />
           </View>
         </View>
 
@@ -68,7 +62,7 @@ export function CompactLessonCard({ lesson, pathTitle }: CompactLessonCardProps)
           <SymbolView
             name={{ ios: "arrow.right", android: "arrow_forward", web: "arrow_forward" }}
             size={16}
-            tintColor="#000000"
+            tintColor={tokens.color.black}
           />
         </View>
       </View>
@@ -80,19 +74,22 @@ const styles = StyleSheet.create({
   pressable: {
     width: "100%",
   },
+  pressed: {
+    opacity: 0.85,
+  },
   card: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.three,
-    backgroundColor: "#FAF9F5",
+    backgroundColor: tokens.color.surface,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     padding: Spacing.three,
   },
   iconBlock: {
     width: 40,
     height: 40,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
@@ -102,22 +99,23 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
   },
   title: {
-    fontFamily: "Inter",
-    fontSize: 16,
-    fontWeight: "600",
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeMd,
+    fontWeight: String(Typography.bodyWeightSemibold) as "600",
     lineHeight: 22,
-    color: "#000000",
+    color: tokens.color.black,
   },
   context: {
-    fontFamily: "Inter",
+    fontFamily: Typography.bodyFamily,
     fontSize: 13,
     lineHeight: 18,
-    fontWeight: "500",
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
   },
   metaRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.one,
+    flexWrap: "wrap",
   },
   arrow: {
     flexShrink: 0,

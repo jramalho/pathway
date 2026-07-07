@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 
 import { Border, Spacing } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type LoadingStateProps = {
   /** Number of skeleton blocks to show. */
@@ -27,8 +28,8 @@ const styles = StyleSheet.create({
   },
   block: {
     height: 120,
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
 });

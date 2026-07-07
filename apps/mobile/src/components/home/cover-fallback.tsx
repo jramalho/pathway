@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 
 import { Border, Spacing } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type CoverFallbackVariant = "cover" | "thumbnail";
 
@@ -36,7 +37,7 @@ const coverStyles = StyleSheet.create({
   container: {
     flex: 1,
     position: "relative",
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     overflow: "hidden",
   },
   base: {
@@ -45,13 +46,13 @@ const coverStyles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
   },
   line: {
     position: "absolute",
     left: Spacing.four,
     height: Border.primary,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   block: {
     position: "absolute",
@@ -59,7 +60,7 @@ const coverStyles = StyleSheet.create({
     right: Spacing.four,
     width: 40,
     height: 40,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   accent: {
     position: "absolute",
@@ -67,9 +68,9 @@ const coverStyles = StyleSheet.create({
     right: Spacing.three,
     width: 24,
     height: 24,
-    backgroundColor: "#79FF5B",
+    backgroundColor: tokens.color.accentGreen,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
 });
 
@@ -77,7 +78,7 @@ const thumbnailStyles = StyleSheet.create({
   container: {
     flex: 1,
     position: "relative",
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     overflow: "hidden",
   },
   base: {
@@ -86,13 +87,13 @@ const thumbnailStyles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
   },
   line: {
     position: "absolute",
     left: Spacing.one,
     height: Border.thin,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   block: {
     position: "absolute",
@@ -100,7 +101,7 @@ const thumbnailStyles = StyleSheet.create({
     right: Spacing.one,
     width: 20,
     height: 20,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   accent: {
     position: "absolute",
@@ -108,8 +109,8 @@ const thumbnailStyles = StyleSheet.create({
     right: Spacing.one,
     width: 14,
     height: 14,
-    backgroundColor: "#79FF5B",
+    backgroundColor: tokens.color.accentGreen,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
 });

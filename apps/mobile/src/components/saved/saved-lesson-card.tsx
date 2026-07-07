@@ -4,15 +4,13 @@ import { useRouter } from "expo-router";
 
 import type { LessonPreview } from "@pathway/api";
 
+import { BookmarkControl } from "@/components/ui/bookmark-control";
+import { DifficultyBadge } from "@/components/ui/difficulty-badge";
+import { DurationLabel } from "@/components/ui/duration-label";
 import { Tag } from "@/components/ui/tag";
 import { ThemedText } from "@/components/themed-text";
-import { Border, Shadow, Spacing } from "@/constants/theme";
-
-const difficultyLabels: Record<string, string> = {
-  beginner: "Beginner",
-  intermediate: "Intermediate",
-  advanced: "Advanced",
-};
+import { Border, Shadow, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type SavedLessonCardProps = {
   lesson: LessonPreview;
@@ -30,8 +28,6 @@ export type SavedLessonCardProps = {
 export function SavedLessonCard({ lesson, pathTitle, pathSlug, isCompleted, onRemove }: SavedLessonCardProps) {
   const router = useRouter();
 
-  const tagLabel = difficultyLabels[lesson.difficulty] ?? lesson.difficulty;
-
   return (
     <View style={styles.wrapper}>
       {/* Hard shadow */}
@@ -41,25 +37,18 @@ export function SavedLessonCard({ lesson, pathTitle, pathSlug, isCompleted, onRe
         <View style={styles.stripe} />
 
         <View style={styles.body}>
-          {/* Top row: tag + remove bookmark */}
+          {/* Top row: badges + remove bookmark */}
           <View style={styles.topRow}>
             <View style={styles.tagRow}>
-              <Tag backgroundColor="#79FF5B">{tagLabel}</Tag>
-              {isCompleted && <Tag backgroundColor="#38FE13">COMPLETED</Tag>}
+              <DifficultyBadge level={lesson.difficulty} backgroundColor={tokens.color.accentGreen} />
+              {isCompleted && <Tag backgroundColor={tokens.color.activeGreen}>COMPLETED</Tag>}
             </View>
-            <Pressable
-              accessibilityRole="button"
+            <BookmarkControl
+              bookmarked
+              onToggle={onRemove}
               accessibilityLabel={`Remove lesson ${lesson.title} from saved items`}
-              hitSlop={12}
-              style={styles.bookmark}
-              onPress={onRemove}
-            >
-              <SymbolView
-                name={{ ios: "bookmark.fill", android: "bookmark", web: "bookmark" }}
-                size={22}
-                tintColor="#000000"
-              />
-            </Pressable>
+              size="sm"
+            />
           </View>
 
           {/* Content area — navigates to lesson */}
@@ -82,9 +71,7 @@ export function SavedLessonCard({ lesson, pathTitle, pathSlug, isCompleted, onRe
             {/* Footer */}
             <View style={styles.footer}>
               {lesson.estimatedDuration > 0 && (
-                <ThemedText type="small" themeColor="textSecondary">
-                  {lesson.estimatedDuration} min
-                </ThemedText>
+                <DurationLabel minutes={lesson.estimatedDuration} />
               )}
               <ThemedText type="small" themeColor="textSecondary">
                 {pathTitle}
@@ -95,7 +82,7 @@ export function SavedLessonCard({ lesson, pathTitle, pathSlug, isCompleted, onRe
                   <SymbolView
                     name={{ ios: "arrow.right", android: "arrow_forward", web: "arrow_forward" }}
                     size={14}
-                    tintColor="#000000"
+                    tintColor={tokens.color.black}
                   />
                 </View>
               </View>
@@ -117,22 +104,22 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     transform: [{ translateX: Shadow.offset }, { translateY: Shadow.offset }],
   },
   card: {
     position: "relative",
     zIndex: 1,
-    backgroundColor: "#FAF9F5",
+    backgroundColor: tokens.color.surface,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     overflow: "hidden",
   },
   stripe: {
     height: 6,
-    backgroundColor: "#79FF5B",
+    backgroundColor: tokens.color.accentGreen,
     borderBottomWidth: Border.primary,
-    borderBottomColor: "#000000",
+    borderBottomColor: tokens.color.black,
   },
   body: {
     padding: Spacing.four,
@@ -150,13 +137,6 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
     flex: 1,
   },
-  bookmark: {
-    minWidth: 44,
-    minHeight: 44,
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
-  },
   contentArea: {
     gap: Spacing.two,
   },
@@ -164,20 +144,20 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   title: {
-    fontFamily: "Epilogue",
+    fontFamily: Typography.headingFamily,
     fontSize: 24,
-    fontWeight: "700",
+    fontWeight: String(Typography.headingWeightBold) as "700",
     lineHeight: 30,
-    color: "#000000",
+    color: tokens.color.black,
     borderBottomWidth: Border.primary,
-    borderBottomColor: "#000000",
+    borderBottomColor: tokens.color.black,
     paddingBottom: Spacing.two,
   },
   summary: {
-    fontFamily: "Inter",
+    fontFamily: Typography.bodyFamily,
     fontSize: 15,
     lineHeight: 22,
-    fontWeight: "500",
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
   },
   footer: {
     flexDirection: "row",
@@ -189,20 +169,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.one,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.one,
     marginLeft: "auto",
   },
   resumeLabel: {
-    fontFamily: "Inter",
-    fontWeight: "700",
+    fontFamily: Typography.bodyFamily,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
     fontSize: 13,
     textTransform: "uppercase",
     letterSpacing: 0.5,
-    color: "#000000",
+    color: tokens.color.black,
   },
   resumeIcon: {
     alignItems: "center",
