@@ -4,7 +4,8 @@ import { useRouter } from "expo-router";
 
 import type { LessonPreview } from "@pathway/api";
 
-import { Border, Shadow, Spacing } from "@/constants/theme";
+import { Border, Shadow, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type LessonNavigationProps = {
   previousLesson: LessonPreview | null;
@@ -17,11 +18,21 @@ export type LessonNavigationProps = {
 /**
  * Keep Learning navigation — previous/next lesson buttons or
  * back-to-path / path-complete state.
+ *
+ * Navigation uses the real CMS order (previousLesson/nextLesson come from
+ * resolveLessonPosition which preserves module and lesson order). When
+ * there is no next lesson, shows a "BACK TO PATH" or "PATH COMPLETE" CTA.
  */
 export function LessonNavigation({ previousLesson, nextLesson, pathSlug, isPathComplete }: LessonNavigationProps) {
   const router = useRouter();
 
   if (!previousLesson && !nextLesson) return null;
+
+  const goToLesson = (slug: string) => {
+    // expo-router replaces the current route so the new lesson screen
+    // mounts fresh and scrolls to the top automatically.
+    router.replace(`/lessons/${slug}`);
+  };
 
   return (
     <View style={styles.container}>
@@ -29,14 +40,14 @@ export function LessonNavigation({ previousLesson, nextLesson, pathSlug, isPathC
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={`Go to previous lesson ${previousLesson.title}`}
-          onPress={() => router.navigate(`/lessons/${previousLesson.slug}`)}
+          onPress={() => goToLesson(previousLesson.slug)}
           style={({ pressed }) => [styles.prevButton, pressed && styles.buttonPressed]}
         >
           <View style={styles.prevIcon} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
             <SymbolView
               name={{ ios: "arrow.left", android: "arrow_back", web: "arrow_back" }}
               size={18}
-              tintColor="#000000"
+              tintColor={tokens.color.black}
             />
           </View>
           <View style={styles.navContent}>
@@ -50,7 +61,7 @@ export function LessonNavigation({ previousLesson, nextLesson, pathSlug, isPathC
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={`Go to next lesson ${nextLesson.title}`}
-          onPress={() => router.navigate(`/lessons/${nextLesson.slug}`)}
+          onPress={() => goToLesson(nextLesson.slug)}
           style={({ pressed }) => [styles.nextButton, pressed && styles.buttonPressed]}
         >
           <View style={styles.nextContent}>
@@ -61,7 +72,7 @@ export function LessonNavigation({ previousLesson, nextLesson, pathSlug, isPathC
             <SymbolView
               name={{ ios: "arrow.right", android: "arrow_forward", web: "arrow_forward" }}
               size={18}
-              tintColor="#000000"
+              tintColor={tokens.color.black}
             />
           </View>
         </Pressable>
@@ -73,13 +84,13 @@ export function LessonNavigation({ previousLesson, nextLesson, pathSlug, isPathC
           style={({ pressed }) => [styles.pathButton, pressed && styles.buttonPressed]}
         >
           <Text style={styles.pathLabel}>
-            {isPathComplete ? "PATH COMPLETE" : "BACK TO PATH"}
+            {isPathComplete ? "PATH COMPLETE — REVIEW" : "BACK TO PATH"}
           </Text>
           <View style={styles.pathIcon} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
             <SymbolView
               name={{ ios: "arrow.right", android: "arrow_forward", web: "arrow_forward" }}
               size={18}
-              tintColor="#000000"
+              tintColor={tokens.color.black}
             />
           </View>
         </Pressable>
@@ -89,17 +100,15 @@ export function LessonNavigation({ previousLesson, nextLesson, pathSlug, isPathC
 }
 
 const styles = StyleSheet.create({
-  container: {
-    gap: Spacing.three,
-  },
+  container: { gap: Spacing.three },
   prevButton: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.three,
     minHeight: 48,
-    backgroundColor: "#FAF9F5",
+    backgroundColor: tokens.color.surface,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.three,
   },
@@ -109,9 +118,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: Spacing.three,
     minHeight: 48,
-    backgroundColor: "#79FF5B",
+    backgroundColor: tokens.color.accentGreen,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.three,
   },
@@ -121,9 +130,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: Spacing.two,
     minHeight: 48,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.three,
   },
@@ -133,65 +142,56 @@ const styles = StyleSheet.create({
   prevIcon: {
     width: 36,
     height: 36,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
   },
-  navContent: {
-    flex: 1,
-    gap: 2,
-  },
+  navContent: { flex: 1, gap: 2 },
   navLabel: {
-    fontFamily: "Inter",
-    fontWeight: "700",
-    fontSize: 11,
-    color: "#424845",
+    fontFamily: Typography.bodyFamily,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
+    fontSize: Typography.fontSizeXs,
+    color: tokens.color.textSecondary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   navTitle: {
-    fontFamily: "Inter",
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#000000",
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeSm,
+    fontWeight: String(Typography.bodyWeightSemibold) as "600",
+    color: tokens.color.black,
   },
-  nextContent: {
-    flex: 1,
-    gap: 2,
-  },
+  nextContent: { flex: 1, gap: 2 },
   nextLabel: {
-    fontFamily: "Inter",
-    fontWeight: "800",
-    fontSize: 11,
-    color: "#000000",
+    fontFamily: Typography.bodyFamily,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
+    fontSize: Typography.fontSizeXs,
+    color: tokens.color.black,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   nextTitle: {
-    fontFamily: "Inter",
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#000000",
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeSm,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
+    color: tokens.color.black,
   },
   nextIcon: {
     width: 36,
     height: 36,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
   },
   pathLabel: {
-    fontFamily: "Inter",
-    fontWeight: "800",
-    fontSize: 14,
-    color: "#000000",
+    fontFamily: Typography.bodyFamily,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
+    fontSize: Typography.fontSizeSm,
+    color: tokens.color.black,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
-  pathIcon: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  pathIcon: { alignItems: "center", justifyContent: "center" },
 });

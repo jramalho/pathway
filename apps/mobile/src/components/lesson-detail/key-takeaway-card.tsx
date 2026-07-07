@@ -2,7 +2,8 @@ import { StyleSheet, Text, View } from "react-native";
 import { SymbolView } from "expo-symbols";
 
 import { ThemedText } from "@/components/themed-text";
-import { Border, Shadow, Spacing } from "@/constants/theme";
+import { Border, Shadow, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type KeyTakeawayCardProps = {
   takeaway: string;
@@ -10,7 +11,9 @@ export type KeyTakeawayCardProps = {
 
 /**
  * Key takeaway card — mint background, black border, hard shadow,
- * "KEY TAKEAWAY" label in a black block with green text.
+ * "KEY TAKEAWAY" label in a black block with green text. Part of the
+ * system, not a random card — uses the same border/shadow language
+ * as the rest of the detail screens.
  */
 export function KeyTakeawayCard({ takeaway }: KeyTakeawayCardProps) {
   return (
@@ -18,19 +21,17 @@ export function KeyTakeawayCard({ takeaway }: KeyTakeawayCardProps) {
       <View style={styles.shadow} />
       <View style={styles.card}>
         <View style={styles.labelBlock}>
+          <View style={styles.labelIcon} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            <SymbolView
+              name={{ ios: "bolt.fill", android: "bolt", web: "bolt" }}
+              size={14}
+              tintColor={tokens.color.accentGreen}
+            />
+          </View>
           <Text style={styles.labelText}>KEY TAKEAWAY</Text>
         </View>
         <View style={styles.content}>
-          <View style={styles.iconRow}>
-            <View style={styles.iconBox} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-              <SymbolView
-                name={{ ios: "bolt.fill", android: "bolt", web: "bolt" }}
-                size={18}
-                tintColor="#79FF5B"
-              />
-            </View>
-            <ThemedText style={styles.takeawayText}>{takeaway}</ThemedText>
-          </View>
+          <ThemedText style={styles.takeawayText}>{takeaway}</ThemedText>
         </View>
       </View>
     </View>
@@ -38,61 +39,50 @@ export function KeyTakeawayCard({ takeaway }: KeyTakeawayCardProps) {
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    position: "relative",
-  },
+  wrapper: { position: "relative" },
   shadow: {
     position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "#000000",
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: tokens.color.black,
     transform: [{ translateX: Shadow.offset }, { translateY: Shadow.offset }],
   },
   card: {
     position: "relative",
     zIndex: 1,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     overflow: "hidden",
   },
   labelBlock: {
-    backgroundColor: "#000000",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.two,
+    backgroundColor: tokens.color.black,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two,
   },
+  labelIcon: {
+    width: 24,
+    height: 24,
+    backgroundColor: tokens.color.black,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   labelText: {
-    fontFamily: "Inter",
-    fontWeight: "800",
-    fontSize: 12,
-    color: "#79FF5B",
+    fontFamily: Typography.bodyFamily,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
+    fontSize: Typography.fontSizeXs,
+    color: tokens.color.accentGreen,
     textTransform: "uppercase",
     letterSpacing: 1,
   },
-  content: {
-    padding: Spacing.four,
-  },
-  iconRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: Spacing.three,
-  },
-  iconBox: {
-    width: 36,
-    height: 36,
-    backgroundColor: "#000000",
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
-  },
+  content: { padding: Spacing.four },
   takeawayText: {
-    flex: 1,
-    fontFamily: "Inter",
-    fontSize: 17,
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeMd,
     lineHeight: 26,
-    fontWeight: "500",
-    color: "#1B1C1A",
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
+    color: tokens.color.text,
   },
 });

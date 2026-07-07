@@ -72,6 +72,12 @@ const styles = stylex.create({
       color: tokens.textOnHeader,
       borderBottomColor: tokens.accentActive,
     },
+    ':focus-visible': {
+      outlineWidth: tokens.borderWidthThin,
+      outlineStyle: 'solid',
+      outlineColor: tokens.accentFocus,
+      outlineOffset: tokens.spaceXs,
+    },
   },
   linkActive: {
     color: tokens.textOnHeader,

@@ -122,6 +122,12 @@ const styles = stylex.create({
     ':active': {
       color: tokens.accentActive,
     },
+    ':focus-visible': {
+      outlineWidth: tokens.borderWidthThin,
+      outlineStyle: 'solid',
+      outlineColor: tokens.accentFocus,
+      outlineOffset: tokens.spaceXs,
+    },
   },
   meta: {
     display: 'flex',

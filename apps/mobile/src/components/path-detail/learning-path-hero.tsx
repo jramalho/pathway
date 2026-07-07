@@ -8,50 +8,90 @@ import { PathCover } from "@/components/ui/path-cover";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Tag } from "@/components/ui/tag";
 import { ThemedText } from "@/components/themed-text";
-import { Border, Shadow, Spacing } from "@/constants/theme";
+import { Border, Shadow, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 import { getDifficultyLabel } from "./learning-path-detail-utils";
 
 export type LearningPathHeroProps = {
   path: LearningPath;
+  /** First navigable lesson (used for the "Start" CTA when no progress). */
   firstLesson: LessonPreview | null;
+  /** First incomplete lesson (the "continue" target), or null when complete. */
+  continueLesson?: LessonPreview | null;
   /** Progress percentage 0-100. Defaults to 0. */
   progressPercentage?: number;
+  /** Number of completed lessons. */
+  completedCount?: number;
+  /** Total lessons in the path. */
+  totalCount?: number;
   /** While local state is being restored from storage. */
   restoringProgress?: boolean;
 };
 
 /**
- * Learning Path hero — large card with cover image (or abstract fallback),
- * difficulty tag, title, description, metadata, progress, and CTA.
+ * Learning Path hero — cover image (or fallback), difficulty tag, title,
+ * description, metadata, progress with human language, and a contextual
+ * CTA that adapts to the learner's state:
+ *   - no progress  → "START PATH"
+ *   - in progress  → "CONTINUE LEARNING"
+ *   - complete     → "REVIEW PATH"
+ *
  * While restoringProgress is true, shows "RESTORING PROGRESS" instead
  * of a potentially misleading 0%.
  */
-export function LearningPathHero({ path, firstLesson, progressPercentage = 0, restoringProgress }: LearningPathHeroProps) {
+export function LearningPathHero({
+  path,
+  firstLesson,
+  continueLesson,
+  progressPercentage = 0,
+  completedCount = 0,
+  totalCount = 0,
+  restoringProgress,
+}: LearningPathHeroProps) {
   const router = useRouter();
   const difficultyLabel = getDifficultyLabel(path.difficulty);
 
+  // Determine CTA label and target lesson.
+  const isComplete = totalCount > 0 && completedCount >= totalCount;
+  const ctaLesson = isComplete ? firstLesson : (continueLesson ?? firstLesson);
+  const ctaLabel = restoringProgress
+    ? "RESTORING PROGRESS"
+    : isComplete
+      ? "REVIEW PATH"
+      : completedCount > 0
+        ? "CONTINUE LEARNING"
+        : "START PATH";
+  const ctaA11y = ctaLesson
+    ? `${ctaLabel} — ${ctaLesson.title}`
+    : ctaLabel;
+
+  // Human-language progress summary.
+  const progressSummary = restoringProgress || totalCount === 0
+    ? null
+    : completedCount > 0
+      ? `${completedCount} of ${totalCount} lessons completed`
+      : `${totalCount} lessons to go`;
+
   return (
     <View style={styles.wrapper}>
-      {/* Hard shadow */}
       <View style={styles.shadow} />
       <View style={styles.card}>
-        {/* Cover image or fallback */}
         <PathCover
           coverImage={path.coverImage}
           fallbackTitle={path.title}
           style={styles.cover}
           decorative
         />
-        {/* Border between image and content */}
         <View style={styles.coverBorder} />
 
-        {/* Content */}
         <View style={styles.content}>
-          {/* Tag row */}
+          {/* Tags */}
           {difficultyLabel && (
             <View style={styles.tagRow}>
-              <Tag backgroundColor="#D4E7DD">{difficultyLabel}</Tag>
-              {path.featured && <Tag backgroundColor="#79FF5B">★ Featured</Tag>}
+              <Tag backgroundColor={tokens.color.mint}>{difficultyLabel}</Tag>
+              {path.featured && (
+                <Tag backgroundColor={tokens.color.accentGreen}>★ FEATURED</Tag>
+              )}
             </View>
           )}
 
@@ -60,43 +100,17 @@ export function LearningPathHero({ path, firstLesson, progressPercentage = 0, re
 
           {/* Description */}
           {path.description ? (
-            <ThemedText themeColor="textSecondary" style={styles.description}>
+            <ThemedText themeColor="textSecondary" style={styles.description} numberOfLines={3}>
               {path.description}
             </ThemedText>
           ) : null}
 
           {/* Metadata */}
           <View style={styles.metaRow}>
-            <View style={styles.metaItem} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-              <SymbolView
-                name={{ ios: "clock", android: "schedule", web: "schedule" }}
-                size={14}
-                tintColor="#424845"
-              />
-              <ThemedText type="small" themeColor="textSecondary">
-                {path.estimatedDuration} min
-              </ThemedText>
-            </View>
-            <View style={styles.metaItem} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-              <SymbolView
-                name={{ ios: "square.stack.3d.up", android: "layers", web: "layers" }}
-                size={14}
-                tintColor="#424845"
-              />
-              <ThemedText type="small" themeColor="textSecondary">
-                {path.modules.length} modules
-              </ThemedText>
-            </View>
-            <View style={styles.metaItem} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-              <SymbolView
-                name={{ ios: "book", android: "menu_book", web: "menu_book" }}
-                size={14}
-                tintColor="#424845"
-              />
-              <ThemedText type="small" themeColor="textSecondary">
-                {path.lessonCount} lessons
-              </ThemedText>
-            </View>
+            <MetaItem icon={{ ios: "clock", android: "schedule", web: "schedule" }} text={`${path.estimatedDuration} min`} />
+            <MetaItem icon={{ ios: "square.stack.3d.up", android: "layers", web: "layers" }} text={`${path.modules.length} modules`} />
+            <MetaItem icon={{ ios: "book", android: "menu_book", web: "menu_book" }} text={`${path.lessonCount} lessons`} />
+            {path.category && <MetaItem icon={{ ios: "tag", android: "sell", web: "sell" }} text={path.category.name} />}
           </View>
 
           {/* Progress */}
@@ -106,7 +120,9 @@ export function LearningPathHero({ path, firstLesson, progressPercentage = 0, re
                 {restoringProgress ? "RESTORING PROGRESS" : "PATH PROGRESS"}
               </ThemedText>
               {!restoringProgress && (
-                <ThemedText type="small" themeColor="textSecondary" style={styles.progressValue}>{progressPercentage}%</ThemedText>
+                <ThemedText type="small" themeColor="textSecondary" style={styles.progressValue}>
+                  {progressPercentage}%
+                </ThemedText>
               )}
             </View>
             {restoringProgress ? (
@@ -114,25 +130,27 @@ export function LearningPathHero({ path, firstLesson, progressPercentage = 0, re
             ) : (
               <ProgressBar value={progressPercentage} />
             )}
+            {progressSummary && (
+              <ThemedText type="small" themeColor="textSecondary" style={styles.progressSummary}>
+                {progressSummary}
+              </ThemedText>
+            )}
           </View>
 
           {/* CTA */}
-          {firstLesson && (
+          {ctaLesson && !restoringProgress && (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={`Start learning with ${firstLesson.title}`}
-              onPress={() => router.navigate(`/lessons/${firstLesson.slug}`)}
-              style={({ pressed }) => [
-                styles.cta,
-                pressed && styles.ctaPressed,
-              ]}
+              accessibilityLabel={ctaA11y}
+              onPress={() => router.navigate(`/lessons/${ctaLesson.slug}`)}
+              style={({ pressed }) => [styles.cta, pressed && styles.ctaPressed]}
             >
-              <Text style={styles.ctaLabel}>START LEARNING</Text>
+              <Text style={styles.ctaLabel}>{ctaLabel}</Text>
               <View style={styles.ctaIcon} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
                 <SymbolView
                   name={{ ios: "arrow.right", android: "arrow_forward", web: "arrow_forward" }}
                   size={18}
-                  tintColor="#000000"
+                  tintColor={tokens.color.black}
                 />
               </View>
             </Pressable>
@@ -143,81 +161,65 @@ export function LearningPathHero({ path, firstLesson, progressPercentage = 0, re
   );
 }
 
+function MetaItem({ icon, text }: { icon: React.ComponentProps<typeof SymbolView>["name"]; text: string }) {
+  return (
+    <View style={styles.metaItem} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+      <SymbolView name={icon} size={14} tintColor={tokens.color.textSecondary} />
+      <ThemedText type="small" themeColor="textSecondary">{text}</ThemedText>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  wrapper: {
-    position: "relative",
-  },
+  wrapper: { position: "relative" },
   shadow: {
     position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "#000000",
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: tokens.color.black,
     transform: [{ translateX: Shadow.offset }, { translateY: Shadow.offset }],
   },
   card: {
     position: "relative",
     zIndex: 1,
-    backgroundColor: "#FAF9F5",
+    backgroundColor: tokens.color.surface,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     overflow: "hidden",
   },
-  cover: {
-    width: "100%",
-    height: 240,
-  },
-  coverBorder: {
-    height: Border.primary,
-    backgroundColor: "#000000",
-  },
-  content: {
-    padding: Spacing.four,
-    gap: Spacing.three,
-  },
-  tagRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.two,
-    flexWrap: "wrap",
-  },
+  cover: { width: "100%", height: 220 },
+  coverBorder: { height: Border.primary, backgroundColor: tokens.color.black },
+  content: { padding: Spacing.four, gap: Spacing.three },
+  tagRow: { flexDirection: "row", alignItems: "center", gap: Spacing.two, flexWrap: "wrap" },
   title: {
-    fontFamily: "Epilogue",
-    fontSize: 32,
-    fontWeight: "800",
+    fontFamily: Typography.headingFamily,
+    fontSize: Typography.fontSize2xl,
+    fontWeight: String(Typography.headingWeightBlack) as "800",
     lineHeight: 38,
-    color: "#000000",
+    color: tokens.color.black,
   },
   description: {
-    fontFamily: "Inter",
-    fontSize: 17,
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeMd,
     lineHeight: 24,
-    fontWeight: "500",
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
   },
-  metaRow: {
-    flexDirection: "row",
-    gap: Spacing.four,
-    flexWrap: "wrap",
+  metaRow: { flexDirection: "row", gap: Spacing.four, flexWrap: "wrap" },
+  metaItem: { flexDirection: "row", alignItems: "center", gap: Spacing.one },
+  progressSection: { gap: Spacing.two },
+  progressLabelRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  progressLabel: { color: tokens.color.black },
+  progressValue: { color: tokens.color.textSecondary },
+  progressSummary: {
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeSm,
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
+    color: tokens.color.textSecondary,
   },
-  metaItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.one,
-  },
-  progressSection: {
-    gap: Spacing.two,
-  },
-  progressLabelRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  progressLabel: {
-    color: "#000000",
-  },
-  progressValue: {
-    color: "#424845",
+  progressSkeleton: {
+    height: 16,
+    backgroundColor: tokens.color.mint,
+    borderWidth: Border.primary,
+    borderColor: tokens.color.black,
   },
   cta: {
     flexDirection: "row",
@@ -225,9 +227,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: Spacing.two,
     minHeight: 48,
-    backgroundColor: "#79FF5B",
+    backgroundColor: tokens.color.accentGreen,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.three,
   },
@@ -235,21 +237,12 @@ const styles = StyleSheet.create({
     transform: [{ translateX: Shadow.offsetPressed }, { translateY: Shadow.offsetPressed }],
   },
   ctaLabel: {
-    fontFamily: "Inter",
-    fontWeight: "800",
-    fontSize: 14,
-    color: "#000000",
+    fontFamily: Typography.bodyFamily,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
+    fontSize: Typography.fontSizeSm,
+    color: tokens.color.black,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
-  ctaIcon: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  progressSkeleton: {
-    height: 16,
-    backgroundColor: "#D4E7DD",
-    borderWidth: Border.primary,
-    borderColor: "#000000",
-  },
+  ctaIcon: { alignItems: "center", justifyContent: "center" },
 });

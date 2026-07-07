@@ -3,6 +3,10 @@ import type { Metadata } from 'next';
 import { tokens } from '../../styles/tokens.stylex';
 import { PublicPageContainer } from '@/components/public/public-page-container';
 import { HomeHero } from '@/components/home/home-hero';
+import { FeaturedPathsSection } from '@/components/home/featured-paths-section';
+import { PopularLessonsSection } from '@/components/home/popular-lessons-section';
+import { TopicsSection } from '@/components/home/topics-section';
+import { PracticalLearningSection } from '@/components/home/practical-learning-section';
 import { getHomepageData } from '@/lib/homepage-data';
 import { buildCanonicalUrl } from '@/lib/metadata';
 
@@ -33,9 +37,11 @@ export const metadata: Metadata = {
  * Pathway homepage — public discovery entry point.
  *
  * Server-rendered. Fetches homepage data at the page boundary via the
- * shared `@pathway/api` client and passes the view model to `HomeHero`.
- * The hero is always rendered; when the CMS is unavailable or empty the
- * hero retains its visual strength and CTAs without misleading stats.
+ * shared `@pathway/api` client and passes the view model to the hero
+ * and the content sections. The hero is always rendered; when the CMS
+ * is unavailable or empty the hero retains its visual strength and
+ * CTAs without misleading stats, and the content sections are omitted
+ * gracefully (each returns null when its data is empty).
  */
 export default async function HomePage() {
   const result = await getHomepageData();
@@ -44,39 +50,24 @@ export default async function HomePage() {
   return (
     <>
       <HomeHero data={data} />
-      <PublicPageContainer>
-        <div {...stylex.props(styles.transition)}>
-          <div {...stylex.props(styles.transitionLine)} aria-hidden="true" />
-          <p {...stylex.props(styles.transitionText)}>
-            More learning content is being surfaced below.
-          </p>
-          <div {...stylex.props(styles.transitionLine)} aria-hidden="true" />
-        </div>
-      </PublicPageContainer>
+      {data && (
+        <PublicPageContainer>
+          <div {...stylex.props(styles.sections)}>
+            <FeaturedPathsSection paths={data.featuredPaths} />
+            <PopularLessonsSection lessons={data.recommendedLessons} />
+            <TopicsSection topics={data.topics} />
+            <PracticalLearningSection />
+          </div>
+        </PublicPageContainer>
+      )}
     </>
   );
 }
 
 const styles = stylex.create({
-  transition: {
+  sections: {
     display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spaceLg,
-    paddingTop: tokens.space2xl,
-  },
-  transitionLine: {
-    flex: 1,
-    height: tokens.borderWidthThin,
-    backgroundColor: tokens.borderThin,
-  },
-  transitionText: {
-    margin: 0,
-    fontFamily: tokens.fontFamilyBody,
-    fontSize: tokens.fontSizeXs,
-    fontWeight: tokens.fontWeightSemibold,
-    textTransform: 'uppercase',
-    letterSpacing: '0.08em',
-    color: tokens.textSecondary,
-    whiteSpace: 'nowrap',
+    flexDirection: 'column',
+    gap: tokens.space4xl,
   },
 });

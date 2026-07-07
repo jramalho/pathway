@@ -264,6 +264,12 @@ const styles = stylex.create({
       transform: 'translate(2px, 2px)',
       boxShadow: tokens.shadowPressed,
     },
+    ':focus-visible': {
+      outlineWidth: tokens.borderWidthThin,
+      outlineStyle: 'solid',
+      outlineColor: tokens.accentFocus,
+      outlineOffset: '2px',
+    },
   },
   ctaSecondary: {
     display: 'inline-flex',
@@ -293,6 +299,12 @@ const styles = stylex.create({
       backgroundColor: tokens.surfaceMuted,
       transform: 'translate(2px, 2px)',
       boxShadow: tokens.shadowPressed,
+    },
+    ':focus-visible': {
+      outlineWidth: tokens.borderWidthThin,
+      outlineStyle: 'solid',
+      outlineColor: tokens.accentFocus,
+      outlineOffset: '2px',
     },
   },
   stats: {

@@ -1,10 +1,12 @@
 import { StyleSheet, View } from "react-native";
 
 import { Border, Spacing } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 /**
  * Lesson detail skeleton — structural loading state matching the
- * lesson detail layout: context, tags, title, summary, media, body, takeaway.
+ * lesson detail layout: context breadcrumb, tags, title, summary,
+ * media, progress, body blocks, takeaway, completion, navigation.
  */
 export function LessonDetailSkeleton() {
   return (
@@ -28,96 +30,95 @@ export function LessonDetailSkeleton() {
   );
 }
 
+const surface = tokens.color.surfaceContainer;
+const surfaceHigh = tokens.color.surfaceContainerHigh;
+const black = tokens.color.black;
+
 const styles = StyleSheet.create({
-  container: {
-    gap: Spacing.three,
-  },
+  container: { gap: Spacing.three },
   contextBlock: {
     height: 40,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: surface,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: black,
   },
-  tagsRow: {
-    flexDirection: "row",
-    gap: Spacing.two,
-  },
+  tagsRow: { flexDirection: "row", gap: Spacing.two },
   tag: {
     height: 24,
     width: 80,
-    backgroundColor: "#EFEEEA",
+    backgroundColor: surface,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: black,
   },
   titleBlock: {
     height: 36,
     width: "80%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: surface,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: black,
   },
   summaryBlock1: {
     height: 18,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: surface,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: black,
   },
   summaryBlock2: {
     height: 18,
     width: "70%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: surface,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: black,
   },
   mediaBlock: {
     aspectRatio: 16 / 9,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: surface,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: black,
   },
   progressBlock: {
     height: 60,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: surface,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: black,
   },
   bodyBlock1: {
     height: 18,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: surfaceHigh,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: black,
   },
   bodyBlock2: {
     height: 18,
     width: "90%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: surfaceHigh,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: black,
   },
   bodyBlock3: {
     height: 18,
     width: "60%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: surfaceHigh,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: black,
   },
   takeawayBlock: {
     height: 100,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: surface,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: black,
   },
   completionBlock: {
     height: 120,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: surface,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: black,
   },
 });

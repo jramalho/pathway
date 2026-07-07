@@ -17,7 +17,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { Screen } from "@/components/ui/screen";
 import { ThemedText } from "@/components/themed-text";
-import { Border, Spacing } from "@/constants/theme";
+import { Border, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 import { useLearningActivity } from "@/features/learning-activity/use-learning-activity";
 import { useLearningPathBySlugQuery } from "@/hooks/use-learning-paths";
 
@@ -121,7 +122,15 @@ export default function PathDetailScreen() {
   if (!hasLessons) {
     return (
       <DetailScreenShell bookmark={<PathDetailHeader pathTitle={path.title} pathSlug={path.slug} isSaved={isPathSaved(path.slug)} isHydrated={isHydrated} onToggleSave={() => togglePathSaved(path.slug)} />}>
-        <LearningPathHero path={path} firstLesson={firstLesson} progressPercentage={isHydrated ? (pathProgress?.percentage ?? 0) : 0} restoringProgress={!isHydrated} />
+        <LearningPathHero
+          path={path}
+          firstLesson={firstLesson}
+          continueLesson={continueLesson}
+          progressPercentage={isHydrated ? (pathProgress?.percentage ?? 0) : 0}
+          completedCount={isHydrated ? (pathProgress?.completed ?? 0) : 0}
+          totalCount={isHydrated ? (pathProgress?.total ?? 0) : 0}
+          restoringProgress={!isHydrated}
+        />
         <View style={styles.section}>
           <SectionTitle title="CURRICULUM MODULES" />
           <EmptyState
@@ -142,7 +151,15 @@ export default function PathDetailScreen() {
       <BackLink />
 
       {/* Hero */}
-      <LearningPathHero path={path} firstLesson={firstLesson} progressPercentage={isHydrated ? (pathProgress?.percentage ?? 0) : 0} restoringProgress={!isHydrated} />
+        <LearningPathHero
+          path={path}
+          firstLesson={firstLesson}
+          continueLesson={continueLesson}
+          progressPercentage={isHydrated ? (pathProgress?.percentage ?? 0) : 0}
+          completedCount={isHydrated ? (pathProgress?.completed ?? 0) : 0}
+          totalCount={isHydrated ? (pathProgress?.total ?? 0) : 0}
+          restoringProgress={!isHydrated}
+        />
 
       {/* Curriculum */}
       <View style={styles.section}>
@@ -234,7 +251,7 @@ function BackLink() {
       <SymbolView
         name={{ ios: "arrow.left", android: "arrow_back", web: "arrow_back" }}
         size={16}
-        tintColor="#000000"
+        tintColor={tokens.color.black}
       />
       <ThemedText type="smallBold" style={styles.backLinkText}>Back to learning paths</ThemedText>
     </Pressable>
@@ -253,7 +270,7 @@ function BackToExploreLink() {
       <SymbolView
         name={{ ios: "arrow.left", android: "arrow_back", web: "arrow_back" }}
         size={16}
-        tintColor="#000000"
+        tintColor={tokens.color.black}
       />
       <ThemedText type="smallBold" style={styles.backLinkText}>BACK TO EXPLORE</ThemedText>
     </Pressable>
@@ -268,17 +285,17 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   sectionTitle: {
-    fontFamily: "Epilogue",
-    fontSize: 24,
-    fontWeight: "800",
+    fontFamily: Typography.headingFamily,
+    fontSize: Typography.fontSizeXl,
+    fontWeight: String(Typography.headingWeightBlack) as "800",
     lineHeight: 30,
     textTransform: "uppercase",
     letterSpacing: 1,
-    color: "#000000",
+    color: tokens.color.black,
   },
   sectionDivider: {
     height: Border.primary,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     width: "100%",
   },
   moduleList: {
@@ -295,9 +312,9 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   backLinkText: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#000000",
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeSm,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
+    color: tokens.color.black,
   },
 });

@@ -21,7 +21,8 @@ import { ProgressBar } from "@/components/ui/progress-bar";
 import { Screen } from "@/components/ui/screen";
 import { Tag } from "@/components/ui/tag";
 import { ThemedText } from "@/components/themed-text";
-import { Border, Spacing } from "@/constants/theme";
+import { Border, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 import { useLearningActivity } from "@/features/learning-activity/use-learning-activity";
 import { useLessonBySlugQuery, usePublishedLearningPathsQuery } from "@/hooks/use-learning-paths";
 
@@ -44,9 +45,23 @@ export default function LessonDetailScreen() {
   // Load all paths to find which path this lesson belongs to
   const { data: allPaths } = usePublishedLearningPathsQuery();
 
-  // Find the parent learning path for this lesson
+  // The lesson detail payload includes a lightweight learningPath and
+  // module ref (populated by the API). Use those for the context
+  // breadcrumb. We still load all paths to resolve the full module tree
+  // for lesson position and progress calculation.
+  const lessonPathRef = lesson?.learningPath ?? null;
+  const lessonModuleRef = lesson?.module ?? null;
+
+  // Find the full parent learning path (needed for resolveLessonPosition
+  // and calculatePathProgress which require the full module tree).
+  // Prefer the ref slug; fall back to scanning all paths.
   const parentPath = useMemo(() => {
-    if (!allPaths || !lesson) return null;
+    if (!lesson) return null;
+    if (lessonPathRef && allPaths) {
+      const found = allPaths.find((p) => p.slug === lessonPathRef.slug);
+      if (found) return found;
+    }
+    if (!allPaths) return null;
     for (const path of allPaths) {
       for (const module of path.modules) {
         if (module.lessons.some((l) => l.slug === lesson.slug)) {
@@ -55,7 +70,7 @@ export default function LessonDetailScreen() {
       }
     }
     return null;
-  }, [allPaths, lesson]);
+  }, [allPaths, lesson, lessonPathRef]);
 
   // Resolve lesson position within the path
   const lessonPosition = useMemo(() => {
@@ -139,9 +154,15 @@ export default function LessonDetailScreen() {
         />
       }
     >
-      {/* 1. Context */}
-      {parentPath ? (
-        <LessonContextLink pathTitle={parentPath.title} pathSlug={parentPath.slug} />
+      {/* 1. Context breadcrumb */}
+      {lessonPathRef ? (
+        <LessonContextLink
+          pathTitle={lessonPathRef.title}
+          pathSlug={lessonPathRef.slug}
+          moduleTitle={lessonModuleRef?.title ?? null}
+        />
+      ) : parentPath ? (
+        <LessonContextLink pathTitle={parentPath.title} pathSlug={parentPath.slug} moduleTitle={lessonModuleRef?.title ?? null} />
       ) : (
         <View style={styles.neutralContext}>
           <ThemedText type="smallBold" style={styles.neutralContextLabel}>LEARNING LESSON</ThemedText>
@@ -150,12 +171,12 @@ export default function LessonDetailScreen() {
 
       {/* 2. Metadata tags */}
       <View style={styles.tagsRow}>
-        {difficultyLabel && <Tag backgroundColor="#D4E7DD">{difficultyLabel}</Tag>}
+        {difficultyLabel && <Tag backgroundColor={tokens.color.mint}>{difficultyLabel}</Tag>}
         {lesson.estimatedDuration > 0 && (
-          <Tag backgroundColor="#FAF9F5">{lesson.estimatedDuration} min</Tag>
+          <Tag backgroundColor={tokens.color.surface}>{lesson.estimatedDuration} min</Tag>
         )}
         {lesson.category && (
-          <Tag backgroundColor="#E9E8E4">{lesson.category.name}</Tag>
+          <Tag backgroundColor={tokens.color.surfaceContainerHigh}>{lesson.category.name}</Tag>
         )}
       </View>
 
@@ -230,6 +251,9 @@ export default function LessonDetailScreen() {
         onMarkComplete={() => markLessonCompleted(slug)}
         onMarkIncomplete={() => markLessonIncomplete(slug)}
         restoring={!isHydrated}
+        completesPath={isPathComplete && pathProgress ? pathProgress.completed === pathProgress.total : false}
+        pathPercentage={pathProgress?.percentage}
+        pathSlug={parentPath?.slug ?? lessonPathRef?.slug}
       />
 
       {/* 11. Navigation */}
@@ -286,15 +310,15 @@ const styles = StyleSheet.create({
   neutralContext: {
     paddingVertical: Spacing.three,
     borderBottomWidth: Border.primary,
-    borderBottomColor: "#000000",
+    borderBottomColor: tokens.color.black,
   },
   neutralContextLabel: {
-    fontFamily: "Inter",
-    fontSize: 11,
-    fontWeight: "700",
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeXs,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
     textTransform: "uppercase",
     letterSpacing: 0.5,
-    color: "#424845",
+    color: tokens.color.textSecondary,
   },
   tagsRow: {
     flexDirection: "row",
@@ -302,17 +326,17 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   title: {
-    fontFamily: "Epilogue",
-    fontSize: 32,
-    fontWeight: "800",
+    fontFamily: Typography.headingFamily,
+    fontSize: Typography.fontSize2xl,
+    fontWeight: String(Typography.headingWeightBlack) as "800",
     lineHeight: 38,
-    color: "#000000",
+    color: tokens.color.black,
   },
   summary: {
-    fontFamily: "Inter",
-    fontSize: 18,
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeLg,
     lineHeight: 26,
-    fontWeight: "500",
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
   },
   authorRow: {
     flexDirection: "row",
@@ -322,19 +346,19 @@ const styles = StyleSheet.create({
   authorAvatar: {
     width: 32,
     height: 32,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   authorName: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    fontWeight: "600",
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeSm,
+    fontWeight: String(Typography.bodyWeightSemibold) as "600",
   },
   progressCard: {
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     padding: Spacing.three,
     gap: Spacing.two,
   },
@@ -344,23 +368,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   progressLabel: {
-    color: "#000000",
+    color: tokens.color.black,
   },
   progressValue: {
-    color: "#424845",
+    color: tokens.color.textSecondary,
   },
   progressDetail: {
-    fontFamily: "Inter",
-    fontSize: 12,
-    fontWeight: "600",
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeXs,
+    fontWeight: String(Typography.bodyWeightSemibold) as "600",
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   progressSkeleton: {
     height: 16,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   navSection: {
     gap: Spacing.three,
@@ -369,17 +393,17 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   sectionTitle: {
-    fontFamily: "Epilogue",
-    fontSize: 24,
-    fontWeight: "800",
+    fontFamily: Typography.headingFamily,
+    fontSize: Typography.fontSizeXl,
+    fontWeight: String(Typography.headingWeightBlack) as "800",
     lineHeight: 30,
     textTransform: "uppercase",
     letterSpacing: 1,
-    color: "#000000",
+    color: tokens.color.black,
   },
   sectionDivider: {
     height: Border.primary,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     width: "100%",
   },
   backLink: {
@@ -390,9 +414,9 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   backLinkText: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#000000",
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeSm,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
+    color: tokens.color.black,
   },
 });

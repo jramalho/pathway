@@ -6,7 +6,8 @@ import type { LearningPathModule } from "@pathway/api";
 
 import { LessonRow } from "./lesson-row";
 import { ThemedText } from "@/components/themed-text";
-import { Border, Shadow, Spacing } from "@/constants/theme";
+import { Border, Shadow, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 import { formatModuleNumber } from "./learning-path-detail-utils";
 
 export type ModuleAccordionProps = {
@@ -24,19 +25,22 @@ export type ModuleAccordionProps = {
 
 /**
  * Module accordion — expandable card with module header and lesson rows.
- * Header is pressable to toggle expansion. Multiple modules can be open.
+ * Header shows module number, title, description, lesson count, and a
+ * completion summary when lessons are completed. Multiple modules can
+ * be open simultaneously.
  */
 export function ModuleAccordion({ module, index, startExpanded, isFirstWithLessons, completedLessonSlugs, continueHereSlug }: ModuleAccordionProps) {
   const [expanded, setExpanded] = useState(startExpanded);
-
   const toggle = useCallback(() => setExpanded((v) => !v), []);
 
   const moduleNum = formatModuleNumber(module, index);
   const a11yLabel = `${expanded ? "Collapse" : "Expand"} module ${module.title}`;
+  const lessonCount = module.lessons.length;
+  const completedCount = module.lessons.filter((l) => completedLessonSlugs?.[l.slug]).length;
+  const isModuleComplete = lessonCount > 0 && completedCount === lessonCount;
 
   return (
     <View style={styles.wrapper}>
-      {/* Hard shadow */}
       <View style={styles.shadow} />
       <View style={styles.card}>
         {/* Header */}
@@ -47,19 +51,22 @@ export function ModuleAccordion({ module, index, startExpanded, isFirstWithLesso
           onPress={toggle}
           style={({ pressed }) => [styles.header, pressed && styles.headerPressed]}
         >
-          {/* Module number block */}
           <View
-            style={[
-              styles.numberBlock,
-              isFirstWithLessons && styles.numberBlockActive,
-            ]}
+            style={[styles.numberBlock, isFirstWithLessons && styles.numberBlockActive, isModuleComplete && styles.numberBlockComplete]}
             accessibilityElementsHidden
             importantForAccessibility="no-hide-descendants"
           >
-            <ThemedText style={styles.numberText}>{moduleNum}</ThemedText>
+            {isModuleComplete ? (
+              <SymbolView
+                name={{ ios: "checkmark", android: "check", web: "check" }}
+                size={20}
+                tintColor={tokens.color.black}
+              />
+            ) : (
+              <ThemedText style={styles.numberText}>{moduleNum}</ThemedText>
+            )}
           </View>
 
-          {/* Title + description */}
           <View style={styles.headerContent}>
             <ThemedText style={styles.moduleTitle}>{module.title}</ThemedText>
             {module.description ? (
@@ -67,9 +74,21 @@ export function ModuleAccordion({ module, index, startExpanded, isFirstWithLesso
                 {module.description}
               </ThemedText>
             ) : null}
+            <View style={styles.metaRow}>
+              <ThemedText type="small" themeColor="textSecondary" style={styles.metaText}>
+                {lessonCount} {lessonCount === 1 ? "lesson" : "lessons"}
+              </ThemedText>
+              {completedCount > 0 && (
+                <>
+                  <ThemedText type="small" themeColor="textSecondary" style={styles.metaDot}>·</ThemedText>
+                  <ThemedText type="small" themeColor="textSecondary" style={styles.metaText}>
+                    {completedCount} done
+                  </ThemedText>
+                </>
+              )}
+            </View>
           </View>
 
-          {/* Chevron */}
           <View style={styles.chevron} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
             <SymbolView
               name={
@@ -78,13 +97,13 @@ export function ModuleAccordion({ module, index, startExpanded, isFirstWithLesso
                   : { ios: "chevron.down", android: "expand_more", web: "expand_more" }
               }
               size={20}
-              tintColor="#000000"
+              tintColor={tokens.color.black}
             />
           </View>
         </Pressable>
 
         {/* Lessons */}
-        {expanded && module.lessons.length > 0 && (
+        {expanded && lessonCount > 0 && (
           <View style={styles.lessonsContainer}>
             <View style={styles.lessonsBorder} />
             {module.lessons.map((lesson, lessonIndex) => (
@@ -99,8 +118,7 @@ export function ModuleAccordion({ module, index, startExpanded, isFirstWithLesso
           </View>
         )}
 
-        {/* Expanded but no lessons */}
-        {expanded && module.lessons.length === 0 && (
+        {expanded && lessonCount === 0 && (
           <View style={styles.lessonsContainer}>
             <View style={styles.lessonsBorder} />
             <View style={styles.noLessons}>
@@ -116,24 +134,19 @@ export function ModuleAccordion({ module, index, startExpanded, isFirstWithLesso
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    position: "relative",
-  },
+  wrapper: { position: "relative" },
   shadow: {
     position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "#000000",
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: tokens.color.black,
     transform: [{ translateX: Shadow.offset }, { translateY: Shadow.offset }],
   },
   card: {
     position: "relative",
     zIndex: 1,
-    backgroundColor: "#FAF9F5",
+    backgroundColor: tokens.color.surface,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   header: {
     flexDirection: "row",
@@ -142,57 +155,48 @@ const styles = StyleSheet.create({
     padding: Spacing.three,
     minHeight: 44,
   },
-  headerPressed: {
-    backgroundColor: "#EFEEEA",
-  },
+  headerPressed: { backgroundColor: tokens.color.surfaceContainer },
   numberBlock: {
     width: 44,
     height: 44,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
   },
-  numberBlockActive: {
-    backgroundColor: "#79FF5B",
-  },
+  numberBlockActive: { backgroundColor: tokens.color.accentGreen },
+  numberBlockComplete: { backgroundColor: tokens.color.activeGreen },
   numberText: {
-    fontFamily: "Epilogue",
-    fontSize: 18,
-    fontWeight: "800",
-    color: "#000000",
+    fontFamily: Typography.headingFamily,
+    fontSize: Typography.fontSizeLg,
+    fontWeight: String(Typography.headingWeightBlack) as "800",
+    color: tokens.color.black,
   },
-  headerContent: {
-    flex: 1,
-    gap: Spacing.one,
-  },
+  headerContent: { flex: 1, gap: Spacing.one },
   moduleTitle: {
-    fontFamily: "Epilogue",
-    fontSize: 18,
-    fontWeight: "700",
+    fontFamily: Typography.headingFamily,
+    fontSize: Typography.fontSizeMd,
+    fontWeight: String(Typography.headingWeightBold) as "700",
     lineHeight: 24,
-    color: "#000000",
+    color: tokens.color.black,
   },
   moduleDesc: {
-    fontFamily: "Inter",
-    fontSize: 13,
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeXs,
     lineHeight: 18,
-    fontWeight: "500",
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
   },
-  chevron: {
-    flexShrink: 0,
-    padding: Spacing.one,
+  metaRow: { flexDirection: "row", alignItems: "center", gap: Spacing.one },
+  metaText: {
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeXs,
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
   },
-  lessonsContainer: {
-    // No gap — border separates header from lessons
-  },
-  lessonsBorder: {
-    height: Border.primary,
-    backgroundColor: "#000000",
-  },
-  noLessons: {
-    padding: Spacing.three,
-  },
+  metaDot: { fontSize: Typography.fontSizeXs },
+  chevron: { flexShrink: 0, padding: Spacing.one },
+  lessonsContainer: {},
+  lessonsBorder: { height: Border.primary, backgroundColor: tokens.color.black },
+  noLessons: { padding: Spacing.three },
 });

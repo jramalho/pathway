@@ -4,6 +4,7 @@ import { SymbolView } from "expo-symbols";
 import { useRouter } from "expo-router";
 
 import { Border, Layout } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type LessonDetailHeaderProps = {
   lessonTitle: string;
@@ -52,7 +53,7 @@ export function LessonDetailHeader({ lessonTitle, isSaved, onToggleSave, pathSlu
           <SymbolView
             name={{ ios: "chevron.left", android: "arrow_back", web: "arrow_back" }}
             size={24}
-            tintColor="#000000"
+            tintColor={tokens.color.black}
           />
         </Pressable>
 
@@ -78,7 +79,7 @@ export function LessonDetailHeader({ lessonTitle, isSaved, onToggleSave, pathSlu
                 : { ios: "bookmark", android: "bookmark_border", web: "bookmark_border" }
             }
             size={24}
-            tintColor="#000000"
+            tintColor={tokens.color.black}
           />
         </Pressable>
       </View>
@@ -88,9 +89,9 @@ export function LessonDetailHeader({ lessonTitle, isSaved, onToggleSave, pathSlu
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FAF9F5",
+    backgroundColor: tokens.color.surface,
     borderBottomWidth: Border.primary,
-    borderBottomColor: "#000000",
+    borderBottomColor: tokens.color.black,
   },
   bar: {
     height: Layout.headerHeight,
@@ -118,6 +119,6 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     fontSize: 22,
     letterSpacing: 1.5,
-    color: "#000000",
+    color: tokens.color.black,
   },
 });

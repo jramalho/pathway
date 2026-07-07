@@ -167,7 +167,64 @@
     {
       "id": "M4",
       "title": "Product Polish and Engineering Signals",
-      "status": "planned"
+      "status": "active",
+      "currentPart": "4.4",
+      "parts": [
+        { "id": "4.1", "title": "Visual audit and token consolidation", "status": "done" },
+        { "id": "4.2", "title": "Mobile discovery screens polish (Home, Explore, Saved)", "status": "done" },
+        { "id": "4.3", "title": "Mobile learning flow polish (Path Detail, Lesson Detail)", "status": "done" },
+        { "id": "4.4", "title": "Web public page polish", "status": "done" },
+        { "id": "4.5", "title": "Loading, error, empty, and unavailable states hardening", "status": "planned" },
+        { "id": "4.6", "title": "Accessibility review", "status": "planned" },
+        { "id": "4.7", "title": "Meaningful automated test", "status": "planned" },
+        { "id": "4.8", "title": "CI for lint, typecheck, and tests", "status": "planned" },
+        { "id": "4.9", "title": "Final demonstration flow review", "status": "planned" }
+      ],
+      "evidence": [
+        "M4.3: Learning Path Detail hero with contextual CTA (START PATH / CONTINUE LEARNING / REVIEW PATH) and human-language progress summary",
+        "M4.3: ModuleAccordion shows lesson count, completion count, and a checkmark when the module is complete",
+        "M4.3: LessonRow uses LessonStatusIndicator (icon + text pill) so lesson state never relies on color alone",
+        "M4.3: LessonStatusIndicator component (completed/current/upcoming/default) with icon + label + background tint",
+        "M4.3: Lesson Detail uses lesson.learningPath and lesson.module refs from the API for the context breadcrumb (no longer scans all paths)",
+        "M4.3: LessonContextLink shows a compact breadcrumb: path title › module title",
+        "M4.3: LessonBodyRenderer parses Markdown into typed blocks (headings, paragraphs, lists, quotes, code, inline bold/italic/code/link) — mobile parser mirrors the web parser",
+        "M4.3: Lesson body reading layout with comfortable line-height, editorial spacing, dark code blocks, mint block quotes",
+        "M4.3: LessonCompletionCard shows inline path-completion feedback (PATH COMPLETE banner + REVIEW PATH CTA) when completing the last lesson",
+        "M4.3: LessonNavigation uses router.replace so navigating to prev/next lesson resets scroll to top",
+        "M4.3: All path-detail and lesson-detail components use @pathway/ui-tokens consistently (no hardcoded #000000/#FAF9F5/#D4E7DD)",
+        "M4.3: Skeletons updated to use tokens",
+        "M4.3: Mobile parser self-check test (8 tests) passes via node --test",
+        "M4.3: pnpm --filter @pathway/mobile exec tsc --noEmit passes",
+        "M4.3: pnpm --filter @pathway/mobile lint passes (0 errors, 0 warnings)",
+        "M4.3: pnpm --filter @pathway/api test passes (47 tests)",
+        "M4.3: pnpm --filter @pathway/web exec tsc --noEmit passes (M4.3 did not break web)",
+        "M4.3: pnpm --filter @pathway/web lint passes",
+        "M4.3: No `any` types introduced in apps/mobile/src"
+      ]
+    },
+    {
+      "id": "M4.4",
+      "title": "Web public page polish",
+      "status": "done",
+      "evidence": [
+        "M4.4: Homepage now renders real content sections below the hero: FeaturedPathsSection, PopularLessonsSection, TopicsSection, PracticalLearningSection — all driven by existing HomepageData (no new data layer)",
+        "M4.4: SectionHeader reusable component (eyebrow + title + supporting) for editorial rhythm across homepage sections",
+        "M4.4: FeaturedPathsSection reuses ExplorePathCard for visual consistency; links to real /paths/[slug]",
+        "M4.4: PopularLessonsSection renders compact lesson cards with parent path context, difficulty, duration — no fake popularity metrics",
+        "M4.4: TopicsSection renders real topic summaries derived from featured paths; each links to /explore (real discovery surface)",
+        "M4.4: PracticalLearningSection explains product positioning honestly on a forest-green surface — no corporate marketing or false career promises",
+        "M4.4: Homepage gracefully omits content sections when CMS is unavailable or empty (each section returns null on empty data); hero retains visual strength",
+        "M4.4: Focus-visible states added to all interactive elements in public shell: header wordmark, sign-in link, desktop nav links, mobile nav trigger + links, footer links, hero CTAs",
+        "M4.4: Explore, Path page, Lesson page already complete from M3 — no regression; visual consistency with mobile confirmed",
+        "M4.4: pnpm --filter @pathway/web exec tsc --noEmit passes",
+        "M4.4: pnpm --filter @pathway/web lint passes",
+        "M4.4: pnpm --filter @pathway/web build passes (21 static pages generated)",
+        "M4.4: pnpm --filter @pathway/web tests pass (70 tests)",
+        "M4.4: pnpm --filter @pathway/api test passes (47 tests)",
+        "M4.4: pnpm --filter @pathway/mobile exec tsc --noEmit passes (M4.4 did not break mobile)",
+        "M4.4: No `any` types introduced in apps/web/src",
+        "M4.4: No new dependencies added"
+      ]
     },
     {
       "id": "M5",

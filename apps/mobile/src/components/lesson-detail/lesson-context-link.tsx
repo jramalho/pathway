@@ -3,18 +3,23 @@ import { SymbolView } from "expo-symbols";
 import { useRouter } from "expo-router";
 
 import { ThemedText } from "@/components/themed-text";
-import { Border, Spacing } from "@/constants/theme";
+import { Border, Spacing, Typography } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type LessonContextLinkProps = {
   pathTitle: string;
   pathSlug: string;
+  /** Parent module title, when available. */
+  moduleTitle?: string | null;
 };
 
 /**
- * Context link — "FROM PATH" label with the learning path title.
- * Pressable, navigates to /paths/[slug].
+ * Context breadcrumb — compact "FROM PATH › MODULE" label linking back
+ * to the learning path. Shows the path title and, when available, the
+ * module title, giving the learner immediate context without consuming
+ * much vertical space.
  */
-export function LessonContextLink({ pathTitle, pathSlug }: LessonContextLinkProps) {
+export function LessonContextLink({ pathTitle, pathSlug, moduleTitle }: LessonContextLinkProps) {
   const router = useRouter();
 
   return (
@@ -27,13 +32,23 @@ export function LessonContextLink({ pathTitle, pathSlug }: LessonContextLinkProp
       <View style={styles.icon} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
         <SymbolView
           name={{ ios: "square.stack.3d.up", android: "layers", web: "layers" }}
-          size={16}
-          tintColor="#000000"
+          size={14}
+          tintColor={tokens.color.black}
         />
       </View>
       <View style={styles.textContainer}>
         <ThemedText type="smallBold" style={styles.label}>FROM PATH</ThemedText>
-        <ThemedText style={styles.pathName}>{pathTitle}</ThemedText>
+        <View style={styles.breadcrumbRow}>
+          <ThemedText style={styles.pathName} numberOfLines={1}>{pathTitle}</ThemedText>
+          {moduleTitle && (
+            <>
+              <ThemedText style={styles.separator} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">›</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary" style={styles.moduleName} numberOfLines={1}>
+                {moduleTitle}
+              </ThemedText>
+            </>
+          )}
+        </View>
       </View>
     </Pressable>
   );
@@ -46,33 +61,47 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
     paddingVertical: Spacing.three,
     borderBottomWidth: Border.primary,
-    borderBottomColor: "#000000",
+    borderBottomColor: tokens.color.black,
+    minHeight: 44,
   },
-  pressed: {
-    opacity: 0.6,
-  },
+  pressed: { opacity: 0.6 },
   icon: {
-    width: 32,
-    height: 32,
+    width: 28,
+    height: 28,
     alignItems: "center",
     justifyContent: "center",
+    flexShrink: 0,
   },
-  textContainer: {
-    flex: 1,
-    gap: 2,
-  },
+  textContainer: { flex: 1, gap: 2 },
   label: {
-    fontFamily: "Inter",
-    fontSize: 11,
-    fontWeight: "700",
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeXs,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
     textTransform: "uppercase",
     letterSpacing: 0.5,
-    color: "#424845",
+    color: tokens.color.textSecondary,
+  },
+  breadcrumbRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.one,
   },
   pathName: {
-    fontFamily: "Inter",
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#000000",
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeMd,
+    fontWeight: String(Typography.bodyWeightSemibold) as "600",
+    color: tokens.color.black,
+  },
+  separator: {
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeMd,
+    fontWeight: String(Typography.bodyWeightBold) as "700",
+    color: tokens.color.textSecondary,
+  },
+  moduleName: {
+    fontFamily: Typography.bodyFamily,
+    fontSize: Typography.fontSizeSm,
+    fontWeight: String(Typography.bodyWeightMedium) as "500",
+    flexShrink: 1,
   },
 });

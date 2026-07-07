@@ -160,6 +160,12 @@ const styles = stylex.create({
     ':active': {
       backgroundColor: tokens.surfaceHeaderHover,
     },
+    ':focus-visible': {
+      outlineWidth: tokens.borderWidthThin,
+      outlineStyle: 'solid',
+      outlineColor: tokens.accentFocus,
+      outlineOffset: tokens.spaceXs,
+    },
   },
   menu: {
     position: 'absolute',
@@ -198,6 +204,12 @@ const styles = stylex.create({
     },
     ':active': {
       backgroundColor: tokens.surfaceAccent,
+    },
+    ':focus-visible': {
+      outlineWidth: tokens.borderWidthThin,
+      outlineStyle: 'solid',
+      outlineColor: tokens.accentFocus,
+      outlineOffset: '-2px',
     },
   },
   linkActive: {
