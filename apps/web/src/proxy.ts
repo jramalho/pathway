@@ -1,11 +1,14 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
 /**
- * Middleware that exposes the request pathname to Server Components
+ * Proxy that exposes the request pathname to Server Components
  * via a custom header. The public layout reads this to determine the
  * active navigation item without making the header a Client Component.
+ *
+ * Renamed from middleware.ts per Next.js 16 deprecation
+ * (https://nextjs.org/docs/app/api-reference/file-conventions/proxy).
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-pathway-pathname', request.nextUrl.pathname);
 

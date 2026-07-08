@@ -7,7 +7,7 @@ import { PublicShell } from '@/components/public/public-shell';
  *
  * Wraps all public routes with the shared shell (skip link, header,
  * main, footer) via `PublicShell`. Reads the request pathname from
- * middleware to determine the active navigation item.
+ * the proxy (proxy.ts) to determine the active navigation item.
  */
 export default async function PublicLayout({
   children,
