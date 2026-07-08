@@ -21,7 +21,7 @@ export function SavedEmptyState({ title, description, actionLabel, onAction, ico
   return (
     <View style={styles.wrapper}>
       <View style={styles.shadow} />
-      <View style={styles.card}>
+      <View style={styles.card} accessibilityRole="summary" accessibilityLiveRegion="polite">
         {/* Icon */}
         <View style={styles.iconContainer} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <SymbolView

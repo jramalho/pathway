@@ -1,4 +1,5 @@
 import { StyleSheet, View } from "react-native";
+import { tokens } from "@pathway/ui-tokens";
 import { SymbolView } from "expo-symbols";
 
 import { ThemedText } from "@/components/themed-text";
@@ -20,7 +21,7 @@ export function LocalLearningDataNotice() {
             <SymbolView
               name={{ ios: "iphone", android: "phone_iphone", web: "phone_iphone" }}
               size={20}
-              tintColor="#000000"
+              tintColor={tokens.color.black}
             />
           </View>
           <ThemedText style={styles.heading}>LOCAL LEARNING DATA</ThemedText>
@@ -47,15 +48,15 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     transform: [{ translateX: Shadow.offset }, { translateY: Shadow.offset }],
   },
   card: {
     position: "relative",
     zIndex: 1,
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     padding: Spacing.four,
     gap: Spacing.two,
   },
@@ -67,9 +68,9 @@ const styles = StyleSheet.create({
   iconBlock: {
     width: 36,
     height: 36,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -79,14 +80,14 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     lineHeight: 24,
     textTransform: "uppercase",
-    color: "#000000",
+    color: tokens.color.black,
   },
   primaryText: {
     fontFamily: "Inter",
     fontSize: 15,
     lineHeight: 22,
     fontWeight: "500",
-    color: "#000000",
+    color: tokens.color.black,
   },
   secondaryText: {
     fontFamily: "Inter",

@@ -71,7 +71,7 @@ export function DetailHeader({
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={bookmarkLabel ?? "Toggle saved"}
-            accessibilityState={{ disabled: bookmarkDisabled }}
+            accessibilityState={{ selected: isSaved, disabled: bookmarkDisabled }}
             hitSlop={12}
             style={[styles.iconSlot, bookmarkDisabled && styles.iconDisabled]}
             onPress={onToggleBookmark}

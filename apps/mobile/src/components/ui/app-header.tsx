@@ -4,6 +4,7 @@ import { SymbolView } from "expo-symbols";
 import { useRouter } from "expo-router";
 
 import { Border, Layout } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type AppHeaderProps = {
   /** Show the menu (left) affordance. Decorative only in this stage. */
@@ -35,7 +36,7 @@ export function AppHeader({ showMenu = true, showSearch = true }: AppHeaderProps
               <SymbolView
                 name={{ ios: "line.3.horizontal", android: "menu", web: "menu" }}
                 size={24}
-                tintColor="#000000"
+                tintColor={tokens.color.black}
               />
             </View>
           )}
@@ -59,7 +60,7 @@ export function AppHeader({ showMenu = true, showSearch = true }: AppHeaderProps
               <SymbolView
                 name={{ ios: "magnifyingglass", android: "search", web: "search" }}
                 size={24}
-                tintColor="#000000"
+                tintColor={tokens.color.black}
               />
             </Pressable>
           )}
@@ -71,9 +72,9 @@ export function AppHeader({ showMenu = true, showSearch = true }: AppHeaderProps
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FAF9F5",
+    backgroundColor: tokens.color.surface,
     borderBottomWidth: Border.primary,
-    borderBottomColor: "#000000",
+    borderBottomColor: tokens.color.black,
   },
   bar: {
     height: Layout.headerHeight,
@@ -103,6 +104,6 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     fontSize: 22,
     letterSpacing: 1.5,
-    color: "#000000",
+    color: tokens.color.black,
   },
 });

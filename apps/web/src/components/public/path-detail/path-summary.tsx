@@ -186,7 +186,7 @@ const styles = stylex.create({
       backgroundColor: tokens.surfaceMuted,
       transform: 'translate(2px, 2px)',
     },
-    ':focus': {
+    ':focus-visible': {
       outlineWidth: tokens.borderWidthThin,
       outlineStyle: 'solid',
       outlineColor: tokens.accentFocus,

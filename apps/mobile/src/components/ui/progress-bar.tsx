@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   track: {
     height: 16,
     width: "100%",
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     overflow: "hidden",
   },
   fill: {

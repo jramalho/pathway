@@ -6,7 +6,7 @@
     "status": "active",
     "goal": "Portfolio proof project for a Senior React Native, Expo, React and Next.js engineer."
   },
-  "activeMilestone": "M4",
+  "activeMilestone": "M5",
   "milestones": [
     {
       "id": "M0",
@@ -167,18 +167,34 @@
     {
       "id": "M4",
       "title": "Product Polish and Engineering Signals",
-      "status": "active",
-      "currentPart": "4.4",
+      "status": "done",
+      "currentPart": "4.9",
+      "goal": "Deliver a visually coherent, refined, and reliable experience across mobile and web without expanding product scope.",
+      "acceptanceCriteria": [
+        "Green neo-brutalist visual language applied consistently across mobile and web.",
+        "Mobile and web look like the same product.",
+        "Borders, offset shadows, typography, colors, spacing, and interactive states follow intentional patterns.",
+        "No generic SaaS visual, glassmorphism, exaggerated gradients, or excess decoration.",
+        "Web lesson pages remain readable.",
+        "No out-of-scope features introduced.",
+        "Loading, error, empty, and unavailable states hardened across mobile and web.",
+        "Accessibility review completed: labels, touch targets, visible focus, keyboard navigation, heading hierarchy, contrast, icon labels.",
+        "At least one meaningful automated test guards a real behavior.",
+        "Lint, typecheck, and tests pass.",
+        "CI exists for lint/typecheck/test.",
+        "No new `any` types.",
+        "No broken imports, routes, or obvious regressions."
+      ],
       "parts": [
         { "id": "4.1", "title": "Visual audit and token consolidation", "status": "done" },
         { "id": "4.2", "title": "Mobile discovery screens polish (Home, Explore, Saved)", "status": "done" },
         { "id": "4.3", "title": "Mobile learning flow polish (Path Detail, Lesson Detail)", "status": "done" },
         { "id": "4.4", "title": "Web public page polish", "status": "done" },
-        { "id": "4.5", "title": "Loading, error, empty, and unavailable states hardening", "status": "planned" },
-        { "id": "4.6", "title": "Accessibility review", "status": "planned" },
-        { "id": "4.7", "title": "Meaningful automated test", "status": "planned" },
-        { "id": "4.8", "title": "CI for lint, typecheck, and tests", "status": "planned" },
-        { "id": "4.9", "title": "Final demonstration flow review", "status": "planned" }
+        { "id": "4.5", "title": "Loading, error, empty, and unavailable states hardening + accessibility review", "status": "done" },
+        { "id": "4.6", "title": "Accessibility review", "status": "done" },
+        { "id": "4.7", "title": "Meaningful automated test", "status": "done" },
+        { "id": "4.8", "title": "CI for lint, typecheck, and tests", "status": "done" },
+        { "id": "4.9", "title": "Final demonstration flow review", "status": "done" }
       ],
       "evidence": [
         "M4.3: Learning Path Detail hero with contextual CTA (START PATH / CONTINUE LEARNING / REVIEW PATH) and human-language progress summary",
@@ -223,7 +239,56 @@
         "M4.4: pnpm --filter @pathway/api test passes (47 tests)",
         "M4.4: pnpm --filter @pathway/mobile exec tsc --noEmit passes (M4.4 did not break mobile)",
         "M4.4: No `any` types introduced in apps/web/src",
-        "M4.4: No new dependencies added"
+        "M4.4: No new dependencies added",
+        "M4.5: ErrorState (mobile) gains accessibilityRole=alert + accessibilityLiveRegion=assertive + retryLoading prop for retry button loading state",
+        "M4.5: EmptyState (mobile) gains accessibilityRole=summary + accessibilityLiveRegion=polite",
+        "M4.5: NoResultsState (mobile) gains accessibilityRole=alert + accessibilityLiveRegion=assertive",
+        "M4.5: SavedEmptyState (mobile) gains accessibilityRole=summary + accessibilityLiveRegion=polite",
+        "M4.5: SearchInput (mobile) gains accessibilityRole=search on the wrapper View",
+        "M4.5: FilterChip (mobile) touch target raised from 36px to 44px to meet the minimum comfortably",
+        "M4.5: DetailHeader + LessonDetailHeader (mobile) bookmark accessibilityState now includes selected: isSaved so screen readers announce saved/unsaved",
+        "M4.5: All mobile screens (Home, Explore, Saved, Profile, Path Detail, Lesson Detail) pass retryLoading={isFetching} to ErrorState so retry shows loading and prevents double-tap",
+        "M4.5: All web public components converted from :focus to :focus-visible so focus rings appear only for keyboard navigation, not mouse click",
+        "M4.5: StateAction (web) gains :focus-visible outline style",
+        "M4.5: docs/decisions/accessibility-and-states.md created with standardized states table, mobile/web a11y decisions, known limitations, and manual validation checklist",
+        "M4.5: pnpm --filter @pathway/mobile lint passes (0 errors, 0 warnings)",
+        "M4.5: pnpm --filter @pathway/mobile exec tsc --noEmit passes",
+        "M4.5: pnpm --filter @pathway/web lint passes",
+        "M4.5: pnpm --filter @pathway/web exec tsc --noEmit passes",
+        "M4.5: pnpm --filter @pathway/web build passes (11 static pages generated)",
+        "M4.5: pnpm --filter @pathway/api test passes (47 tests)",
+        "M4.5: Web lib tests pass (70 tests)",
+        "M4.5: Mobile parser tests pass (8 tests)",
+        "M4.5: No `any` types introduced",
+        "M4.5: No new dependencies added",
+        "M4.7: Meaningful automated test — learning activity reducer test (13 tests) guards save/remove lesson, mark complete/incomplete, path save, full user flow, persistence payload, and hydration",
+        "M4.7: Test uses existing node:test + --experimental-strip-types stack — no Jest, Vitest, or RNTL installed",
+        "M4.7: Test is a pure-function test of the reducer — no mocks needed, no React rendering, no AsyncStorage, no Strapi",
+        "M4.7: Test uses real product slugs (optimizing-long-lists-with-flashlist, react-native-performance) for readability",
+        "M4.7: apps/mobile/package.json gains test script: node --experimental-strip-types --test src/lib/lesson-body-parser.test.ts src/features/learning-activity/learning-activity.test.ts",
+        "M4.7: Root package.json gains test script: pnpm --filter @pathway/api test && pnpm --filter @pathway/mobile test",
+        "M4.7: Root package.json gains typecheck script normalization — pnpm -r typecheck now works (typecheck scripts added to mobile, web, cms)",
+        "M4.7: pnpm --filter @pathway/mobile test passes (21 tests: 8 parser + 13 reducer)",
+        "M4.7: pnpm test passes (47 API + 21 mobile = 68 tests total)",
+        "M4.7: No `any` types, no new dependencies, no eslint-disable",
+        "M4.8: .github/workflows/quality.yml created — runs on pull_request and push to main",
+        "M4.8: Workflow uses actions/checkout@v4, actions/setup-node@v4 (Node 22 LTS), corepack enable, pnpm/action-setup@v4 (pnpm 11.8.0)",
+        "M4.8: Workflow runs pnpm install --frozen-lockfile, pnpm lint, pnpm typecheck, pnpm test",
+        "M4.8: No secrets, no Strapi, no database, no Expo account, no continue-on-error",
+        "M4.8: docs/decisions/testing-and-ci.md created with chosen flow, coverage, mock strategy, local commands, CI validation, and known limitations",
+        "M4.8: pnpm install --frozen-lockfile passes locally",
+        "M4.8: pnpm lint passes (mobile + web)",
+        "M4.8: pnpm typecheck passes (api + cms + mobile + web)",
+        "M4.8: pnpm test passes (68 tests total)",
+        "M4.9: Token consolidation completed for profile components (learning-overview-grid, active-path-card, completed-path-card, completed-lesson-row, profile-avatar, profile-hero, profile-skeleton, local-learning-data-notice) and UI base (app-header, tab-bar, screen, progress-bar, themed-text) — no hardcoded #000000/#FAF9F5/#EFEEEA/#D4E7DD/#79FF5B/#38FE13/#424845 remaining in mobile source (except documented #0F1F18 code-block surface)",
+        "M4.9: LessonContextLink pathName gains flexShrink: 1 to prevent overflow with long path titles",
+        "M4.9: LessonBodyRenderer mobile article container no longer uses accessibilityRole=summary (not a collapsible summary)",
+        "M4.9: docs/milestones/milestone-4-review.md created with completed work, verified flows, quality checks, known limitations, and M5 readiness checklist",
+        "M4.9: pnpm lint passes (mobile + web)",
+        "M4.9: pnpm typecheck passes (api + cms + mobile + web)",
+        "M4.9: pnpm test passes (68 tests)",
+        "M4.9: pnpm --filter @pathway/web build passes (11 static pages)",
+        "M4.9: No new features, no new dependencies, no redesign"
       ]
     },
     {
@@ -232,6 +297,48 @@
       "status": "planned"
     }
   ],
+  "surfaceAudit": {
+    "visualPolish": {
+      "status": "done",
+      "summary": "Green neo-brutalist visual language applied consistently across mobile and web. Shared @pathway/ui-tokens (foundation + semantic + flat export). Web StyleX tokens mirror the same values. No hardcoded colors in mobile source except documented #0F1F18 code-block surface. Web has editorial-specific colors in lesson-body-renderer (code blocks, blockquotes) — intentional, not token drift.",
+      "tokensConsolidated": true,
+      "reusablePrimitives": [
+        "Mobile: NeoButton, BookmarkControl, FilterChip, CardShell, EmptyState, ErrorState, PathCover, LessonMediaPreview, Screen, TabBar, ProgressBar, Tag, DifficultyBadge, DurationLabel, SkeletonCard, LoadingState, SearchInput",
+        "Web: PrimaryButton, SecondaryButton, GhostButton, BookmarkControl, FilterChip, CardShell, EmptyState, ErrorState, DifficultyBadge, DurationLabel, ProgressBar, SearchInput, SkeletonCard, SkeletonPage, SkeletonText, SkeletonMedia, ContentState, StateIcon, StateAction"
+      ]
+    },
+    "accessibility": {
+      "status": "done",
+      "summary": "Practical accessibility review completed. Mobile: accessibilityRole on all interactive elements, accessibilityLabel on cards/bookmarks/completion/navigation, accessibilityState (selected/disabled/expanded), 44px touch targets with hitSlop, decorative icons hidden, hydration disables controls. Web: semantic HTML (header/nav/main/section/article/aside/footer), one h1 per page, :focus-visible on all interactive elements, skip link, aria-pressed on filter chips, aria-label on search/share/controls, role=alert/status on state containers, prefers-reduced-motion respected.",
+      "knownLimitations": [
+        "Mobile lesson body external links render as styled text (expo-web-browser wiring deferred)",
+        "Web ToC has no scroll-spy active-heading tracking",
+        "No automated a11y testing (axe) wired — validation is manual",
+        "Dark mode intentionally not supported in V1",
+        "Mobile landscape not explicitly tested"
+      ]
+    },
+    "tests": {
+      "status": "done",
+      "summary": "68 tests pass: 47 API (Zod schemas, mappers, media URL resolver) + 21 mobile (8 lesson-body-parser + 13 learning-activity reducer). Web has 70 lib tests (explore-filters, lesson-body-parser, lesson-navigation, related-paths, revalidation) not counted in pnpm test. All tests use node:test + --experimental-strip-types, no Jest/Vitest/RNTL.",
+      "meaningfulTest": "learning-activity reducer test (13 tests) guards save/remove lesson, mark complete/incomplete, path save, full user flow, persistence payload, hydration — pure-function test, no mocks needed",
+      "knownLimitations": [
+        "No E2E coverage (no Playwright/Cypress/Detox)",
+        "No React component tests (no RNTL)",
+        "No Strapi integration test (fixtures, not running Strapi)",
+        "No coverage analysis (node:test does not emit coverage)"
+      ]
+    },
+    "ci": {
+      "status": "done",
+      "summary": ".github/workflows/quality.yml runs on pull_request and push to main. Node 22 LTS, pnpm 11.8.0, frozen lockfile, pnpm lint, pnpm typecheck, pnpm test. No secrets, no Strapi, no database, no Expo account, no continue-on-error.",
+      "knownLimitations": [
+        "CMS has no lint script (Strapi does not ship a linter by default)",
+        "No web build in CI (build is local-only, not gated by CI)",
+        "No mobile build/EAS in CI"
+      ]
+    }
+  },
   "nodes": [
     {
       "id": "surface.cms",
@@ -257,7 +364,7 @@
         "local-saved-items",
         "local-progress"
       ],
-      "status": "m2-core-journey-ready"
+      "status": "m4-polished"
     },
     {
       "id": "surface.web",
@@ -270,7 +377,7 @@
         "shareable-routes",
         "long-form-reading"
       ],
-      "status": "m3-public-web-ready"
+      "status": "m4-polished"
     },
     {
       "id": "package.api",
@@ -326,19 +433,17 @@
     }
   ],
   "nextTask": {
-    "id": "M4-design-foundations-audit",
-    "summary": "Audit and consolidate the shared visual foundation across mobile and web, then implement the smallest set of reusable primitives needed to make the primary flows visually coherent and production-minded.",
-    "dependsOn": [
-      "M3"
-    ],
+    "id": "M5-release-readiness-audit",
+    "summary": "Audit deployment readiness, identify the smallest reliable demo path for web, CMS and mobile, and prepare final portfolio assets without changing product scope.",
+    "dependsOn": ["M4"],
     "blocks": [
-      "M4-token-consolidation",
-      "M4-mobile-visual-polish",
-      "M4-web-visual-polish",
-      "M4-product-states",
-      "M4-accessibility-review",
-      "M4-meaningful-test",
-      "M4-ci-validation"
+      "M5-web-deployment",
+      "M5-cms-demo-path",
+      "M5-expo-preview-build",
+      "M5-readme-finalization",
+      "M5-screenshots",
+      "M5-demo-video",
+      "M5-portfolio-packaging"
     ]
   }
 }

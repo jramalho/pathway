@@ -1,6 +1,7 @@
 import { Platform, StyleSheet, Text, type TextProps } from "react-native";
 
 import { Fonts, ThemeColor } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 import { useTheme } from "@/hooks/use-theme";
 
 export type ThemedTextProps = TextProps & {
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     fontFamily: bodyFont,
     lineHeight: 30,
     fontSize: 14,
-    color: "#000000",
+    color: tokens.color.black,
   },
   code: {
     fontFamily: Fonts?.mono ?? "monospace",

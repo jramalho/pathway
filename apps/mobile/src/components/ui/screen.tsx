@@ -2,6 +2,7 @@ import { ScrollView, StyleSheet, View, type ViewProps } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BottomTabInset, Layout, Spacing } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type ScreenProps = ViewProps & {
   /** Wrap content in a ScrollView (default true). */
@@ -72,14 +73,14 @@ export function Screen({
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#FAF9F5",
+    backgroundColor: tokens.color.surface,
   maxWidth: Layout.maxContentWidth,
-    width: "100%",
-    alignSelf: "center",
+  width: "100%",
+  alignSelf: "center",
   },
   container: {
     flex: 1,
-    backgroundColor: "#FAF9F5",
+    backgroundColor: tokens.color.surface,
   maxWidth: Layout.maxContentWidth,
     width: "100%",
     alignSelf: "center",

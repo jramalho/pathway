@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizeMd,
     fontWeight: String(Typography.bodyWeightSemibold) as "600",
     color: tokens.color.black,
+    flexShrink: 1,
   },
   separator: {
     fontFamily: Typography.bodyFamily,

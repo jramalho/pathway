@@ -37,7 +37,7 @@ const MAX_LESSONS_TO_EXPLORE = 4;
  * derives lessons from the path tree, and filters/searches locally.
  */
 export default function ExploreScreen() {
-  const { data: paths, isLoading, isError, errorMessage, refetch } = usePublishedLearningPathsQuery();
+  const { data: paths, isLoading, isFetching, isError, errorMessage, refetch } = usePublishedLearningPathsQuery();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTopic, setSelectedTopic] = useState<Topic>("All");
@@ -105,6 +105,7 @@ export default function ExploreScreen() {
           message={errorMessage ?? "We couldn't load the learning catalog right now."}
           retryLabel="Try again"
           onRetry={refetch}
+          retryLoading={isFetching}
         />
       </Screen>
     );

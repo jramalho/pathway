@@ -63,7 +63,7 @@ const styles = stylex.create({
     borderStyle: 'solid',
     borderColor: tokens.borderStrong,
     textDecoration: 'none',
-    ':focus': {
+    ':focus-visible': {
       top: 0,
     },
   },

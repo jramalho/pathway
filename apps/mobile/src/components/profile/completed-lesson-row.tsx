@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, View } from "react-native";
+import { tokens } from "@pathway/ui-tokens";
 import { SymbolView } from "expo-symbols";
 import { useRouter } from "expo-router";
 
@@ -53,7 +54,7 @@ export function CompletedLessonRow({ lesson, pathTitle }: CompletedLessonRowProp
               <SymbolView
                 name={{ ios: "checkmark", android: "check", web: "check" }}
                 size={16}
-                tintColor="#000000"
+                tintColor={tokens.color.black}
               />
             </View>
 
@@ -69,7 +70,7 @@ export function CompletedLessonRow({ lesson, pathTitle }: CompletedLessonRowProp
                     · {lesson.estimatedDuration} min
                   </ThemedText>
                 )}
-                <Tag backgroundColor="#38FE13">COMPLETED</Tag>
+                <Tag backgroundColor={tokens.color.activeGreen}>COMPLETED</Tag>
               </View>
             </View>
 
@@ -78,7 +79,7 @@ export function CompletedLessonRow({ lesson, pathTitle }: CompletedLessonRowProp
               <SymbolView
                 name={{ ios: "chevron.right", android: "chevron_right", web: "chevron_right" }}
                 size={16}
-                tintColor="#000000"
+                tintColor={tokens.color.black}
               />
             </View>
           </View>
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   row: {
     position: "relative",
@@ -109,17 +110,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.three,
-    backgroundColor: "#FAF9F5",
+    backgroundColor: tokens.color.surface,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     padding: Spacing.three,
   },
   checkBlock: {
     width: 36,
     height: 36,
-    backgroundColor: "#79FF5B",
+    backgroundColor: tokens.color.accentGreen,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "600",
     lineHeight: 21,
-    color: "#000000",
+    color: tokens.color.black,
   },
   metaRow: {
     flexDirection: "row",

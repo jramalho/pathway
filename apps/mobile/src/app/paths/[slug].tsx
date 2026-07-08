@@ -34,7 +34,7 @@ export default function PathDetailScreen() {
   const params = useLocalSearchParams<{ slug: string }>();
   const slug = typeof params.slug === "string" ? params.slug.trim() : "";
 
-  const { data: path, isLoading, isError, errorMessage, refetch } = useLearningPathBySlugQuery(slug || undefined);
+  const { data: path, isLoading, isFetching, isError, errorMessage, refetch } = useLearningPathBySlugQuery(slug || undefined);
   const { completedLessonSlugs, isPathSaved, togglePathSaved, isHydrated } = useLearningActivity();
 
   // Derive sorted modules and first lesson
@@ -98,6 +98,7 @@ export default function PathDetailScreen() {
           message={errorMessage ?? "We couldn't load this learning path right now."}
           retryLabel="TRY AGAIN"
           onRetry={refetch}
+          retryLoading={isFetching}
         />
         <BackToExploreLink />
       </DetailScreenShell>

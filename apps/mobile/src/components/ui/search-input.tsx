@@ -23,7 +23,7 @@ export function SearchInput({
   accessibilityLabel = "Search",
 }: SearchInputProps) {
   return (
-    <View style={styles.wrapper}>
+    <View style={styles.wrapper} accessibilityRole="search">
       {/* Hard shadow */}
       <View style={styles.shadow} />
       <View style={styles.container}>

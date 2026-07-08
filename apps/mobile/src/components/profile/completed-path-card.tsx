@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, View } from "react-native";
+import { tokens } from "@pathway/ui-tokens";
 import { SymbolView } from "expo-symbols";
 import { useRouter } from "expo-router";
 
@@ -54,7 +55,7 @@ export function CompletedPathCard({ path }: CompletedPathCardProps) {
               <SymbolView
                 name={{ ios: "checkmark", android: "check", web: "check" }}
                 size={20}
-                tintColor="#38FE13"
+                tintColor={tokens.color.activeGreen}
               />
             </View>
 
@@ -62,7 +63,7 @@ export function CompletedPathCard({ path }: CompletedPathCardProps) {
             <View style={styles.content}>
               <ThemedText style={styles.title} numberOfLines={2}>{path.title}</ThemedText>
               <View style={styles.metaRow}>
-                <Tag backgroundColor="#38FE13">COMPLETED</Tag>
+                <Tag backgroundColor={tokens.color.activeGreen}>COMPLETED</Tag>
                 <ThemedText type="small" themeColor="textSecondary" style={styles.lessonCount}>
                   {total} LESSONS COMPLETED
                 </ThemedText>
@@ -74,7 +75,7 @@ export function CompletedPathCard({ path }: CompletedPathCardProps) {
               <SymbolView
                 name={{ ios: "arrow.right", android: "arrow_forward", web: "arrow_forward" }}
                 size={16}
-                tintColor="#000000"
+                tintColor={tokens.color.black}
               />
             </View>
           </View>
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   card: {
     position: "relative",
@@ -105,15 +106,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.three,
-    backgroundColor: "#D4E7DD",
+    backgroundColor: tokens.color.mint,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     padding: Spacing.three,
   },
   checkBlock: {
     width: 44,
     height: 44,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     lineHeight: 22,
-    color: "#000000",
+    color: tokens.color.black,
   },
   metaRow: {
     flexDirection: "row",
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
   arrow: {
     width: 32,
     height: 32,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,

@@ -93,7 +93,7 @@ const styles = stylex.create({
     borderBottomStyle: 'solid',
     borderBottomColor: 'transparent',
     transition: tokens.transitionFast,
-    ':focus': {
+    ':focus-visible': {
       outlineWidth: tokens.borderWidthThin,
       outlineStyle: 'solid',
       outlineOffset: tokens.spaceXs,
@@ -117,7 +117,7 @@ const pageStyles = stylex.create({
       color: tokens.textPrimary,
       borderBottomColor: tokens.accentActive,
     },
-    ':focus': {
+    ':focus-visible': {
       outlineColor: tokens.accentFocus,
     },
   },
@@ -137,7 +137,7 @@ const onHeaderStyles = stylex.create({
       color: tokens.textOnHeader,
       borderBottomColor: tokens.accentActive,
     },
-    ':focus': {
+    ':focus-visible': {
       outlineColor: tokens.accentActive,
     },
   },

@@ -31,7 +31,7 @@ const iconNames: Record<Exclude<EmptyStateIcon, "none">, React.ComponentProps<ty
  */
 export function EmptyState({ title, description, actionLabel, onAction, icon = "none" }: EmptyStateProps) {
   return (
-    <View style={styles.container}>
+    <View style={styles.container} accessibilityRole="summary" accessibilityLiveRegion="polite">
       {icon !== "none" && (
         <View style={styles.iconContainer} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <SymbolView

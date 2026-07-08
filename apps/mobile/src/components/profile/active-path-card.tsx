@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, View } from "react-native";
+import { tokens } from "@pathway/ui-tokens";
 import { SymbolView } from "expo-symbols";
 import { useRouter } from "expo-router";
 
@@ -76,7 +77,7 @@ export function ActivePathCard({ path, completedLessonSlugs }: ActivePathCardPro
               <SymbolView
                 name={{ ios: "arrow.right", android: "arrow_forward", web: "arrow_forward" }}
                 size={16}
-                tintColor="#000000"
+                tintColor={tokens.color.black}
               />
             </View>
           </View>
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   card: {
     position: "relative",
@@ -107,16 +108,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.three,
-    backgroundColor: "#FAF9F5",
+    backgroundColor: tokens.color.surface,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     padding: Spacing.three,
   },
   thumbnailContainer: {
     width: 72,
     height: 72,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     overflow: "hidden",
     flexShrink: 0,
   },
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     lineHeight: 22,
-    color: "#000000",
+    color: tokens.color.black,
   },
   progressText: {
     fontFamily: "Inter",
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
   arrow: {
     width: 32,
     height: 32,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,

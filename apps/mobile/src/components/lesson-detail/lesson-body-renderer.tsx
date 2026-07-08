@@ -34,7 +34,7 @@ export function LessonBodyRenderer({ body }: LessonBodyRendererProps) {
   if (!blocks || blocks.length === 0) return null;
 
   return (
-    <View style={styles.article} accessibilityRole="summary">
+    <View style={styles.article}>
       {blocks.map((block, index) => (
         <BlockView key={index} block={block} />
       ))}

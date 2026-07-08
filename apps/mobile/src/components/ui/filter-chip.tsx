@@ -42,7 +42,7 @@ export function FilterChip({ label, active, onPress, accessibilityLabel }: Filte
 
 const styles = StyleSheet.create({
   chip: {
-    minHeight: 36,
+    minHeight: 44,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two,
     backgroundColor: tokens.color.mint,

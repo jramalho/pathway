@@ -14,6 +14,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { Screen } from "@/components/ui/screen";
 import { ThemedText } from "@/components/themed-text";
 import { Border, Spacing } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 import { useLearningActivity } from "@/features/learning-activity/use-learning-activity";
 import { usePublishedLearningPathsQuery } from "@/hooks/use-learning-paths";
 import {
@@ -48,7 +49,7 @@ export default function ProfileScreen() {
     storageStatus,
   } = useLearningActivity();
 
-  const { data: paths, isLoading: pathsLoading, isError: pathsError, errorMessage, refetch } = usePublishedLearningPathsQuery();
+  const { data: paths, isLoading: pathsLoading, isFetching: pathsFetching, isError: pathsError, errorMessage, refetch } = usePublishedLearningPathsQuery();
 
   // --- Derive all metrics from real API data + local state ---
   const overview = useMemo(() => {
@@ -121,6 +122,7 @@ export default function ProfileScreen() {
             message={errorMessage ?? "We couldn't load your learning activity right now."}
             retryLabel="TRY AGAIN"
             onRetry={refetch}
+            retryLoading={pathsFetching}
           />
         </View>
       ) : overview ? (
@@ -247,20 +249,20 @@ const styles = StyleSheet.create({
     lineHeight: 30,
     textTransform: "uppercase",
     letterSpacing: 1,
-    color: "#000000",
+    color: tokens.color.black,
   },
   sectionDivider: {
     height: Border.primary,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     width: "100%",
   },
   cardList: {
     gap: Spacing.three,
   },
   storageWarning: {
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     padding: Spacing.three,
   },
   storageWarningText: {
@@ -268,7 +270,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     fontWeight: "500",
-    color: "#000000",
+    color: tokens.color.black,
   },
   unavailableNotice: {
     fontFamily: "Inter",
@@ -285,15 +287,15 @@ const styles = StyleSheet.create({
     width: "48%",
     flexGrow: 1,
     height: 100,
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   pathSkeleton: {
     height: 90,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
 });

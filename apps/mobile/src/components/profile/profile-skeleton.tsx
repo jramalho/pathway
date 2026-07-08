@@ -1,4 +1,5 @@
 import { StyleSheet, View } from "react-native";
+import { tokens } from "@pathway/ui-tokens";
 
 import { Border, Spacing } from "@/constants/theme";
 
@@ -53,16 +54,16 @@ const styles = StyleSheet.create({
   avatar: {
     width: 112,
     height: 112,
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   title: {
     height: 32,
     width: "70%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   tagRow: {
     flexDirection: "row",
@@ -71,35 +72,35 @@ const styles = StyleSheet.create({
   tag1: {
     height: 24,
     width: 120,
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   tag2: {
     height: 24,
     width: 130,
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   description: {
     height: 20,
     width: "90%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   sectionHeader: {
     height: 28,
     width: "60%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.thin,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   sectionDivider: {
     height: Border.primary,
     width: "100%",
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   overviewGrid: {
     flexDirection: "row",
@@ -110,22 +111,22 @@ const styles = StyleSheet.create({
     width: "48%",
     flexGrow: 1,
     height: 100,
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   pathRow1: {
     height: 90,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
   pathRow2: {
     height: 90,
     width: "100%",
-    backgroundColor: "#EFEEEA",
+    backgroundColor: tokens.color.surfaceContainer,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
   },
 });

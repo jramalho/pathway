@@ -180,7 +180,7 @@ const styles = stylex.create({
     borderStyle: "solid",
     borderColor: tokens.borderStrong,
     transition: tokens.transitionFast,
-    ":focus": {
+    ":focus-visible": {
       outlineWidth: tokens.borderWidthThin,
       outlineStyle: "solid",
       outlineColor: tokens.accentFocus,

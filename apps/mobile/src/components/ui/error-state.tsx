@@ -11,19 +11,24 @@ export type ErrorStateProps = {
   /** Optional secondary action (e.g. "Back to Explore"). */
   secondaryLabel?: string;
   onSecondary?: () => void;
+  /** Show a loading indicator on the retry button (e.g. while refetching). */
+  retryLoading?: boolean;
 };
 
 /**
  * Error state: short message, optional retry button, optional secondary
  * action. Visually compatible with the neo-brutalist system. Retry and
  * secondary actions are only wired when real handlers are provided.
+ *
+ * Announced to screen readers as an assertive alert so the user knows
+ * something went wrong without navigating away.
  */
-export function ErrorState({ message, retryLabel, onRetry, secondaryLabel, onSecondary }: ErrorStateProps) {
+export function ErrorState({ message, retryLabel, onRetry, secondaryLabel, onSecondary, retryLoading }: ErrorStateProps) {
   return (
-    <View style={styles.container}>
+    <View style={styles.container} accessibilityRole="alert" accessibilityLiveRegion="assertive">
       <ThemedText style={styles.message}>{message}</ThemedText>
       {retryLabel && onRetry && (
-        <NeoButton label={retryLabel} variant="primary" accessibilityLabel={retryLabel} onPress={onRetry} />
+        <NeoButton label={retryLabel} variant="primary" accessibilityLabel={retryLabel} onPress={onRetry} loading={retryLoading} />
       )}
       {secondaryLabel && onSecondary && (
         <NeoButton

@@ -177,7 +177,7 @@ const styles = stylex.create({
       color: tokens.textPrimary,
       backgroundColor: tokens.surfaceAccent,
     },
-    ":focus": {
+    ":focus-visible": {
       outlineWidth: tokens.borderWidthThin,
       outlineStyle: "solid",
       outlineColor: tokens.accentFocus,
@@ -236,7 +236,7 @@ const styles = stylex.create({
       color: tokens.textPrimary,
       backgroundColor: tokens.surfaceAccent,
     },
-    ":focus": {
+    ":focus-visible": {
       outlineWidth: tokens.borderWidthThin,
       outlineStyle: "solid",
       outlineColor: tokens.accentFocus,

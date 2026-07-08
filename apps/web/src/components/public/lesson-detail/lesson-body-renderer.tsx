@@ -213,7 +213,7 @@ const styles = stylex.create({
     opacity: 0,
     transition: tokens.transitionFast,
     fontSize: tokens.fontSizeSm,
-    ":focus": {
+    ":focus-visible": {
       outlineWidth: tokens.borderWidthThin,
       outlineStyle: "solid",
       outlineColor: tokens.accentFocus,
@@ -315,7 +315,7 @@ const styles = stylex.create({
     display: "inline-flex",
     alignItems: "baseline",
     gap: tokens.spaceXs,
-    ":focus": {
+    ":focus-visible": {
       outlineWidth: tokens.borderWidthThin,
       outlineStyle: "solid",
       outlineColor: tokens.accentFocus,

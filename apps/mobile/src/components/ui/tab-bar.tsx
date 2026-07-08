@@ -5,6 +5,7 @@ import bold from "expo-symbols/androidWeights/bold";
 import { type TabTriggerSlotProps } from "expo-router/ui";
 
 import { Border, Layout, Shadow, Spacing } from "@/constants/theme";
+import { tokens } from "@pathway/ui-tokens";
 
 export type TabBarProps = ViewProps & {
   children: React.ReactNode;
@@ -59,20 +60,20 @@ export function TabButton({ label, accessibilityLabel, icon, isFocused, ...props
           isFocused && styles.tabActive,
           isFocused && {
             borderWidth: Border.primary,
-            borderColor: "#000000",
+            borderColor: tokens.color.black,
           },
         ]}
       >
         <SymbolView
           name={icon}
           size={24}
-          tintColor={isFocused ? "#000000" : "#424845"}
+          tintColor={isFocused ? tokens.color.black : tokens.color.textSecondary}
           weight={isFocused ? { ios: "bold", android: bold } : undefined}
         />
         <Text
           style={[
             styles.label,
-            { color: isFocused ? "#000000" : "#424845" },
+            { color: isFocused ? tokens.color.black : tokens.color.textSecondary },
             isFocused && styles.labelActive,
           ]}
         >
@@ -92,13 +93,13 @@ const styles = StyleSheet.create({
   },
   shadowStrip: {
     height: Shadow.offset,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     width: "100%",
   },
   bar: {
-    backgroundColor: "#FAF9F5",
+    backgroundColor: tokens.color.surface,
     borderTopWidth: Border.primary,
-    borderTopColor: "#000000",
+    borderTopColor: tokens.color.black,
   },
   tabsRow: {
     flexDirection: "row",
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   tabActive: {
-    backgroundColor: "#38FE13",
+    backgroundColor: tokens.color.activeGreen,
     transform: [{ translateY: -8 }],
   },
   label: {

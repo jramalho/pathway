@@ -66,7 +66,7 @@ export function LessonDetailHeader({ lessonTitle, isSaved, onToggleSave, pathSlu
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={saveLabel}
-          accessibilityState={{ disabled: !!disabled }}
+          accessibilityState={{ selected: isSaved, disabled: !!disabled }}
           hitSlop={12}
           style={[styles.iconSlot, disabled && styles.iconDisabled]}
           onPress={onToggleSave}

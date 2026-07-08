@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
+import { tokens } from "@pathway/ui-tokens";
 
 import { Border, Shadow, Spacing } from "@/constants/theme";
 
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     transform: [{ translateX: Shadow.offset }, { translateY: Shadow.offset }],
   },
   avatar: {
@@ -44,9 +45,9 @@ const styles = StyleSheet.create({
     zIndex: 1,
     width: 112,
     height: 112,
-    backgroundColor: "#79FF5B",
+    backgroundColor: tokens.color.accentGreen,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     overflow: "hidden",
   },
   detailBar: {
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: 40,
     height: Border.primary,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
   initialsContainer: {
     flex: 1,
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
     fontFamily: "Epilogue",
     fontSize: 40,
     fontWeight: "800",
-    color: "#000000",
+    color: tokens.color.black,
     lineHeight: 44,
   },
   detailSquare: {
@@ -75,6 +76,6 @@ const styles = StyleSheet.create({
     right: Spacing.two,
     width: 20,
     height: 20,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
   },
 });

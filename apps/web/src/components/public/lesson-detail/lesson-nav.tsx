@@ -96,7 +96,7 @@ const styles = stylex.create({
     ":hover": {
       color: tokens.textPrimary,
     },
-    ":focus": {
+    ":focus-visible": {
       outlineWidth: tokens.borderWidthThin,
       outlineStyle: "solid",
       outlineColor: tokens.accentFocus,
@@ -140,7 +140,7 @@ const styles = stylex.create({
       transform: "translate(2px, 2px)",
       boxShadow: tokens.shadowPressed,
     },
-    ":focus": {
+    ":focus-visible": {
       outlineWidth: tokens.borderWidthThin,
       outlineStyle: "solid",
       outlineColor: tokens.accentFocus,
@@ -160,7 +160,7 @@ const styles = stylex.create({
       transform: "translate(2px, 2px)",
       boxShadow: tokens.shadowPressed,
     },
-    ":focus": {
+    ":focus-visible": {
       outlineWidth: tokens.borderWidthThin,
       outlineStyle: "solid",
       outlineColor: tokens.accentFocus,

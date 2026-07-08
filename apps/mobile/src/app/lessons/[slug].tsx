@@ -40,7 +40,7 @@ export default function LessonDetailScreen() {
 
   const { isLessonSaved, isLessonCompleted, toggleLessonSaved, markLessonCompleted, markLessonIncomplete, completedLessonSlugs, isHydrated } = useLearningActivity();
 
-  const { data: lesson, isLoading, isError, errorMessage, refetch } = useLessonBySlugQuery(slug || undefined);
+  const { data: lesson, isLoading, isFetching, isError, errorMessage, refetch } = useLessonBySlugQuery(slug || undefined);
 
   // Load all paths to find which path this lesson belongs to
   const { data: allPaths } = usePublishedLearningPathsQuery();
@@ -118,6 +118,7 @@ export default function LessonDetailScreen() {
           message={errorMessage ?? "We couldn't load this lesson right now."}
           retryLabel="TRY AGAIN"
           onRetry={refetch}
+          retryLoading={isFetching}
         />
         <BackToExploreLink />
       </LessonShell>

@@ -437,7 +437,7 @@ const styles = stylex.create({
       color: tokens.surfaceAction,
       borderBottomColor: tokens.surfaceAction,
     },
-    ':focus': {
+    ':focus-visible': {
       outlineWidth: tokens.borderWidthThin,
       outlineStyle: 'solid',
       outlineColor: tokens.accentFocus,

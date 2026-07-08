@@ -1,4 +1,5 @@
 import { StyleSheet, View } from "react-native";
+import { tokens } from "@pathway/ui-tokens";
 
 import { ProfileAvatar } from "./profile-avatar";
 import { Tag } from "@/components/ui/tag";
@@ -19,8 +20,8 @@ export function ProfileHero() {
         <ThemedText style={styles.name}>JONATHAN RAMALHO</ThemedText>
 
         <View style={styles.tagRow}>
-          <Tag backgroundColor="#D4E7DD">MOBILE ENGINEER</Tag>
-          <Tag backgroundColor="#FAF9F5">LEARNING PROFILE</Tag>
+          <Tag backgroundColor={tokens.color.mint}>MOBILE ENGINEER</Tag>
+          <Tag backgroundColor={tokens.color.surface}>LEARNING PROFILE</Tag>
         </View>
 
         <ThemedText themeColor="textSecondary" style={styles.description}>
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     lineHeight: 38,
     textTransform: "uppercase",
-    color: "#000000",
+    color: tokens.color.black,
   },
   tagRow: {
     flexDirection: "row",

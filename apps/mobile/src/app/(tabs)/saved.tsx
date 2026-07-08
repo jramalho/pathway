@@ -37,7 +37,7 @@ export default function SavedScreen() {
     togglePathSaved,
   } = useLearningActivity();
 
-  const { data: paths, isLoading, isError, errorMessage, refetch } = usePublishedLearningPathsQuery();
+  const { data: paths, isLoading, isFetching, isError, errorMessage, refetch } = usePublishedLearningPathsQuery();
 
   // Resolve saved lessons against the published path tree.
   const savedLessons = useMemo(() => {
@@ -76,6 +76,7 @@ export default function SavedScreen() {
           message={errorMessage ?? "We couldn't load your saved content right now."}
           retryLabel="TRY AGAIN"
           onRetry={refetch}
+          retryLoading={isFetching}
           secondaryLabel="BACK TO EXPLORE"
           onSecondary={() => router.navigate("/explore")}
         />

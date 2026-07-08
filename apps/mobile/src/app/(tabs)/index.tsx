@@ -72,7 +72,7 @@ function flattenLessons(paths: LearningPath[], maxCount: number): { lesson: Less
  */
 export default function HomeScreen() {
   const router = useRouter();
-  const { data: paths, isLoading, isError, errorMessage, refetch } = useFeaturedLearningPathsQuery();
+  const { data: paths, isLoading, isFetching, isError, errorMessage, refetch } = useFeaturedLearningPathsQuery();
   const { savedLessonOrder, savedPathOrder, completedLessonSlugs, isHydrated } = useLearningActivity();
 
   // Derive data for sections from the real API response
@@ -119,6 +119,7 @@ export default function HomeScreen() {
           message={errorMessage ?? "We couldn't load the learning paths right now."}
           retryLabel="Try again"
           onRetry={refetch}
+          retryLoading={isFetching}
           secondaryLabel="Back to Explore"
           onSecondary={() => router.navigate("/explore")}
         />

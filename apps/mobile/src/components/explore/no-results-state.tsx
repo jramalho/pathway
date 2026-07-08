@@ -17,7 +17,7 @@ export function NoResultsState({ onReset }: NoResultsStateProps) {
     <View style={styles.wrapper}>
       {/* Hard shadow */}
       <View style={styles.shadow} />
-      <View style={styles.card}>
+      <View style={styles.card} accessibilityRole="alert" accessibilityLiveRegion="assertive">
         {/* Icon */}
         <View style={styles.iconBox} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           <SymbolView

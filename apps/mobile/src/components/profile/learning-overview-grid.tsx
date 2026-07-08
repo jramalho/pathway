@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
+import { tokens } from "@pathway/ui-tokens";
 
 import type { LearningOverview } from "@/lib/profile-learning.utils";
 import { Border, Shadow, Spacing } from "@/constants/theme";
@@ -25,30 +26,30 @@ export function LearningOverviewGrid({ overview }: LearningOverviewGridProps) {
     {
       label: "COMPLETED LESSONS",
       value: overview.completedLessons,
-      backgroundColor: "#000000",
-      valueColor: "#79FF5B",
-      labelColor: "#FAF9F5",
+      backgroundColor: tokens.color.black,
+      valueColor: tokens.color.accentGreen,
+      labelColor: tokens.color.surface,
     },
     {
       label: "SAVED ITEMS",
       value: overview.savedItems,
-      backgroundColor: "#79FF5B",
-      valueColor: "#000000",
-      labelColor: "#000000",
+      backgroundColor: tokens.color.accentGreen,
+      valueColor: tokens.color.black,
+      labelColor: tokens.color.black,
     },
     {
       label: "ACTIVE PATHS",
       value: overview.activePaths,
-      backgroundColor: "#D4E7DD",
-      valueColor: "#000000",
-      labelColor: "#000000",
+      backgroundColor: tokens.color.mint,
+      valueColor: tokens.color.black,
+      labelColor: tokens.color.black,
     },
     {
       label: "COMPLETED PATHS",
       value: overview.completedPaths,
-      backgroundColor: "#EFEEEA",
-      valueColor: "#000000",
-      labelColor: "#000000",
+      backgroundColor: tokens.color.surfaceContainer,
+      valueColor: tokens.color.black,
+      labelColor: tokens.color.black,
     },
   ];
 
@@ -93,14 +94,14 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#000000",
+    backgroundColor: tokens.color.black,
     transform: [{ translateX: Shadow.offset }, { translateY: Shadow.offset }],
   },
   card: {
     position: "relative",
     zIndex: 1,
     borderWidth: Border.primary,
-    borderColor: "#000000",
+    borderColor: tokens.color.black,
     padding: Spacing.three,
     gap: Spacing.one,
     minHeight: 100,

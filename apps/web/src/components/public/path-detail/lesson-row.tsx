@@ -98,7 +98,7 @@ const styles = stylex.create({
     ':hover': {
       backgroundColor: tokens.surfaceAccent,
     },
-    ':focus': {
+    ':focus-visible': {
       outlineWidth: tokens.borderWidthThin,
       outlineStyle: 'solid',
       outlineColor: tokens.accentFocus,
