@@ -32,8 +32,6 @@ I built Pathway to show my approach to full-stack, cross-platform architecture w
 
 The answer this project demonstrates: one CMS as the source of truth, one shared package that validates and maps CMS data into typed domain models, and two clients that never touch raw CMS payloads. No `any`. No hardcoded content. No duplicated mappers. Runtime validation at the boundary, not scattered through the UI.
 
-The scope is deliberately small — no auth, no payments, no sync — because a senior signal is knowing what not to build, and saying so honestly.
-
 ## Architecture
 
 ```mermaid
@@ -288,13 +286,14 @@ These are honest directions, not promises:
 - **Accessibility audit** — formal audit against WCAG, not just manual review.
 - **Richer media pipeline** — video player, transcripts, audio narration.
 - **Dark mode** — token-driven theme switching.
+- **Full Product** — Maybe a full product
+
 
 ## Contact
 
-- **LinkedIn** — [coming soon]
-- **GitHub** — [coming soon]
-- **Portfolio** — [coming soon]
-- **Email** — [coming soon]
+- **LinkedIn** — [[Jonathan Ramalho](https://www.linkedin.com/in/jonathanramalho)]
+- **Portfolio** — [[jramalho.dev](https://www.jramalho.dev/)]
+- **Email** — [email me](jonathan.oliveira.ramalho@gmail.com)
 
 ---
 
