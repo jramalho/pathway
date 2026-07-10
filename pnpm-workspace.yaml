@@ -2,6 +2,7 @@ packages:
   - "apps/*"
   - "packages/*"
 allowBuilds:
+  '@shopify/react-native-skia': true
   '@swc/core': true
   better-sqlite3: true
   core-js-pure: true
