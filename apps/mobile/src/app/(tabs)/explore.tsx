@@ -253,6 +253,7 @@ const styles = StyleSheet.create({
   titleSection: {
     gap: Spacing.two,
     marginBottom: Spacing.four,
+    paddingTop: Spacing.four,
   },
   title: {
     fontFamily: Typography.headingFamily,

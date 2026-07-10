@@ -22,7 +22,7 @@ export type AppHeaderProps = {
  * accessible control until a real drawer exists. The search icon
  * navigates to the Explore tab.
  */
-export function AppHeader({ showMenu = true, showSearch = true }: AppHeaderProps) {
+export function AppHeader({ showMenu = false, showSearch = false }: AppHeaderProps) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
 

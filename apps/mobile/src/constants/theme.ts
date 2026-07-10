@@ -161,5 +161,7 @@ export const Layout = {
   maxContentWidth: tokens.layout.maxContentWidth,
 } as const;
 
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
+// Tab bar height excluding the bottom safe area (which Screen adds separately).
+// barOuter paddingTop(10) + barShell minHeight(98) = 108 on iOS.
+export const BottomTabInset = Platform.select({ ios: 108, android: 80 }) ?? 0;
 export const MaxContentWidth = Layout.maxContentWidth;

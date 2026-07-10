@@ -37,15 +37,13 @@ export function Screen({
   const insets = useSafeAreaInsets();
   const totalBottomPadding = bottomInset + insets.bottom;
 
-  const containerStyle = [
-    styles.container,
-    { paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right },
-    style,
-  ];
+  // SafeAreaView already applies top/left/right insets via edges prop,
+  // so containerStyle must not re-apply them (would double-pad the top).
+  const containerStyle = [styles.container, style];
 
   if (scrollable) {
     return (
-      <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
+      <SafeAreaView style={styles.safe} edges={["left", "right"]}>
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={[
@@ -62,7 +60,7 @@ export function Screen({
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
+    <SafeAreaView style={styles.safe} edges={["left", "right"]}>
       <View style={[containerStyle, { paddingHorizontal, paddingBottom: totalBottomPadding }]} {...rest}>
         {children}
       </View>
@@ -74,14 +72,14 @@ const styles = StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: tokens.color.surface,
-  maxWidth: Layout.maxContentWidth,
-  width: "100%",
-  alignSelf: "center",
+    maxWidth: Layout.maxContentWidth,
+    width: "100%",
+    alignSelf: "center",
   },
   container: {
     flex: 1,
     backgroundColor: tokens.color.surface,
-  maxWidth: Layout.maxContentWidth,
+    maxWidth: Layout.maxContentWidth,
     width: "100%",
     alignSelf: "center",
   },
@@ -90,6 +88,6 @@ const styles = StyleSheet.create({
   },
   content: {
     gap: Spacing.four,
-    paddingVertical: Spacing.four,
+    paddingBottom: Spacing.four,
   },
 });

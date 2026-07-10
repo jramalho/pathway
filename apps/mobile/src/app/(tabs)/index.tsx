@@ -301,6 +301,8 @@ function RecentlySavedPathCard({ path }: { path: LearningPath }) {
 const styles = StyleSheet.create({
   greeting: {
     gap: 0,
+    paddingTop: Spacing.four,
+
   },
   greetingLine: {
     fontFamily: Typography.headingFamily,

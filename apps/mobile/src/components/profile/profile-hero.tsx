@@ -35,6 +35,7 @@ export function ProfileHero() {
 const styles = StyleSheet.create({
   container: {
     gap: Spacing.four,
+    paddingTop: Spacing.four,
   },
   content: {
     gap: Spacing.two,
